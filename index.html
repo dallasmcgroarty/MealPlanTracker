@@ -7,526 +7,602 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0e0f13;
-    --surface: #16181f;
-    --surface2: #1e2029;
-    --border: #2a2d3a;
-    --accent: #c8f060;
-    --accent2: #60c8f0;
-    --accent3: #f0a060;
-    --warn: #f06060;
-    --text: #e8eaf0;
-    --muted: #7a7f96;
-    --protein: #60f0a0;
-    --carbs: #f0d060;
-    --fat: #f09060;
+    --bg: #0e0f13; --surface: #16181f; --surface2: #1e2029; --border: #2a2d3a;
+    --accent: #c8f060; --accent2: #60c8f0; --accent3: #f0a060; --warn: #f06060;
+    --text: #e8eaf0; --muted: #7a7f96; --protein: #60f0a0; --carbs: #f0d060; --fat: #f09060;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; padding: 32px 24px; }
-  .page { max-width: 880px; margin: 0 auto; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; padding: 28px 20px; }
+  .page { max-width: 900px; margin: 0 auto; }
+
+  /* NAV TABS */
+  .nav-tabs { display: flex; gap: 4px; margin-bottom: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px; }
+  .nav-tab { flex: 1; padding: 8px; border-radius: 7px; border: none; background: none; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; text-align: center; }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { background: var(--surface2); color: var(--accent); border: 1px solid var(--border); }
+  .tab-view { display: none; }
+  .tab-view.active { display: block; }
 
   /* HEADER */
-  header { margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+  header { margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
   .header-left .label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
-  h1 { font-size: 34px; font-weight: 800; line-height: 1; color: var(--accent); margin-bottom: 4px; }
+  h1 { font-size: 32px; font-weight: 800; line-height: 1; color: var(--accent); margin-bottom: 4px; }
   .subtitle { color: var(--muted); font-size: 13px; }
   .date-badge { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; text-align: right; }
-  .date-badge .date-day { font-size: 16px; font-weight: 500; }
+  .date-badge .date-day { font-size: 15px; font-weight: 500; }
   .date-badge .date-reset { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
   /* STATUS BANNER */
-  .status-banner { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 14px 18px; margin-bottom: 28px; display: flex; align-items: flex-start; gap: 10px; }
-  .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; box-shadow: 0 0 8px var(--accent); margin-top: 5px; }
+  .status-banner { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 10px; }
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); flex-shrink: 0; box-shadow: 0 0 8px var(--accent); margin-top: 4px; }
   .status-text { font-size: 13px; line-height: 1.6; }
 
   /* TOTALS GRID */
-  .totals-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 28px; }
-  .total-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align: center; }
-  .total-card .val { font-size: 24px; font-weight: 800; line-height: 1; margin-bottom: 3px; }
-  .total-card .lbl { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
-  .total-card .sub { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 2px; }
+  .totals-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 24px; }
+  .total-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px; text-align: center; }
+  .total-card .val { font-size: 20px; font-weight: 800; line-height: 1; margin-bottom: 3px; }
+  .total-card .lbl { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .total-card .sub { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--muted); margin-top: 2px; }
   .tc-cal .val { color: var(--accent2); }
   .tc-p .val { color: var(--protein); }
   .tc-c .val { color: var(--carbs); }
   .tc-f .val { color: var(--fat); }
-  .tc-cost .val { color: var(--accent); font-size: 18px; }
+  .tc-spent .val { color: var(--accent); font-size: 16px; }
+  .tc-target .val { color: var(--muted); font-size: 16px; }
 
   /* CALORIE METER */
-  .meter-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 28px; }
-  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 14px; }
-  .cal-meter { position: relative; height: 22px; background: var(--surface2); border-radius: 6px; overflow: visible; margin-bottom: 10px; }
+  .meter-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 24px; }
+  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px; }
+  .cal-meter { position: relative; height: 20px; background: var(--surface2); border-radius: 6px; overflow: visible; margin-bottom: 8px; }
   .cal-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.4s ease; max-width: 100%; }
   .target-zone { position: absolute; top: 0; height: 100%; background: rgba(96,240,160,0.12); border-left: 2px solid var(--protein); border-right: 2px solid var(--protein); border-radius: 3px; pointer-events: none; }
-  .zone-label-low, .zone-label-high { position: absolute; bottom: -18px; font-family: 'DM Mono', monospace; font-size: 9px; color: var(--protein); white-space: nowrap; }
+  .zone-label-low, .zone-label-high { position: absolute; bottom: -16px; font-family: 'DM Mono', monospace; font-size: 9px; color: var(--protein); white-space: nowrap; }
   .zone-label-low { left: 0; transform: translateX(-50%); }
   .zone-label-high { right: 0; transform: translateX(50%); }
-  .cal-scale { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 22px; }
-  .meter-note { font-size: 12px; margin-top: 10px; line-height: 1.6; color: var(--muted); }
+  .cal-scale { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 20px; }
+  .meter-note { font-size: 12px; margin-top: 8px; line-height: 1.6; color: var(--muted); }
   .meter-note strong { color: var(--text); }
-
-  /* MACRO BAR */
-  .macro-bar-wrap { display: flex; height: 16px; border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
+  .macro-bar-wrap { display: flex; height: 14px; border-radius: 5px; overflow: hidden; margin-bottom: 8px; }
   .macro-seg { transition: width 0.4s ease; }
-  .ms-p { background: var(--protein); }
-  .ms-c { background: var(--carbs); }
-  .ms-f { background: var(--fat); }
-  .macro-legend { display: flex; gap: 16px; flex-wrap: wrap; }
-  .ml-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
-  .ml-dot { width: 9px; height: 9px; border-radius: 2px; }
-  .ml-val { font-family: 'DM Mono', monospace; color: var(--muted); font-size: 11px; }
+  .ms-p { background: var(--protein); } .ms-c { background: var(--carbs); } .ms-f { background: var(--fat); }
+  .macro-legend { display: flex; gap: 14px; flex-wrap: wrap; }
+  .ml-item { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+  .ml-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .ml-val { font-family: 'DM Mono', monospace; color: var(--muted); font-size: 10px; }
 
-  /* SECTION HEADER ROW */
+  /* SECTION HEADER */
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 
   /* FOOD ITEMS */
-  .items-section { margin-bottom: 28px; }
-  .item-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-    padding: 14px 16px; margin-bottom: 8px;
-    display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center;
-    transition: border-color 0.15s, opacity 0.2s;
-  }
-  .item-card.done { opacity: 0.55; }
+  .items-section { margin-bottom: 24px; }
+  .item-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; transition: opacity 0.2s; }
+  .item-card.done { opacity: 0.5; }
   .item-card.custom-item { border-left: 3px solid var(--accent3); }
-
-  /* SERVING COUNTER */
-  .serving-ctrl { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .srv-btn {
-    width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border);
-    background: var(--surface2); color: var(--text); font-size: 16px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all 0.1s; line-height: 1; font-family: 'Syne', sans-serif;
-  }
+  .serving-ctrl { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .srv-btn { width: 24px; height: 24px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.1s; line-height: 1; }
   .srv-btn:hover { background: var(--accent); color: #0e0f13; border-color: var(--accent); }
-  .srv-btn:active { transform: scale(0.92); }
-  .srv-count {
-    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
-    min-width: 28px; text-align: center; line-height: 1;
-  }
-  .srv-count .target { color: var(--muted); font-size: 10px; }
-  .srv-count .current { font-size: 16px; }
+  .srv-btn:active { transform: scale(0.9); }
+  .srv-count { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; min-width: 28px; text-align: center; }
+  .srv-count .target { color: var(--muted); font-size: 9px; }
+  .srv-count .current { font-size: 15px; }
   .srv-count .current.over { color: var(--warn); }
   .srv-count .current.met { color: var(--protein); }
   .srv-count .current.under { color: var(--accent2); }
-
   .item-info { min-width: 0; }
-  .item-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .item-serving-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 6px; }
-  .item-macros { display: flex; gap: 10px; flex-wrap: wrap; }
-  .im { font-family: 'DM Mono', monospace; font-size: 11px; }
-  .im-cal { color: var(--accent2); }
-  .im-p { color: var(--protein); }
-  .im-c { color: var(--carbs); }
-  .im-f { color: var(--fat); }
-
-  .item-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .item-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-serving-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+  .item-macros { display: flex; gap: 8px; flex-wrap: wrap; }
+  .im { font-family: 'DM Mono', monospace; font-size: 10px; }
+  .im-cal { color: var(--accent2); } .im-p { color: var(--protein); } .im-c { color: var(--carbs); } .im-f { color: var(--fat); }
+  .item-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; min-width: 80px; }
   .item-cost-lbl { font-size: 12px; font-weight: 700; color: var(--accent); }
-  .item-freq-lbl { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
-  .remove-btn {
-    background: none; border: 1px solid var(--border); border-radius: 5px;
-    color: var(--muted); font-size: 11px; padding: 3px 7px; cursor: pointer;
-    font-family: 'DM Mono', monospace; transition: all 0.1s; margin-top: 2px;
-  }
+  .item-cost-target { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); }
+  .remove-btn { background: none; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); font-size: 10px; padding: 2px 6px; cursor: pointer; font-family: 'DM Mono', monospace; transition: all 0.1s; }
   .remove-btn:hover { border-color: var(--warn); color: var(--warn); }
 
   /* ADD CUSTOM ITEM */
-  .add-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 28px; }
-  .add-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-  .add-grid-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 8px; }
-  .field-group { display: flex; flex-direction: column; gap: 4px; }
-  .field-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-  input[type="text"], input[type="number"] {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
-    color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px;
-    padding: 7px 10px; width: 100%; outline: none; transition: border-color 0.15s;
-  }
+  .add-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-top: 10px; }
+  .add-row { display: grid; gap: 8px; margin-bottom: 8px; }
+  .add-row-1 { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; }
+  .add-row-2 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .add-row-3 { grid-template-columns: 1fr 1fr auto; }
+  .field-group { display: flex; flex-direction: column; gap: 3px; }
+  .field-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .field-hint { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--accent3); margin-top: 2px; }
+  input[type="text"], input[type="number"] { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; padding: 6px 9px; width: 100%; outline: none; transition: border-color 0.15s; }
   input:focus { border-color: var(--accent); }
   input::placeholder { color: var(--muted); }
-  .add-btn {
-    background: var(--accent); color: #0e0f13; border: none; border-radius: 6px;
-    font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800;
-    padding: 0 16px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap;
-    align-self: flex-end; height: 32px;
-  }
+  input[readonly] { color: var(--accent3); cursor: default; }
+  .add-btn { background: var(--accent); color: #0e0f13; border: none; border-radius: 6px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; padding: 0 16px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; align-self: flex-end; height: 30px; }
   .add-btn:hover { opacity: 0.85; }
 
-  /* WEEKLY COST */
-  .weekly-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 28px; }
-  .cost-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-  .cost-row:last-child { border-bottom: none; font-weight: 800; font-size: 15px; padding-top: 12px; }
-  .cost-row .amt { font-family: 'DM Mono', monospace; color: var(--accent); }
-  .cost-row:last-child .amt { font-size: 18px; }
+  /* WEEKLY COST SECTION */
+  .weekly-section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 24px; }
+  .weekly-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .weekly-col-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .weekly-col-title .badge { font-size: 9px; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+  .badge-target { background: rgba(122,127,150,0.2); color: var(--muted); }
+  .badge-actual { background: rgba(200,240,96,0.15); color: var(--accent); }
+  .cost-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-row .amt { font-family: 'DM Mono', monospace; }
+  .cost-row .amt.target-amt { color: var(--muted); }
+  .cost-row .amt.actual-amt { color: var(--accent); }
+  .cost-row .amt.custom-amt { color: var(--accent3); }
+  .cost-total-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 0; margin-top: 6px; border-top: 1px solid var(--border); font-weight: 800; font-size: 13px; }
+  .cost-total-row .amt { font-family: 'DM Mono', monospace; font-size: 16px; }
   .cost-note { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 10px; }
 
-  /* RESET BUTTON */
-  .reset-row { display: flex; justify-content: flex-end; margin-bottom: 40px; }
-  .reset-day-btn {
-    background: none; border: 1px solid var(--border); border-radius: 7px;
-    color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px;
-    padding: 7px 14px; cursor: pointer; transition: all 0.15s;
-  }
-  .reset-day-btn:hover { border-color: var(--warn); color: var(--warn); }
+  /* RESET ROW */
+  .reset-row { display: flex; justify-content: flex-end; margin-bottom: 40px; gap: 8px; }
+  .ghost-btn { background: none; border: 1px solid var(--border); border-radius: 7px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; padding: 6px 12px; cursor: pointer; transition: all 0.15s; }
+  .ghost-btn:hover { border-color: var(--warn); color: var(--warn); }
 
-  @media (max-width: 640px) {
+  /* ── HISTORY VIEW ── */
+  .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .history-header h2 { font-size: 20px; font-weight: 800; color: var(--accent); }
+  .week-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+  .week-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .week-header:hover { background: var(--surface2); }
+  .week-label { font-weight: 700; font-size: 14px; }
+  .week-summary { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+  .week-summary span { color: var(--accent2); }
+  .week-summary .wcost { color: var(--accent); }
+  .week-chevron { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
+  .week-block.open .week-chevron { transform: rotate(180deg); }
+  .week-days { display: none; border-top: 1px solid var(--border); }
+  .week-block.open .week-days { display: block; }
+  .day-row { display: grid; grid-template-columns: 110px 1fr 1fr 1fr 1fr 90px; gap: 8px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .day-row:last-child { border-bottom: none; }
+  .day-row.header-row { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 16px 6px; background: var(--surface2); }
+  .day-date { font-weight: 700; }
+  .day-cal { color: var(--accent2); font-family: 'DM Mono', monospace; }
+  .day-p { color: var(--protein); font-family: 'DM Mono', monospace; }
+  .day-c { color: var(--carbs); font-family: 'DM Mono', monospace; }
+  .day-f { color: var(--fat); font-family: 'DM Mono', monospace; }
+  .day-cost { color: var(--accent); font-family: 'DM Mono', monospace; font-weight: 700; text-align: right; }
+  .day-row .in-range { color: var(--protein); font-size: 9px; font-family: 'DM Mono', monospace; }
+  .day-row .out-range { color: var(--warn); font-size: 9px; font-family: 'DM Mono', monospace; }
+  .no-history { text-align: center; padding: 60px 20px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 13px; }
+
+  @media (max-width: 660px) {
     .totals-grid { grid-template-columns: repeat(3, 1fr); }
-    .add-grid { grid-template-columns: 1fr 1fr; }
-    .add-grid-row2 { grid-template-columns: 1fr 1fr 1fr; }
+    .add-row-1 { grid-template-columns: 1fr 1fr; }
+    .add-row-2 { grid-template-columns: 1fr 1fr; }
+    .add-row-3 { grid-template-columns: 1fr 1fr; }
+    .weekly-cols { grid-template-columns: 1fr; }
     .item-card { grid-template-columns: auto 1fr; }
     .item-right { display: none; }
+    .day-row { grid-template-columns: 90px 1fr 1fr 70px; }
+    .day-p, .day-c { display: none; }
   }
 </style>
 </head>
 <body>
 <div class="page">
 
-  <header>
-    <div class="header-left">
-      <div class="label">Daily Tracker</div>
-      <h1>Meal Plan</h1>
-      <p class="subtitle">Check off servings · Track calories · Log custom foods</p>
-    </div>
-    <div class="date-badge">
-      <div class="date-day" id="hdr-date">—</div>
-      <div class="date-reset" id="hdr-reset">Resets at midnight</div>
-    </div>
-  </header>
+  <!-- NAV -->
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('today')">📋 Today</button>
+    <button class="nav-tab" onclick="switchTab('history')">📅 History</button>
+  </nav>
 
-  <!-- STATUS -->
-  <div class="status-banner" id="status-banner">
-    <div class="status-dot" id="status-dot"></div>
-    <div class="status-text" id="status-text">Loading...</div>
-  </div>
+  <!-- ══════════════ TODAY TAB ══════════════ -->
+  <div class="tab-view active" id="tab-today">
 
-  <!-- TOTALS -->
-  <div class="totals-grid">
-    <div class="total-card tc-cal">
-      <div class="val" id="tot-cal">—</div>
-      <div class="lbl">Logged</div>
-      <div class="sub" id="tot-cal-target">/ — kcal target</div>
-    </div>
-    <div class="total-card tc-p">
-      <div class="val" id="tot-p">—</div>
-      <div class="lbl">Protein</div>
-    </div>
-    <div class="total-card tc-c">
-      <div class="val" id="tot-c">—</div>
-      <div class="lbl">Carbs</div>
-    </div>
-    <div class="total-card tc-f">
-      <div class="val" id="tot-f">—</div>
-      <div class="lbl">Fat</div>
-    </div>
-    <div class="total-card tc-cost">
-      <div class="val" id="tot-week-cost">—</div>
-      <div class="lbl">This Week</div>
-      <div class="sub" id="tot-week-sub">cumulative</div>
-    </div>
-  </div>
+    <header>
+      <div class="header-left">
+        <div class="label">Daily Tracker</div>
+        <h1>Meal Plan</h1>
+        <p class="subtitle">Log servings · Track calories & cost · Add custom foods</p>
+      </div>
+      <div class="date-badge">
+        <div class="date-day" id="hdr-date">—</div>
+        <div class="date-reset">Resets at midnight</div>
+      </div>
+    </header>
 
-  <!-- CALORIE METER + MACROS -->
-  <div class="meter-section">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex-wrap:wrap;">
-      <div>
-        <div class="section-title">Calories Logged Today</div>
-        <div class="cal-meter">
-          <div class="cal-fill" id="cal-fill" style="width:0%"></div>
-          <!-- target zone 1250–1600 on 0–2000 scale = 62.5% to 80% -->
-          <div class="target-zone" style="left:62.5%;width:17.5%;">
-            <span class="zone-label-low">1,250</span>
-            <span class="zone-label-high">1,600</span>
+    <!-- STATUS -->
+    <div class="status-banner" id="status-banner">
+      <div class="status-dot" id="status-dot"></div>
+      <div class="status-text" id="status-text">Loading...</div>
+    </div>
+
+    <!-- TOTALS: cal / protein / carbs / fat / spent today / target today -->
+    <div class="totals-grid">
+      <div class="total-card tc-cal">
+        <div class="val" id="tot-cal">0</div>
+        <div class="lbl">Logged kcal</div>
+        <div class="sub" id="tot-cal-sub">/ 1,250 target</div>
+      </div>
+      <div class="total-card tc-p">
+        <div class="val" id="tot-p">0g</div>
+        <div class="lbl">Protein</div>
+      </div>
+      <div class="total-card tc-c">
+        <div class="val" id="tot-c">0g</div>
+        <div class="lbl">Carbs</div>
+      </div>
+      <div class="total-card tc-f">
+        <div class="val" id="tot-f">0g</div>
+        <div class="lbl">Fat</div>
+      </div>
+      <div class="total-card tc-spent">
+        <div class="val" id="tot-spent">$0.00</div>
+        <div class="lbl">Spent Today</div>
+        <div class="sub" id="tot-spent-sub">actual</div>
+      </div>
+      <div class="total-card tc-target">
+        <div class="val" id="tot-target-cost">$0.00</div>
+        <div class="lbl">Target/Day</div>
+        <div class="sub">if all logged</div>
+      </div>
+    </div>
+
+    <!-- CALORIE METER + MACROS -->
+    <div class="meter-section">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          <div class="section-title">Calories Logged Today</div>
+          <div class="cal-meter">
+            <div class="cal-fill" id="cal-fill" style="width:0%"></div>
+            <div class="target-zone" style="left:62.5%;width:17.5%;">
+              <span class="zone-label-low">1,250</span>
+              <span class="zone-label-high">1,600</span>
+            </div>
+          </div>
+          <div class="cal-scale"><span>0</span><span>500</span><span>1,000</span><span>1,500</span><span>2,000</span></div>
+          <p class="meter-note" id="meter-note" style="margin-top:18px;"></p>
+        </div>
+        <div>
+          <div class="section-title">Macro Split (logged)</div>
+          <div class="macro-bar-wrap">
+            <div class="macro-seg ms-p" id="bar-p" style="width:34%"></div>
+            <div class="macro-seg ms-c" id="bar-c" style="width:33%"></div>
+            <div class="macro-seg ms-f" id="bar-f" style="width:33%"></div>
+          </div>
+          <div class="macro-legend">
+            <div class="ml-item"><div class="ml-dot" style="background:var(--protein)"></div>Protein <span class="ml-val" id="leg-p">—</span></div>
+            <div class="ml-item"><div class="ml-dot" style="background:var(--carbs)"></div>Carbs <span class="ml-val" id="leg-c">—</span></div>
+            <div class="ml-item"><div class="ml-dot" style="background:var(--fat)"></div>Fat <span class="ml-val" id="leg-f">—</span></div>
           </div>
         </div>
-        <div class="cal-scale"><span>0</span><span>500</span><span>1,000</span><span>1,500</span><span>2,000</span></div>
-        <p class="meter-note" id="meter-note" style="margin-top:20px;"></p>
-      </div>
-      <div>
-        <div class="section-title">Macro Split (logged)</div>
-        <div class="macro-bar-wrap">
-          <div class="macro-seg ms-p" id="bar-p" style="width:0%"></div>
-          <div class="macro-seg ms-c" id="bar-c" style="width:0%"></div>
-          <div class="macro-seg ms-f" id="bar-f" style="width:0%"></div>
-        </div>
-        <div class="macro-legend">
-          <div class="ml-item"><div class="ml-dot" style="background:var(--protein)"></div>Protein <span class="ml-val" id="leg-p">—</span></div>
-          <div class="ml-item"><div class="ml-dot" style="background:var(--carbs)"></div>Carbs <span class="ml-val" id="leg-c">—</span></div>
-          <div class="ml-item"><div class="ml-dot" style="background:var(--fat)"></div>Fat <span class="ml-val" id="leg-f">—</span></div>
-        </div>
       </div>
     </div>
-  </div>
 
-  <!-- CORE FOOD ITEMS -->
-  <div class="items-section">
-    <div class="section-header">
-      <div class="section-title" style="margin-bottom:0">Core Diet Items</div>
-      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">tap +/− to log servings</span>
-    </div>
-    <div id="core-items-list"></div>
-  </div>
-
-  <!-- CUSTOM ITEMS -->
-  <div class="items-section">
-    <div class="section-header">
-      <div class="section-title" style="margin-bottom:0">Today's Custom Foods</div>
-      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">resets daily · tracked in weekly cost</span>
-    </div>
-    <div id="custom-items-list"></div>
-
-    <!-- ADD FORM -->
-    <div class="add-section" style="margin-top:10px;margin-bottom:0;">
-      <div class="section-title">+ Add Custom Food</div>
-      <div class="add-grid">
-        <div class="field-group">
-          <span class="field-label">Name</span>
-          <input type="text" id="cf-name" placeholder="e.g. Banana">
-        </div>
-        <div class="field-group">
-          <span class="field-label">Calories</span>
-          <input type="number" id="cf-cal" placeholder="105" min="0">
-        </div>
-        <div class="field-group">
-          <span class="field-label">Protein (g)</span>
-          <input type="number" id="cf-p" placeholder="1" min="0">
-        </div>
-        <div class="field-group">
-          <span class="field-label">Carbs (g)</span>
-          <input type="number" id="cf-c" placeholder="27" min="0">
-        </div>
-        <div class="field-group">
-          <span class="field-label">Fat (g)</span>
-          <input type="number" id="cf-f" placeholder="0" min="0">
-        </div>
+    <!-- CORE FOOD ITEMS -->
+    <div class="items-section">
+      <div class="section-header">
+        <div class="section-title" style="margin-bottom:0">Core Diet Items</div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">+/− to log servings · cost tracks actual consumed</span>
       </div>
-      <div class="add-grid-row2">
-        <div class="field-group">
-          <span class="field-label">Cost / day ($)</span>
-          <input type="number" id="cf-cost" placeholder="0.50" min="0" step="0.01">
+      <div id="core-items-list"></div>
+    </div>
+
+    <!-- CUSTOM ITEMS -->
+    <div class="items-section">
+      <div class="section-header">
+        <div class="section-title" style="margin-bottom:0">Today's Custom Foods</div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">resets daily · included in weekly cost</span>
+      </div>
+      <div id="custom-items-list"></div>
+
+      <div class="add-section">
+        <div class="section-title">+ Add Custom Food</div>
+        <!-- Row 1: name + macros -->
+        <div class="add-row add-row-1">
+          <div class="field-group">
+            <span class="field-label">Name</span>
+            <input type="text" id="cf-name" placeholder="e.g. Banana">
+          </div>
+          <div class="field-group">
+            <span class="field-label">Calories</span>
+            <input type="number" id="cf-cal" placeholder="105" min="0">
+          </div>
+          <div class="field-group">
+            <span class="field-label">Protein (g)</span>
+            <input type="number" id="cf-p" placeholder="1" min="0">
+          </div>
+          <div class="field-group">
+            <span class="field-label">Carbs (g)</span>
+            <input type="number" id="cf-c" placeholder="27" min="0">
+          </div>
+          <div class="field-group">
+            <span class="field-label">Fat (g)</span>
+            <input type="number" id="cf-f" placeholder="0" min="0">
+          </div>
         </div>
-        <div class="field-group" style="grid-column:2/5;">
-          <span class="field-label">&nbsp;</span>
+        <!-- Row 2: cost fields -->
+        <div class="add-row add-row-2">
+          <div class="field-group">
+            <span class="field-label">Bulk Total Price ($)</span>
+            <input type="number" id="cf-bulk-price" placeholder="15.00" min="0" step="0.01" oninput="calcCostPerServing()">
+            <span class="field-hint">total you paid</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Servings in Package</span>
+            <input type="number" id="cf-bulk-servings" placeholder="30" min="1" oninput="calcCostPerServing()">
+            <span class="field-hint">total servings</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Cost / Serving ($)</span>
+            <input type="number" id="cf-cost-per-srv" placeholder="0.50" min="0" step="0.01" oninput="clearBulkIfManual()">
+            <span class="field-hint" id="cf-cost-hint">or enter manually</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Servings Eaten Today</span>
+            <input type="number" id="cf-servings-eaten" placeholder="1" min="1" value="1" oninput="calcCostPerServing()">
+            <span class="field-hint" id="cf-today-cost-hint">today's cost: $0.00</span>
+          </div>
+        </div>
+        <!-- Row 3: add button -->
+        <div class="add-row add-row-3">
+          <div></div><div></div>
           <button class="add-btn" onclick="addCustomItem()">Add to Today</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- WEEKLY COST -->
-  <div class="weekly-section">
-    <div class="section-header" style="margin-bottom:12px;">
-      <div class="section-title" style="margin-bottom:0">Weekly Cost Tracker</div>
-      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">never resets · accumulates all spending</span>
+    <!-- WEEKLY COST -->
+    <div class="weekly-section">
+      <div class="section-header" style="margin-bottom:14px;">
+        <div class="section-title" style="margin-bottom:0">Weekly Cost</div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">week started <span id="week-start-label">—</span></span>
+      </div>
+      <div class="weekly-cols">
+        <!-- TARGET/EXPECTED -->
+        <div>
+          <div class="weekly-col-title">Expected <span class="badge badge-target">per week at target servings</span></div>
+          <div id="weekly-target-rows"></div>
+          <div class="cost-total-row">
+            <span>Weekly Target</span>
+            <span class="amt target-amt" id="weekly-target-total">$0.00</span>
+          </div>
+        </div>
+        <!-- ACTUAL SPENT -->
+        <div>
+          <div class="weekly-col-title">Actual Spent <span class="badge badge-actual">starts at $0 · grows as you log</span></div>
+          <div id="weekly-actual-rows"></div>
+          <div class="cost-total-row">
+            <span>Total Spent</span>
+            <span class="amt actual-amt" id="weekly-actual-total">$0.00</span>
+          </div>
+        </div>
+      </div>
+      <div class="cost-note">
+        Actual cost reflects servings logged each day · <button onclick="resetWeeklyCost()" style="background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;text-decoration:underline;">reset week</button>
+      </div>
     </div>
-    <div id="weekly-cost-rows"></div>
-    <div class="cost-row" style="margin-top:4px;">
-      <span>Total Spent This Week</span>
-      <span class="amt" id="weekly-grand-total">$0.00</span>
+
+    <div class="reset-row">
+      <button class="ghost-btn" onclick="confirmResetDay()">↺ Reset Today's Log</button>
     </div>
-    <div class="cost-note">Week started <span id="week-start-label">—</span> · <button onclick="resetWeeklyCost()" style="background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;text-decoration:underline;">reset week</button></div>
+
+  </div><!-- /tab-today -->
+
+  <!-- ══════════════ HISTORY TAB ══════════════ -->
+  <div class="tab-view" id="tab-history">
+    <div class="history-header">
+      <div>
+        <div class="label">Food Log</div>
+        <h2>History</h2>
+      </div>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">stored locally · up to 6 months</span>
+    </div>
+    <div id="history-content"></div>
   </div>
 
-  <div class="reset-row">
-    <button class="reset-day-btn" onclick="confirmResetDay()">↺ Reset Today's Log</button>
-  </div>
-
-</div>
+</div><!-- /page -->
 
 <script>
-// ─── CORE DIET DATA ───────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// CORE DIET DATA
+// ═══════════════════════════════════════════════════════════════════
 const CORE_ITEMS = [
   {
-    id: 'chicken',
-    name: 'Kirkland Lightly Breaded Chicken Chunks',
-    shortName: 'Chicken Chunks',
-    target: 6,
-    cal: 140, p: 16, c: 9, f: 5,
-    costPerServing: 16 / (4 * 12 / 6), // $16/bag, ~12 servings/bag → ~$1.33 per 6-serving-day portion... use per-serving
-    costPerDay: (16 * 2) / 7,  // 2 bags/week ÷ 7 days
-    freq: '6 srv/day · 2 bags/wk',
-    veggie: false
+    id: 'chicken', name: 'Kirkland Lightly Breaded Chicken Chunks',
+    target: 6, cal: 140, p: 16, c: 9, f: 5,
+    costPerServing: 16 / 22, // $16/bag ÷ 22 servings = ~$0.73/serving
+    freq: '6 srv/day · 2 bags/wk · $32/wk', veggie: false
   },
   {
-    id: 'veggies',
-    name: 'Kirkland Normandy Vegetable Blend',
-    shortName: 'Normandy Veggies',
-    target: 1,
-    cal: 30, p: 2, c: 7, f: 0,
-    costPerDay: 9 / 25, // $9 / 25 servings
-    freq: '1 srv/day · 1 container/3wks',
-    veggie: true
+    id: 'veggies', name: 'Kirkland Normandy Vegetable Blend',
+    target: 1, cal: 30, p: 2, c: 7, f: 0,
+    costPerServing: 9 / 25, // $9 / 25 servings
+    freq: '1 srv/day · 1 container/3wks', veggie: true
   },
   {
-    id: 'yogurt',
-    name: 'Dannon Oikos Triple Zero Yogurt',
-    shortName: 'Oikos Yogurt',
-    target: 1,
-    cal: 90, p: 15, c: 7, f: 0,
-    costPerDay: 14 / 18, // $14 / 18 servings
-    freq: '1 srv/day · 1 pack/2.5wks',
-    veggie: false
+    id: 'yogurt', name: 'Dannon Oikos Triple Zero Yogurt',
+    target: 1, cal: 90, p: 15, c: 7, f: 0,
+    costPerServing: 14 / 18,
+    freq: '1 srv/day · 1 pack/2.5wks', veggie: false
   },
   {
-    id: 'sausage',
-    name: "Aidell's Chicken Apple Sausage",
-    shortName: 'Chicken Sausage',
-    target: 1,
-    cal: 170, p: 13, c: 4, f: 12,
-    costPerDay: 17 / 15, // $17 / 15 links
-    freq: '1 link/day · 1 pack/2wks',
-    veggie: false
+    id: 'sausage', name: "Aidell's Chicken Apple Sausage",
+    target: 1, cal: 170, p: 13, c: 4, f: 12,
+    costPerServing: 17 / 15,
+    freq: '1 link/day · 1 pack/2wks', veggie: false
   },
   {
-    id: 'whey',
-    name: 'ON Gold Standard Whey Protein',
-    shortName: 'Whey Protein',
-    target: 1,
-    cal: 120, p: 24, c: 3, f: 1.5,
-    costPerDay: 37 / 29, // $37 / 29 servings
-    freq: '1 srv/day · 1 tub/month',
-    veggie: false
+    id: 'whey', name: 'ON Gold Standard Whey Protein',
+    target: 1, cal: 120, p: 24, c: 3, f: 1.5,
+    costPerServing: 37 / 29,
+    freq: '1 srv/day · 1 tub/month', veggie: false
   }
 ];
 
-// ─── STORAGE KEYS ─────────────────────────────────────────────────────────────
-const KEY_DAY_LOG    = 'mealplan_daylog';      // resets daily
-const KEY_CUSTOM     = 'mealplan_custom';      // resets daily
-const KEY_WEEK_COST  = 'mealplan_weekcost';    // never resets (manual only)
-const KEY_WEEK_START = 'mealplan_weekstart';   // week start date string
+const TARGET_WEEKLY = CORE_ITEMS.reduce((sum, item) => sum + item.costPerServing * item.target * 7, 0);
 
-function todayStr() {
-  return new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+// ═══════════════════════════════════════════════════════════════════
+// INDEXEDDB SETUP
+// ═══════════════════════════════════════════════════════════════════
+const DB_NAME = 'MealPlanDB';
+const DB_VERSION = 1;
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('days')) {
+        d.createObjectStore('days', { keyPath: 'date' });
+      }
+      if (!d.objectStoreNames.contains('weeks')) {
+        d.createObjectStore('weeks', { keyPath: 'weekStart' });
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror = e => reject(e);
+  });
 }
 
-// ─── LOAD / SAVE DAY STATE ────────────────────────────────────────────────────
-function loadDayState() {
+function dbGet(store, key) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbPut(store, value) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(value);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbDelete(store, key) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).delete(key);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbGetAll(store) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DATE HELPERS
+// ═══════════════════════════════════════════════════════════════════
+function todayStr() { return new Date().toLocaleDateString('en-CA'); }
+
+function weekStartFor(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const day = d.getDay(); // 0=Sun
+  d.setDate(d.getDate() - day);
+  return d.toLocaleDateString('en-CA');
+}
+
+function formatDate(dateStr) {
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function formatDateShort(dateStr) {
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LOCAL STATE (today only, also cached in localStorage for speed)
+// ═══════════════════════════════════════════════════════════════════
+const LS_TODAY = 'mp_today_v3';
+const LS_WEEK  = 'mp_weekstart_v3';
+
+let servings = {};
+let customItems = [];
+
+function loadTodayLS() {
   try {
-    const raw = localStorage.getItem(KEY_DAY_LOG);
+    const raw = localStorage.getItem(LS_TODAY);
     if (!raw) return null;
     const obj = JSON.parse(raw);
-    if (obj.date !== todayStr()) return null; // stale — new day
+    if (obj.date !== todayStr()) return null;
     return obj;
   } catch(e) { return null; }
 }
 
-function saveDayState(state) {
-  localStorage.setItem(KEY_DAY_LOG, JSON.stringify({ date: todayStr(), ...state }));
-}
-
-function loadCustomItems() {
-  try {
-    const raw = localStorage.getItem(KEY_CUSTOM);
-    if (!raw) return [];
-    const obj = JSON.parse(raw);
-    if (obj.date !== todayStr()) return []; // new day
-    return obj.items || [];
-  } catch(e) { return []; }
-}
-
-function saveCustomItems(items) {
-  localStorage.setItem(KEY_CUSTOM, JSON.stringify({ date: todayStr(), items }));
-}
-
-// ─── WEEKLY COST ──────────────────────────────────────────────────────────────
-function loadWeekCost() {
-  try {
-    const raw = localStorage.getItem(KEY_WEEK_COST);
-    return raw ? JSON.parse(raw) : { entries: [] };
-  } catch(e) { return { entries: [] }; }
-}
-
-function saveWeekCost(data) {
-  localStorage.setItem(KEY_WEEK_COST, JSON.stringify(data));
+function saveTodayLS() {
+  localStorage.setItem(LS_TODAY, JSON.stringify({ date: todayStr(), servings, customItems }));
 }
 
 function loadWeekStart() {
-  const s = localStorage.getItem(KEY_WEEK_START);
-  if (!s) {
-    const t = todayStr();
-    localStorage.setItem(KEY_WEEK_START, t);
-    return t;
-  }
+  let s = localStorage.getItem(LS_WEEK);
+  if (!s) { s = weekStartFor(todayStr()); localStorage.setItem(LS_WEEK, s); }
   return s;
 }
 
-function resetWeeklyCost() {
-  if (!confirm('Reset the weekly cost tracker? This cannot be undone.')) return;
-  localStorage.setItem(KEY_WEEK_COST, JSON.stringify({ entries: [] }));
-  localStorage.setItem(KEY_WEEK_START, todayStr());
-  render();
-}
-
-// Record today's spending into weekly ledger (called once per day on first load)
-function recordTodayCost(servings, customItems) {
-  const wc = loadWeekCost();
-  const today = todayStr();
-  // Remove any existing entry for today, then add fresh
-  wc.entries = wc.entries.filter(e => e.date !== today);
-
-  let coreCost = 0;
-  CORE_ITEMS.forEach(item => {
-    const srv = servings[item.id] || 0;
-    coreCost += (item.costPerDay / item.target) * srv;
-  });
-  let customCost = customItems.reduce((s, i) => s + (parseFloat(i.cost) || 0), 0);
-
-  wc.entries.push({ date: today, core: coreCost, custom: customCost, customItems: customItems.map(i => i.name) });
-  saveWeekCost(wc);
-}
-
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let servings = {};   // { itemId: count }
-let customItems = [];
-
-function initState() {
-  const day = loadDayState();
-  if (day) {
-    servings = day.servings || {};
-  } else {
-    servings = {};
-    CORE_ITEMS.forEach(item => { servings[item.id] = 0; });
-  }
-  customItems = loadCustomItems();
-  // Ensure all core items have a key
-  CORE_ITEMS.forEach(item => { if (servings[item.id] === undefined) servings[item.id] = 0; });
-}
-
-function persistState() {
-  saveDayState({ servings });
-  saveCustomItems(customItems);
-  // Update today's cost entry in weekly ledger
-  recordTodayCost(servings, customItems);
-}
-
-// ─── COMPUTED TOTALS ──────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// COMPUTED
+// ═══════════════════════════════════════════════════════════════════
 function computeTotals() {
-  let cal = 0, p = 0, c = 0, f = 0;
+  let cal=0, p=0, c=0, f=0, cost=0;
   CORE_ITEMS.forEach(item => {
     const srv = servings[item.id] || 0;
-    cal += item.cal * srv;
-    p   += item.p   * srv;
-    c   += item.c   * srv;
-    f   += item.f   * srv;
+    cal  += item.cal * srv;
+    p    += item.p   * srv;
+    c    += item.c   * srv;
+    f    += item.f   * srv;
+    cost += item.costPerServing * srv;
   });
   customItems.forEach(item => {
-    cal += parseFloat(item.cal)  || 0;
-    p   += parseFloat(item.p)    || 0;
-    c   += parseFloat(item.c)    || 0;
-    f   += parseFloat(item.f)    || 0;
+    cal  += parseFloat(item.cal)  || 0;
+    p    += parseFloat(item.p)    || 0;
+    c    += parseFloat(item.c)    || 0;
+    f    += parseFloat(item.f)    || 0;
+    cost += parseFloat(item.todayCost) || 0;
   });
-  return { cal, p, c, f };
+  return { cal, p, c, f, cost };
 }
 
-function targetTotals() {
-  let cal = 0, p = 0, c = 0, f = 0;
-  CORE_ITEMS.forEach(item => {
-    cal += item.cal * item.target;
-    p   += item.p   * item.target;
-    c   += item.c   * item.target;
-    f   += item.f   * item.target;
-  });
-  return { cal, p, c, f };
+function targetCostPerDay() {
+  return CORE_ITEMS.reduce((s, item) => s + item.costPerServing * item.target, 0);
 }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// PERSIST — save today snapshot to IndexedDB
+// ═══════════════════════════════════════════════════════════════════
+async function persistState() {
+  saveTodayLS();
+  const tot = computeTotals();
+  // Only write to IDB if something has actually been logged
+  if (tot.cal === 0 && tot.cost === 0) return;
+  const snapshot = {
+    date: todayStr(),
+    servings: { ...servings },
+    customItems: [...customItems],
+    cal: tot.cal, p: tot.p, c: tot.c, f: tot.f,
+    cost: tot.cost
+  };
+  try { await dbPut('days', snapshot); } catch(e) { console.warn('IDB write failed', e); }
+  await updateWeekRecord();
+}
+
+async function updateWeekRecord() {
+  const weekStart = weekStartFor(todayStr());
+  let week;
+  try { week = await dbGet('weeks', weekStart); } catch(e) { week = null; }
+  if (!week) week = { weekStart, days: {} };
+  const tot = computeTotals();
+  // Only record today if there's actual data
+  if (tot.cal === 0 && tot.cost === 0) return;
+  week.days[todayStr()] = { cal: tot.cal, p: tot.p, c: tot.c, f: tot.f, cost: tot.cost };
+  try { await dbPut('weeks', week); } catch(e) { console.warn('IDB week write failed', e); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════
 function render() {
   renderHeader();
   renderCoreItems();
@@ -536,9 +612,8 @@ function render() {
 }
 
 function renderHeader() {
-  const now = new Date();
-  const opts = { weekday: 'short', month: 'short', day: 'numeric' };
-  document.getElementById('hdr-date').textContent = now.toLocaleDateString('en-US', opts);
+  document.getElementById('hdr-date').textContent =
+    new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
 function renderCoreItems() {
@@ -548,36 +623,35 @@ function renderCoreItems() {
     const srv = servings[item.id] || 0;
     const met = srv >= item.target;
     const over = srv > item.target;
+    const countClass = over ? 'over' : (met ? 'met' : 'under');
+    const spentToday = (item.costPerServing * srv).toFixed(2);
+    const targetDay  = (item.costPerServing * item.target).toFixed(2);
     const card = document.createElement('div');
     card.className = 'item-card' + (item.veggie ? ' veggie' : '') + (met ? ' done' : '');
-
-    const countClass = over ? 'over' : (met ? 'met' : 'under');
-
     card.innerHTML = `
       <div class="serving-ctrl">
-        <button class="srv-btn" onclick="adjustServing('${item.id}', 1)">+</button>
+        <button class="srv-btn" onclick="adjustServing('${item.id}',1)">+</button>
         <div class="srv-count">
           <div class="current ${countClass}">${srv}</div>
           <div class="target">/ ${item.target}</div>
         </div>
-        <button class="srv-btn" onclick="adjustServing('${item.id}', -1)">−</button>
+        <button class="srv-btn" onclick="adjustServing('${item.id}',-1)">−</button>
       </div>
       <div class="item-info">
         <div class="item-name">${item.name}</div>
-        <div class="item-serving-lbl">${item.freq}</div>
+        <div class="item-serving-lbl">${item.freq} · $${item.costPerServing.toFixed(2)}/serving</div>
         <div class="item-macros">
           <span class="im im-cal">${item.cal * srv} kcal</span>
           <span class="im im-p">P: ${(item.p * srv).toFixed(0)}g</span>
           <span class="im im-c">C: ${(item.c * srv).toFixed(0)}g</span>
           <span class="im im-f">F: ${(item.f * srv).toFixed(1)}g</span>
-          <span class="im" style="color:var(--muted)">(per srv: ${item.cal}kcal)</span>
+          <span class="im" style="color:var(--muted)">(${item.cal}kcal ea)</span>
         </div>
       </div>
       <div class="item-right">
-        <div class="item-cost-lbl">$${(item.costPerDay / item.target * srv).toFixed(2)}/day</div>
-        <div class="item-freq-lbl">$${item.costPerDay.toFixed(2)} target/day</div>
-      </div>
-    `;
+        <div class="item-cost-lbl">$${spentToday} spent</div>
+        <div class="item-cost-target">target: $${targetDay}/day</div>
+      </div>`;
     list.appendChild(card);
   });
 }
@@ -586,22 +660,23 @@ function renderCustomItems() {
   const list = document.getElementById('custom-items-list');
   list.innerHTML = '';
   if (customItems.length === 0) {
-    list.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--muted);padding:10px 0;">No custom items today.</div>';
+    list.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--muted);padding:8px 0;">No custom items today.</div>';
     return;
   }
   customItems.forEach((item, idx) => {
     const card = document.createElement('div');
-    card.className = 'item-card custom-item';
+    card.className = 'item-card custom-item done';
+    const srvLabel = item.servingsEaten > 1 ? `${item.servingsEaten} servings` : '1 serving';
     card.innerHTML = `
       <div class="serving-ctrl">
         <div class="srv-count">
-          <div class="current met">1</div>
-          <div class="target">/ 1</div>
+          <div class="current met">${item.servingsEaten || 1}</div>
+          <div class="target">srv</div>
         </div>
       </div>
       <div class="item-info">
         <div class="item-name">${item.name}</div>
-        <div class="item-serving-lbl">custom · today only</div>
+        <div class="item-serving-lbl">custom · ${srvLabel} · $${parseFloat(item.costPerSrv || 0).toFixed(2)}/srv</div>
         <div class="item-macros">
           <span class="im im-cal">${item.cal} kcal</span>
           <span class="im im-p">P: ${item.p}g</span>
@@ -610,72 +685,64 @@ function renderCustomItems() {
         </div>
       </div>
       <div class="item-right">
-        <div class="item-cost-lbl">$${parseFloat(item.cost || 0).toFixed(2)}/day</div>
+        <div class="item-cost-lbl">$${parseFloat(item.todayCost || 0).toFixed(2)} today</div>
+        ${item.bulkPrice ? `<div class="item-cost-target">$${parseFloat(item.bulkPrice).toFixed(2)} bulk / ${item.bulkServings} srv</div>` : ''}
         <button class="remove-btn" onclick="removeCustomItem(${idx})">remove</button>
-      </div>
-    `;
+      </div>`;
     list.appendChild(card);
   });
 }
 
 function renderStats() {
   const tot = computeTotals();
-  const tgt = targetTotals();
+  const tgtCal = CORE_ITEMS.reduce((s, i) => s + i.cal * i.target, 0);
 
-  // Totals cards
   document.getElementById('tot-cal').textContent = Math.round(tot.cal);
-  document.getElementById('tot-cal-target').textContent = `/ ${Math.round(tgt.cal)} kcal target`;
+  document.getElementById('tot-cal-sub').textContent = `/ ${tgtCal} target`;
   document.getElementById('tot-p').textContent = Math.round(tot.p) + 'g';
   document.getElementById('tot-c').textContent = Math.round(tot.c) + 'g';
   document.getElementById('tot-f').textContent = tot.f.toFixed(1) + 'g';
+  document.getElementById('tot-spent').textContent = '$' + tot.cost.toFixed(2);
+  document.getElementById('tot-target-cost').textContent = '$' + targetCostPerDay().toFixed(2);
 
-  // Weekly cost
-  const wc = loadWeekCost();
-  const weekTotal = wc.entries.reduce((s, e) => s + (e.core || 0) + (e.custom || 0), 0);
-  document.getElementById('tot-week-cost').textContent = '$' + weekTotal.toFixed(2);
-  document.getElementById('tot-week-sub').textContent = wc.entries.length + ' day(s) tracked';
-
-  // Calorie fill bar (0–2000 scale)
-  const pct = Math.min(tot.cal / 2000 * 100, 100);
-  document.getElementById('cal-fill').style.width = pct + '%';
+  // Calorie fill
+  document.getElementById('cal-fill').style.width = Math.min(tot.cal / 2000 * 100, 100) + '%';
 
   // Meter note
   const note = document.getElementById('meter-note');
-  const remaining = tgt.cal - tot.cal;
   if (tot.cal === 0) {
-    note.innerHTML = `<strong>Nothing logged yet.</strong> Target: ${Math.round(tgt.cal)} kcal when all servings are met.`;
+    note.innerHTML = `<strong>Nothing logged yet.</strong> Target: ${tgtCal} kcal at full servings.`;
   } else if (tot.cal < 1250) {
-    note.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal logged</strong> — ${Math.round(remaining)} kcal to go to hit target.`;
+    note.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(1250 - tot.cal)} kcal to floor. Wiggle room for extras.`;
   } else if (tot.cal <= 1600) {
-    note.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal logged</strong> — within target range. ${remaining > 0 ? Math.round(remaining) + ' kcal of wiggle room left.' : 'Target met!'}`;
+    note.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> — in range! ${Math.round(1600 - tot.cal)} kcal ceiling remaining.`;
   } else {
-    note.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal logged</strong> — ${Math.round(tot.cal - 1600)} kcal over your 1,600 ceiling.`;
+    note.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(tot.cal - 1600)} kcal over ceiling.`;
   }
 
   // Status banner
   const dot = document.getElementById('status-dot');
   const banner = document.getElementById('status-banner');
-  const statusText = document.getElementById('status-text');
-
+  const txt = document.getElementById('status-text');
   if (tot.cal === 0) {
     dot.style.cssText = 'background:var(--muted);box-shadow:none;';
     banner.style.borderLeftColor = 'var(--muted)';
-    statusText.innerHTML = `No servings logged yet today. Hit <strong>+</strong> on each item as you eat.`;
+    txt.innerHTML = `Nothing logged yet. Tap <strong>+</strong> on each item as you eat.`;
   } else if (tot.cal < 1250) {
     dot.style.cssText = 'background:var(--accent3);box-shadow:0 0 8px var(--accent3);';
     banner.style.borderLeftColor = 'var(--accent3)';
-    statusText.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> logged — <strong style="color:var(--accent3)">${Math.round(1250 - tot.cal)} kcal below</strong> your 1,250 floor. Keep eating!`;
+    txt.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> logged · <strong style="color:var(--accent3)">${Math.round(1250 - tot.cal)} kcal</strong> below floor · <strong style="color:var(--accent)">${Math.round(1600 - tot.cal)} kcal</strong> of wiggle room for extras.`;
   } else if (tot.cal <= 1600) {
     dot.style.cssText = 'background:var(--protein);box-shadow:0 0 8px var(--protein);';
     banner.style.borderLeftColor = 'var(--protein)';
-    statusText.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> logged — you're in range. <strong style="color:var(--protein)">${Math.round(1600 - tot.cal)} kcal</strong> of wiggle room for extras.`;
+    txt.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> logged — in range! <strong style="color:var(--protein)">${Math.round(1600 - tot.cal)} kcal</strong> of ceiling remaining.`;
   } else {
     dot.style.cssText = 'background:var(--warn);box-shadow:0 0 8px var(--warn);';
     banner.style.borderLeftColor = 'var(--warn)';
-    statusText.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> logged — <strong style="color:var(--warn)">${Math.round(tot.cal - 1600)} kcal over</strong> your 1,600 ceiling.`;
+    txt.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — <strong style="color:var(--warn)">${Math.round(tot.cal - 1600)} kcal over</strong> your 1,600 ceiling.`;
   }
 
-  // Macro bar
+  // Macros
   const calP = tot.p * 4, calC = tot.c * 4, calF = tot.f * 9;
   const totalMC = calP + calC + calF || 1;
   const pPct = (calP / totalMC * 100).toFixed(0);
@@ -689,70 +756,243 @@ function renderStats() {
   document.getElementById('leg-f').textContent = fPct + '% · ' + tot.f.toFixed(1) + 'g';
 }
 
-function renderWeeklyCost() {
-  const wc = loadWeekCost();
-  const weekStart = loadWeekStart();
-  document.getElementById('week-start-label').textContent = new Date(weekStart + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-
-  const rows = document.getElementById('weekly-cost-rows');
-  rows.innerHTML = '';
-
-  // Fixed core costs per week (at target servings)
-  const fixedCoreWeekly = [
-    { name: 'Chicken Chunks (2 bags/wk)', amt: 32.00 },
-    { name: 'Normandy Veggies (~0.33 containers)', amt: 9/25*7 },
-    { name: 'Oikos Yogurt (~0.4 packs)', amt: 14/18*7 },
-    { name: "Aidell's Sausage (~0.5 packs)", amt: 17/15*7 },
-    { name: 'Whey Protein (~0.24 tubs)', amt: 37/29*7 },
-  ];
-
-  let fixedTotal = 0;
-  fixedCoreWeekly.forEach(r => {
-    fixedTotal += r.amt;
+async function renderWeeklyCost() {
+  // TARGET column — static per-item breakdown
+  const targetRows = document.getElementById('weekly-target-rows');
+  targetRows.innerHTML = '';
+  let targetTotal = 0;
+  CORE_ITEMS.forEach(item => {
+    const weeklyAmt = item.costPerServing * item.target * 7;
+    targetTotal += weeklyAmt;
     const row = document.createElement('div');
     row.className = 'cost-row';
-    row.innerHTML = `<span>${r.name}</span><span class="amt">$${r.amt.toFixed(2)}</span>`;
-    rows.appendChild(row);
+    row.innerHTML = `<span>${item.name.split(' ').slice(0,3).join(' ')}</span><span class="amt target-amt">$${weeklyAmt.toFixed(2)}</span>`;
+    targetRows.appendChild(row);
+  });
+  document.getElementById('weekly-target-total').textContent = '$' + targetTotal.toFixed(2);
+
+  // ACTUAL column — sum from IDB week record
+  const weekStart = weekStartFor(todayStr());
+  document.getElementById('week-start-label').textContent = formatDate(weekStart);
+
+  let week;
+  try { week = await dbGet('weeks', weekStart); } catch(e) { week = null; }
+  const days = week ? week.days : {};
+
+  const actualRows = document.getElementById('weekly-actual-rows');
+  actualRows.innerHTML = '';
+
+  // Group by core items: compute from all days in this week
+  let coreActual = 0;
+  let customActual = 0;
+  let totalActual = 0;
+
+  // Today's running totals (from live state, not DB snapshot which may be stale mid-day)
+  const dayDates = Object.keys(days).sort();
+  dayDates.forEach(dateStr => {
+    totalActual += days[dateStr].cost || 0;
   });
 
-  // Custom extras this week
-  let customWeekTotal = 0;
-  wc.entries.forEach(e => { customWeekTotal += e.custom || 0; });
-
-  if (customWeekTotal > 0) {
-    const row = document.createElement('div');
-    row.className = 'cost-row';
-    row.innerHTML = `<span>Custom extras this week</span><span class="amt" style="color:var(--accent3)">$${customWeekTotal.toFixed(2)}</span>`;
-    rows.appendChild(row);
+  // Also ensure today is current (live state overrides DB for today)
+  const todayTot = computeTotals();
+  if (days[todayStr()]) {
+    // Subtract the DB version of today, add live version
+    totalActual = totalActual - (days[todayStr()].cost || 0) + todayTot.cost;
+  } else {
+    totalActual += todayTot.cost;
   }
 
-  const grandTotal = fixedTotal + customWeekTotal;
-  document.getElementById('weekly-grand-total').textContent = '$' + grandTotal.toFixed(2);
+  // Per-day rows in actual
+  const allDates = new Set([...dayDates, todayStr()]);
+  const sortedDates = [...allDates].sort();
+
+  sortedDates.forEach(dateStr => {
+    let dayCost;
+    if (dateStr === todayStr()) {
+      dayCost = todayTot.cost;
+    } else {
+      dayCost = days[dateStr] ? days[dateStr].cost : 0;
+    }
+    if (dayCost === 0 && dateStr !== todayStr()) return;
+    const row = document.createElement('div');
+    row.className = 'cost-row';
+    const isToday = dateStr === todayStr();
+    row.innerHTML = `<span>${formatDateShort(dateStr)}${isToday ? ' <em style="color:var(--accent);font-style:normal;font-size:9px">today</em>' : ''}</span><span class="amt actual-amt">$${dayCost.toFixed(2)}</span>`;
+    actualRows.appendChild(row);
+  });
+
+  if (sortedDates.filter(d => d === todayStr() || (days[d] && days[d].cost > 0)).length === 0) {
+    actualRows.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--muted);padding:6px 0;">No spending logged yet this week.</div>';
+  }
+
+  document.getElementById('weekly-actual-total').textContent = '$' + totalActual.toFixed(2);
+  document.getElementById('tot-week-cost') && (document.getElementById('tot-week-cost').textContent = '$' + totalActual.toFixed(2));
 }
 
-// ─── ACTIONS ──────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// HISTORY RENDER
+// ═══════════════════════════════════════════════════════════════════
+async function renderHistory() {
+  const container = document.getElementById('history-content');
+  container.innerHTML = '<div style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:12px;padding:20px 0;">Loading...</div>';
+
+  let weeks;
+  try { weeks = await dbGetAll('weeks'); } catch(e) { weeks = []; }
+
+  if (!weeks || weeks.length === 0) {
+    container.innerHTML = '<div class="no-history">No history yet.<br><br>Your daily logs will appear here as you track over time.</div>';
+    return;
+  }
+
+  // Sort weeks newest first
+  weeks.sort((a, b) => b.weekStart.localeCompare(a.weekStart));
+
+  container.innerHTML = '';
+
+  weeks.forEach(week => {
+    const days = week.days || {};
+    const dayDates = Object.keys(days).sort((a,b) => b.localeCompare(a));
+    if (dayDates.length === 0) return;
+
+    const weekTotal = dayDates.reduce((s, d) => s + (days[d].cost || 0), 0);
+    const weekCal   = dayDates.reduce((s, d) => s + (days[d].cal  || 0), 0);
+    const avgCal    = dayDates.length > 0 ? Math.round(weekCal / dayDates.length) : 0;
+
+    const weekEnd = (() => {
+      const d = new Date(week.weekStart + 'T00:00:00');
+      d.setDate(d.getDate() + 6);
+      return d.toLocaleDateString('en-CA');
+    })();
+
+    const block = document.createElement('div');
+    block.className = 'week-block';
+
+    const isCurrentWeek = week.weekStart === weekStartFor(todayStr());
+
+    block.innerHTML = `
+      <div class="week-header" onclick="toggleWeek(this)">
+        <div>
+          <div class="week-label">${formatDateShort(week.weekStart)} – ${formatDateShort(weekEnd)} ${isCurrentWeek ? '<span style="color:var(--accent);font-size:10px;font-family:\'DM Mono\',monospace;">current</span>' : ''}</div>
+          <div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);margin-top:2px;">${dayDates.length} day(s) logged</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="week-summary">avg <span>${avgCal} kcal</span>/day · total <span class="wcost">$${weekTotal.toFixed(2)}</span></div>
+          <div class="week-chevron">▼</div>
+        </div>
+      </div>
+      <div class="week-days">
+        <div class="day-row header-row">
+          <span>Date</span><span>Calories</span><span>Protein</span><span>Carbs</span><span>Fat</span><span style="text-align:right">Cost</span>
+        </div>
+        ${dayDates.map(d => {
+          const day = days[d];
+          const inRange = day.cal >= 1250 && day.cal <= 1600;
+          const rangeLabel = day.cal === 0 ? '' : inRange
+            ? '<span class="in-range">✓ in range</span>'
+            : '<span class="out-range">⚠ out</span>';
+          return `<div class="day-row">
+            <div>
+              <div class="day-date">${formatDate(d)}</div>
+              <div style="margin-top:2px;">${rangeLabel}</div>
+            </div>
+            <div class="day-cal">${Math.round(day.cal)} kcal</div>
+            <div class="day-p">${Math.round(day.p)}g</div>
+            <div class="day-c">${Math.round(day.c)}g</div>
+            <div class="day-f">${day.f ? day.f.toFixed(1) : 0}g</div>
+            <div class="day-cost">$${(day.cost || 0).toFixed(2)}</div>
+          </div>`;
+        }).join('')}
+        <div class="day-row" style="background:var(--surface2);font-weight:700;">
+          <span>Week Total</span>
+          <span class="day-cal">${Math.round(weekCal)} kcal</span>
+          <span class="day-p">${Math.round(dayDates.reduce((s,d)=>s+(days[d].p||0),0))}g</span>
+          <span class="day-c">${Math.round(dayDates.reduce((s,d)=>s+(days[d].c||0),0))}g</span>
+          <span class="day-f">${dayDates.reduce((s,d)=>s+(days[d].f||0),0).toFixed(1)}g</span>
+          <span class="day-cost">$${weekTotal.toFixed(2)}</span>
+        </div>
+      </div>`;
+
+    // Auto-open current week
+    if (isCurrentWeek) block.classList.add('open');
+    container.appendChild(block);
+  });
+}
+
+function toggleWeek(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════════════════════
 function adjustServing(id, delta) {
   servings[id] = Math.max(0, (servings[id] || 0) + delta);
   persistState();
   render();
 }
 
+// Custom item cost calculator
+function calcCostPerServing() {
+  const bulkPrice    = parseFloat(document.getElementById('cf-bulk-price').value) || 0;
+  const bulkServings = parseFloat(document.getElementById('cf-bulk-servings').value) || 0;
+  const eatenToday   = parseFloat(document.getElementById('cf-servings-eaten').value) || 1;
+
+  if (bulkPrice > 0 && bulkServings > 0) {
+    const perSrv = bulkPrice / bulkServings;
+    document.getElementById('cf-cost-per-srv').value = perSrv.toFixed(2);
+    document.getElementById('cf-cost-hint').textContent = `= $${perSrv.toFixed(2)} per serving`;
+  }
+
+  const perSrv = parseFloat(document.getElementById('cf-cost-per-srv').value) || 0;
+  const todayCost = perSrv * eatenToday;
+  document.getElementById('cf-today-cost-hint').textContent = `today's cost: $${todayCost.toFixed(2)}`;
+}
+
+function clearBulkIfManual() {
+  // User typed cost/srv manually — clear bulk fields so they don't conflict
+  document.getElementById('cf-bulk-price').value = '';
+  document.getElementById('cf-bulk-servings').value = '';
+  document.getElementById('cf-cost-hint').textContent = 'or enter manually';
+  const perSrv = parseFloat(document.getElementById('cf-cost-per-srv').value) || 0;
+  const eaten  = parseFloat(document.getElementById('cf-servings-eaten').value) || 1;
+  document.getElementById('cf-today-cost-hint').textContent = `today's cost: $${(perSrv * eaten).toFixed(2)}`;
+}
+
 function addCustomItem() {
   const name = document.getElementById('cf-name').value.trim();
-  const cal  = parseFloat(document.getElementById('cf-cal').value)  || 0;
-  const p    = parseFloat(document.getElementById('cf-p').value)    || 0;
-  const c    = parseFloat(document.getElementById('cf-c').value)    || 0;
-  const f    = parseFloat(document.getElementById('cf-f').value)    || 0;
-  const cost = parseFloat(document.getElementById('cf-cost').value) || 0;
-
   if (!name) { document.getElementById('cf-name').focus(); return; }
 
-  customItems.push({ name, cal, p, c, f, cost });
+  const servingsEaten = parseFloat(document.getElementById('cf-servings-eaten').value) || 1;
+  const costPerSrv    = parseFloat(document.getElementById('cf-cost-per-srv').value) || 0;
+  const bulkPrice     = parseFloat(document.getElementById('cf-bulk-price').value) || 0;
+  const bulkServings  = parseFloat(document.getElementById('cf-bulk-servings').value) || 0;
+  const todayCost     = costPerSrv * servingsEaten;
+
+  // Macros are per serving eaten (total for today)
+  const calPerSrv = parseFloat(document.getElementById('cf-cal').value) || 0;
+  const pPerSrv   = parseFloat(document.getElementById('cf-p').value)   || 0;
+  const cPerSrv   = parseFloat(document.getElementById('cf-c').value)   || 0;
+  const fPerSrv   = parseFloat(document.getElementById('cf-f').value)   || 0;
+
+  customItems.push({
+    name,
+    cal: calPerSrv * servingsEaten,
+    p: pPerSrv * servingsEaten,
+    c: cPerSrv * servingsEaten,
+    f: fPerSrv * servingsEaten,
+    servingsEaten,
+    costPerSrv,
+    todayCost,
+    bulkPrice: bulkPrice || null,
+    bulkServings: bulkServings || null
+  });
+
   persistState();
   render();
-
-  // Clear form
-  ['cf-name','cf-cal','cf-p','cf-c','cf-f','cf-cost'].forEach(id => document.getElementById(id).value = '');
+  ['cf-name','cf-cal','cf-p','cf-c','cf-f','cf-bulk-price','cf-bulk-servings','cf-cost-per-srv'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cf-servings-eaten').value = '1';
+  document.getElementById('cf-cost-hint').textContent = 'or enter manually';
+  document.getElementById('cf-today-cost-hint').textContent = "today's cost: $0.00";
   document.getElementById('cf-name').focus();
 }
 
@@ -762,8 +1002,16 @@ function removeCustomItem(idx) {
   render();
 }
 
+async function resetWeeklyCost() {
+  if (!confirm('Reset the weekly cost tracker? This deletes all logged days for this week.')) return;
+  const weekStart = weekStartFor(todayStr());
+  try { await dbDelete('weeks', weekStart); } catch(e) {}
+  render();
+  renderWeeklyCost();
+}
+
 function confirmResetDay() {
-  if (!confirm("Reset today's log? Serving counts and custom items will be cleared.")) return;
+  if (!confirm("Reset today's log? All serving counts and custom items will be cleared.")) return;
   servings = {};
   CORE_ITEMS.forEach(item => { servings[item.id] = 0; });
   customItems = [];
@@ -771,16 +1019,60 @@ function confirmResetDay() {
   render();
 }
 
-// Allow Enter key in add form
+// ═══════════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'history') renderHistory();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ENTER KEY in custom form
+// ═══════════════════════════════════════════════════════════════════
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.activeElement && document.activeElement.id && document.activeElement.id.startsWith('cf-')) {
-    addCustomItem();
-  }
+  if (e.key === 'Enter' && document.activeElement?.id?.startsWith('cf-')) addCustomItem();
 });
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-initState();
-render();
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+async function cleanupOldRecords() {
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - 6);
+  const cutoffStr = cutoff.toLocaleDateString('en-CA');
+
+  try {
+    const allDays = await dbGetAll('days');
+    for (const day of allDays) {
+      if (day.date < cutoffStr) await dbDelete('days', day.date);
+    }
+    const allWeeks = await dbGetAll('weeks');
+    for (const week of allWeeks) {
+      if (week.weekStart < cutoffStr) await dbDelete('weeks', week.weekStart);
+    }
+  } catch(e) { console.warn('Cleanup failed', e); }
+}
+
+async function init() {
+  await openDB();
+  await cleanupOldRecords();
+  const saved = loadTodayLS();
+  if (saved) {
+    servings = saved.servings || {};
+    customItems = saved.customItems || [];
+  }
+  CORE_ITEMS.forEach(item => { if (servings[item.id] === undefined) servings[item.id] = 0; });
+  render();
+  // Only persist on init if there's already data loaded from today
+  const initTot = computeTotals();
+  if (initTot.cal > 0 || initTot.cost > 0) await persistState();
+}
+
+init();
 </script>
 </body>
 </html>
