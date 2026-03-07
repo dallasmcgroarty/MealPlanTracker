@@ -141,28 +141,39 @@
   /* ── HISTORY VIEW ── */
   .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .history-header h2 { font-size: 20px; font-weight: 800; color: var(--accent); }
-  .week-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
-  .week-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .week-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 16px; }
+  .week-header { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: background 0.15s; gap: 12px; border-radius: 10px; }
+  .week-block.open .week-header { border-radius: 10px 10px 0 0; }
   .week-header:hover { background: var(--surface2); }
+  .week-header-left { display: flex; flex-direction: column; gap: 4px; }
   .week-label { font-weight: 700; font-size: 14px; }
+  .week-days-logged { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .week-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
   .week-summary { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
   .week-summary span { color: var(--accent2); }
   .week-summary .wcost { color: var(--accent); }
-  .week-chevron { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
+  .week-summary-stat { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
+  .week-summary-stat span { color: var(--accent2); }
+  .week-summary-stat .wcost { color: var(--accent); }
+  .week-chevron { color: var(--muted); font-size: 12px; transition: transform 0.2s; margin-top: 2px; }
   .week-block.open .week-chevron { transform: rotate(180deg); }
-  .week-days { display: none; border-top: 1px solid var(--border); }
+  .week-days { display: none; border-top: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 0 0 10px 10px; }
   .week-block.open .week-days { display: block; }
-  .day-row { display: grid; grid-template-columns: 110px 1fr 1fr 1fr 1fr 90px; gap: 8px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 12px; }
-  .day-row:last-child { border-bottom: none; }
-  .day-row.header-row { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 16px 6px; background: var(--surface2); }
+  .days-table { width: 100%; min-width: 500px; border-collapse: collapse; font-size: 12px; }
+  .days-table th { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 12px 6px; background: var(--surface2); font-weight: 400; text-align: left; white-space: nowrap; }
+  .days-table th:last-child { padding-right: 20px; text-align: right; }
+  .days-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; white-space: nowrap; }
+  .days-table td:last-child { padding-right: 20px; }
+  .days-table tr:last-child td { border-bottom: none; }
+  .days-table tr.week-total-row { background: var(--surface2); font-weight: 700; }
   .day-date { font-weight: 700; }
   .day-cal { color: var(--accent2); font-family: 'DM Mono', monospace; }
   .day-p { color: var(--protein); font-family: 'DM Mono', monospace; }
   .day-c { color: var(--carbs); font-family: 'DM Mono', monospace; }
   .day-f { color: var(--fat); font-family: 'DM Mono', monospace; }
   .day-cost { color: var(--accent); font-family: 'DM Mono', monospace; font-weight: 700; text-align: right; }
-  .day-row .in-range { color: var(--protein); font-size: 9px; font-family: 'DM Mono', monospace; }
-  .day-row .out-range { color: var(--warn); font-size: 9px; font-family: 'DM Mono', monospace; }
+  .in-range { color: var(--protein); font-size: 9px; font-family: 'DM Mono', monospace; }
+  .out-range { color: var(--warn); font-size: 9px; font-family: 'DM Mono', monospace; }
   .no-history { text-align: center; padding: 60px 20px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 13px; }
 
   @media (max-width: 660px) {
@@ -173,8 +184,6 @@
     .weekly-cols { grid-template-columns: 1fr; }
     .item-card { grid-template-columns: auto 1fr; }
     .item-right { display: none; }
-    .day-row { grid-template-columns: 90px 1fr 1fr 70px; }
-    .day-p, .day-c { display: none; }
     .zone-label-high, .zone-label-low { display: none; }
   }
 </style>
@@ -878,45 +887,49 @@ async function renderHistory() {
 
     block.innerHTML = `
       <div class="week-header" onclick="toggleWeek(this)">
-        <div>
+        <div class="week-header-left">
           <div class="week-label">${formatDateShort(week.weekStart)} – ${formatDateShort(weekEnd)} ${isCurrentWeek ? '<span style="color:var(--accent);font-size:10px;font-family:\'DM Mono\',monospace;">current</span>' : ''}</div>
-          <div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);margin-top:2px;">${dayDates.length} day(s) logged</div>
+          <div class="week-days-logged">${dayDates.length} day(s) logged</div>
         </div>
-        <div style="display:flex;align-items:center;gap:16px;">
-          <div class="week-summary">avg <span>${avgCal} kcal</span>/day · total <span class="wcost">$${weekTotal.toFixed(2)}</span></div>
+        <div class="week-header-right">
+          <div class="week-summary-stat">avg <span>${avgCal} kcal</span>/day</div>
+          <div class="week-summary-stat">total <span class="wcost">$${weekTotal.toFixed(2)}</span></div>
           <div class="week-chevron">▼</div>
         </div>
       </div>
       <div class="week-days">
-        <div class="day-row header-row">
-          <span>Date</span><span>Calories</span><span>Protein</span><span>Carbs</span><span>Fat</span><span style="text-align:right">Cost</span>
-        </div>
+        <table class="days-table">
+          <thead>
+            <tr>
+              <th>Date</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fat</th><th>Cost</th>
+            </tr>
+          </thead>
+          <tbody>
         ${dayDates.map(d => {
           const day = days[d];
           const inRange = day.cal >= 1250 && day.cal <= 1600;
           const rangeLabel = day.cal === 0 ? '' : inRange
-            ? '<span class="in-range">✓ in range</span>'
-            : '<span class="out-range">⚠ out</span>';
-          return `<div class="day-row">
-            <div>
-              <div class="day-date">${formatDate(d)}</div>
-              <div style="margin-top:2px;">${rangeLabel}</div>
-            </div>
-            <div class="day-cal">${Math.round(day.cal)} kcal</div>
-            <div class="day-p">${Math.round(day.p)}g</div>
-            <div class="day-c">${Math.round(day.c)}g</div>
-            <div class="day-f">${day.f ? day.f.toFixed(1) : 0}g</div>
-            <div class="day-cost">$${(day.cost || 0).toFixed(2)}</div>
-          </div>`;
+            ? '<br><span class="in-range">✓ in range</span>'
+            : '<br><span class="out-range">⚠ out</span>';
+          return `<tr>
+            <td><span class="day-date">${formatDate(d)}</span>${rangeLabel}</td>
+            <td class="day-cal">${Math.round(day.cal)} kcal</td>
+            <td class="day-p">${Math.round(day.p)}g</td>
+            <td class="day-c">${Math.round(day.c)}g</td>
+            <td class="day-f">${day.f ? day.f.toFixed(1) : 0}g</td>
+            <td class="day-cost">$${(day.cost || 0).toFixed(2)}</td>
+          </tr>`;
         }).join('')}
-        <div class="day-row" style="background:var(--surface2);font-weight:700;">
-          <span>Week Total</span>
-          <span class="day-cal">${Math.round(weekCal)} kcal</span>
-          <span class="day-p">${Math.round(dayDates.reduce((s,d)=>s+(days[d].p||0),0))}g</span>
-          <span class="day-c">${Math.round(dayDates.reduce((s,d)=>s+(days[d].c||0),0))}g</span>
-          <span class="day-f">${dayDates.reduce((s,d)=>s+(days[d].f||0),0).toFixed(1)}g</span>
-          <span class="day-cost">$${weekTotal.toFixed(2)}</span>
-        </div>
+          <tr class="week-total-row">
+            <td>Week Total</td>
+            <td class="day-cal">${Math.round(weekCal)} kcal</td>
+            <td class="day-p">${Math.round(dayDates.reduce((s,d)=>s+(days[d].p||0),0))}g</td>
+            <td class="day-c">${Math.round(dayDates.reduce((s,d)=>s+(days[d].c||0),0))}g</td>
+            <td class="day-f">${dayDates.reduce((s,d)=>s+(days[d].f||0),0).toFixed(1)}g</td>
+            <td class="day-cost">$${weekTotal.toFixed(2)}</td>
+          </tr>
+          </tbody>
+        </table>
       </div>`;
 
     // Auto-open current week
