@@ -1660,10 +1660,10 @@
           note.innerHTML = `<strong>Nothing logged yet.</strong> Target: ${tgtCal} kcal at full servings.`;
         } else if (tot.cal < 1250) {
           note.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(1250 - tot.cal)} kcal to floor. Wiggle room for extras.`;
-        } else if (tot.cal <= 1600) {
-          note.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> — in range! ${Math.round(1600 - tot.cal)} kcal ceiling remaining.`;
+        } else if (tot.cal <= 1750) {
+          note.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> — in range! ${Math.round(1750 - tot.cal)} kcal ceiling remaining.`;
         } else {
-          note.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(tot.cal - 1600)} kcal over ceiling.`;
+          note.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(tot.cal - 1750)} kcal over ceiling.`;
         }
 
         // Status banner
@@ -1678,17 +1678,17 @@
           dot.style.cssText =
             "background:var(--accent3);box-shadow:0 0 8px var(--accent3);";
           banner.style.borderLeftColor = "var(--accent3)";
-          txt.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> logged · <strong style="color:var(--accent3)">${Math.round(1250 - tot.cal)} kcal</strong> below floor · <strong style="color:var(--accent)">${Math.round(1600 - tot.cal)} kcal</strong> of wiggle room for extras.`;
-        } else if (tot.cal <= 1600) {
+          txt.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> logged · <strong style="color:var(--accent3)">${Math.round(1250 - tot.cal)} kcal</strong> below floor · <strong style="color:var(--accent)">${Math.round(1750 - tot.cal)} kcal</strong> of wiggle room for extras.`;
+        } else if (tot.cal <= 1750) {
           dot.style.cssText =
             "background:var(--protein);box-shadow:0 0 8px var(--protein);";
           banner.style.borderLeftColor = "var(--protein)";
-          txt.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> logged — in range! <strong style="color:var(--protein)">${Math.round(1600 - tot.cal)} kcal</strong> of ceiling remaining.`;
+          txt.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> logged — in range! <strong style="color:var(--protein)">${Math.round(1750 - tot.cal)} kcal</strong> of ceiling remaining.`;
         } else {
           dot.style.cssText =
             "background:var(--warn);box-shadow:0 0 8px var(--warn);";
           banner.style.borderLeftColor = "var(--warn)";
-          txt.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — <strong style="color:var(--warn)">${Math.round(tot.cal - 1600)} kcal over</strong> your 1,600 ceiling.`;
+          txt.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — <strong style="color:var(--warn)">${Math.round(tot.cal - 1750)} kcal over</strong> your 1,750 ceiling.`;
         }
 
         // Macros
@@ -1871,7 +1871,7 @@
         ${dayDates
           .map((d) => {
             const day = days[d];
-            const inRange = day.cal >= 1250 && day.cal <= 1600;
+            const inRange = day.cal >= 1250 && day.cal <= 1750;
             const rangeLabel =
               day.cal === 0
                 ? ""
