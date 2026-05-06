@@ -481,6 +481,10 @@
         color: var(--warn);
       }
 
+      #core-items-mgmt-list {
+        margin-top: 12px;
+      }
+
       /* ADD CUSTOM ITEM */
       .add-section {
         background: var(--surface);
@@ -562,7 +566,28 @@
       .add-btn:hover {
         opacity: 0.85;
       }
-
+      .edit-btn {
+        background: var(--accent);
+        color: #0e0f13;
+        border: none;
+        border-radius: 6px;
+        font-family: "Syne", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 0 12px;
+        cursor: pointer;
+        transition: opacity 0.15s;
+        white-space: nowrap;
+        align-self: flex-end;
+        height: 30px;
+      }
+      .edit-btn:hover {
+        opacity: 0.85;
+      }
+      .active-btn.activate-outline:hover {
+        border: 1.5px solid var(--protein) !important;
+        color: var(--protein) !important;
+      }
       /* WEEKLY COST SECTION */
       .weekly-section {
         background: var(--surface);
@@ -685,6 +710,9 @@
         border: 1px solid var(--border);
         border-radius: 10px;
         margin-bottom: 16px;
+      }
+      .week-block:last-child {
+        margin-bottom: 0;
       }
       .week-header {
         padding: 14px 16px;
@@ -879,16 +907,37 @@
   <body>
     <div class="page">
       <!-- NAV -->
+
       <nav class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('today')">
+        <button class="nav-tab active" onclick="window.switchTab('today')">
           📋 Today
         </button>
-        <button class="nav-tab" onclick="switchTab('history')">
+        <button class="nav-tab" onclick="window.switchTab('coreitems')">
+          🗂️ Core Items
+        </button>
+        <button class="nav-tab" onclick="window.switchTab('history')">
           📅 History
         </button>
       </nav>
 
       <!-- ══════════════ TODAY TAB ══════════════ -->
+      <!-- ══════════════ CORE ITEMS MANAGEMENT TAB ══════════════ -->
+      <div class="tab-view" id="tab-coreitems">
+        <header>
+          <div class="header-left">
+            <div class="label">Core Diet Items</div>
+            <h1>Manage Core Items</h1>
+            <p class="subtitle">
+              View, edit, activate/inactivate, delete, or add core diet items.
+            </p>
+          </div>
+        </header>
+        <div style="margin-bottom:24px;">
+          <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Core Item</button>
+        </div>
+        <div id="add-core-item-form-container"></div>
+        <div id="core-items-mgmt-list"></div>
+      </div>
       <div class="tab-view active" id="tab-today">
         <header>
           <div class="header-left">
@@ -948,9 +997,9 @@
               <div class="section-title">Calories Logged Today</div>
               <div class="cal-meter">
                 <div class="cal-fill" id="cal-fill" style="width: 0%"></div>
-                <div class="target-zone" style="left: 62.5%; width: 17.5%">
+                <div class="target-zone">
                   <span class="zone-label-low">1,250</span>
-                  <span class="zone-label-high">1,600</span>
+                  <span class="zone-label-high">1,750</span>
                 </div>
               </div>
               <div class="cal-scale">
@@ -1106,7 +1155,7 @@
             <div class="add-row add-row-3">
               <div></div>
               <div></div>
-              <button class="add-btn" onclick="addCustomItem()">
+              <button class="add-btn" onclick="window.addCustomItem()">
                 Add to Today
               </button>
             </div>
@@ -1165,7 +1214,7 @@
           <div class="cost-note">
             Actual cost reflects servings logged each day ·
             <button
-              onclick="resetWeeklyCost()"
+              onclick="window.resetWeeklyCost()"
               style="
                 background: none;
                 border: none;
@@ -1182,7 +1231,7 @@
         </div>
 
         <div class="reset-row">
-          <button class="ghost-btn" onclick="confirmResetDay()">
+          <button class="ghost-btn" onclick="window.confirmResetDay()">
             ↺ Reset Today's Log
           </button>
         </div>
@@ -1202,954 +1251,64 @@
               font-size: 10px;
               color: var(--muted);
             "
-            >stored locally · up to 6 months</span
+            >stored locally · up to 9 months</span
           >
+        </div>
+        <!-- Overall charts -->
+        <div id="history-charts-overall" style="margin-bottom:32px;display:none;">
+          <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
+            <div style="min-width:320px;max-width:420px;width:100%;">
+              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Calories per Day</div>
+              <div id="chart-calories" class="echart-container"></div>
+            </div>
+            <div style="min-width:320px;max-width:420px;width:100%;">
+              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Weekly Cost</div>
+              <div id="chart-weekly-cost" class="echart-container"></div>
+            </div>
+            <div style="min-width:220px;max-width:320px;width:100%;">
+              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Macro Split</div>
+              <div id="chart-macros" class="echart-container echart-macros"></div>
+                    <style>
+                      .echart-macros {
+                        min-width: 260px;
+                        max-width: 340px;
+                        height: 240px;
+                      }
+                      @media (max-width: 600px) {
+                        .echart-macros {
+                          min-width: 0;
+                          max-width: 100vw;
+                          height: 260px;
+                        }
+                      }
+                    </style>
+                <style>
+                  /* ECharts container for responsive sizing */
+                  .echart-container {
+                    width: 100%;
+                    min-width: 0;
+                    height: 180px;
+                    max-width: 420px;
+                    margin: 0 auto 12px auto;
+                    background: none;
+                    overflow: visible;
+                    display: block;
+                  }
+                  @media (max-width: 600px) {
+                    .echart-container {
+                      height: 220px;
+                      max-width: 100vw;
+                    }
+                  }
+                </style>
+            </div>
+          </div>
         </div>
         <div id="history-content"></div>
       </div>
     </div>
-    <!-- /page -->
-
-    <script>
-      // ═══════════════════════════════════════════════════════════════════
-      // CORE DIET DATA
-      // ═══════════════════════════════════════════════════════════════════
-      const CORE_ITEMS = [
-        {
-          id: "chicken",
-          name: "Kirkland Lightly Breaded Chicken Chunks",
-          target: 6,
-          cal: 160,
-          p: 16,
-          c: 9,
-          f: 6,
-          costPerServing: 16 / 22, // $16/bag ÷ 22 servings = ~$0.73/serving
-          freq: "6 srv/day · 2 bags/wk · $32/wk",
-          veggie: false,
-        },
-        {
-          id: "veggies",
-          name: "Kirkland Normandy Vegetable Blend",
-          target: 2,
-          cal: 30,
-          p: 2,
-          c: 6,
-          f: 0,
-          costPerServing: 9 / 25, // $9 / 25 servings
-          freq: "2 srv/day · 1 container/3wks",
-          veggie: true,
-        },
-        {
-          id: "yogurt",
-          name: "Chobani 20g Protein Yogurt",
-          target: 1,
-          cal: 140,
-          p: 20,
-          c: 9,
-          f: 3,
-          costPerServing: 18 / 16,
-          freq: "1 srv/day · 1 pack/2wks",
-          veggie: false,
-        },
-        {
-          id: "yogurt-2",
-          name: "Dannon Oikos Triple Zero Yogurt",
-          target: 0,
-          cal: 90,
-          p: 15,
-          c: 7,
-          f: 0,
-          costPerServing: 14 / 18,
-          freq: "1 srv/day · 1 pack/2.5wks",
-          veggie: false,
-        },
-        {
-          id: "sausage",
-          name: "Kirkland Chicken Sausage Parm/Pepper",
-          target: 1,
-          cal: 150,
-          p: 14,
-          c: 1,
-          f: 10,
-          costPerServing: 13 / 18,
-          freq: "1 link/day · 1 pack/3wks",
-          veggie: false,
-        },
-        {
-          id: "sausage-2",
-          name: "Aidell's Chicken Apple Sausage",
-          target: 0,
-          cal: 190,
-          p: 13,
-          c: 5,
-          f: 13,
-          costPerServing: 17 / 15,
-          freq: "1 link/day · 1 pack/2wks",
-          veggie: false,
-        },
-        {
-          id: "whey",
-          name: "ON Gold Standard Whey Protein",
-          target: 1,
-          cal: 120,
-          p: 24,
-          c: 3,
-          f: 1.5,
-          costPerServing: 37 / 29,
-          freq: "1 srv/day · 1 tub/month",
-          veggie: false,
-        },
-        {
-          id: "black-beans",
-          name: "Amy's Refried Black Beans",
-          target: 0,
-          cal: 160,
-          p: 8,
-          c: 26,
-          f: 3,
-          costPerServing: 5.5 / 3.5,
-          freq: "1 srv/day · 2 cans/wk",
-          veggie: false,
-        },
-        {
-          id: "black-beans-2",
-          name: "Organics Refried Black Beans",
-          target: 0,
-          cal: 90,
-          p: 6,
-          c: 17,
-          f: 0,
-          costPerServing: 2 / 3.5,
-          freq: "1 srv/day · 2 cans/wk",
-          veggie: false,
-        },
-        {
-          id: "bbq-sauce",
-          name: "Ray's No Sugar Barbecue Sauce",
-          target: 2,
-          cal: 15,
-          p: 1,
-          c: 4,
-          f: 0,
-          costPerServing: 4 / 16,
-          freq: "2 srv/day · 1 bottle/2wks",
-          veggie: false,
-        },
-        {
-          id: "ketchup",
-          name: "Hunt's 100% Natural Tomato Ketchup",
-          target: 0,
-          cal: 20,
-          p: 0,
-          c: 5,
-          f: 0,
-          costPerServing: 3.5 / 53,
-          freq: "2 srv/day · 1 bottle/month",
-          veggie: false,
-        },
-      ];
-
-      const TARGET_WEEKLY = CORE_ITEMS.reduce(
-        (sum, item) => sum + item.costPerServing * item.target * 7,
-        0,
-      );
-
-      // ═══════════════════════════════════════════════════════════════════
-      // INDEXEDDB SETUP
-      // ═══════════════════════════════════════════════════════════════════
-      const DB_NAME = "MealPlanDB";
-      const DB_VERSION = 1;
-      let db = null;
-
-      function openDB() {
-        return new Promise((resolve, reject) => {
-          const req = indexedDB.open(DB_NAME, DB_VERSION);
-          req.onupgradeneeded = (e) => {
-            const d = e.target.result;
-            if (!d.objectStoreNames.contains("days")) {
-              d.createObjectStore("days", { keyPath: "date" });
-            }
-            if (!d.objectStoreNames.contains("weeks")) {
-              d.createObjectStore("weeks", { keyPath: "weekStart" });
-            }
-          };
-          req.onsuccess = (e) => {
-            db = e.target.result;
-            resolve(db);
-          };
-          req.onerror = (e) => reject(e);
-        });
-      }
-
-      function dbGet(store, key) {
-        return new Promise((resolve, reject) => {
-          const tx = db.transaction(store, "readonly");
-          const req = tx.objectStore(store).get(key);
-          req.onsuccess = () => resolve(req.result);
-          req.onerror = () => reject(req.error);
-        });
-      }
-
-      function dbPut(store, value) {
-        return new Promise((resolve, reject) => {
-          const tx = db.transaction(store, "readwrite");
-          const req = tx.objectStore(store).put(value);
-          req.onsuccess = () => resolve();
-          req.onerror = () => reject(req.error);
-        });
-      }
-
-      function dbDelete(store, key) {
-        return new Promise((resolve, reject) => {
-          const tx = db.transaction(store, "readwrite");
-          const req = tx.objectStore(store).delete(key);
-          req.onsuccess = () => resolve();
-          req.onerror = () => reject(req.error);
-        });
-      }
-
-      function dbGetAll(store) {
-        return new Promise((resolve, reject) => {
-          const tx = db.transaction(store, "readonly");
-          const req = tx.objectStore(store).getAll();
-          req.onsuccess = () => resolve(req.result);
-          req.onerror = () => reject(req.error);
-        });
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // DATE HELPERS
-      // ═══════════════════════════════════════════════════════════════════
-      function todayStr() {
-        return new Date().toLocaleDateString("en-CA");
-      }
-
-      function weekStartFor(dateStr) {
-        const d = new Date(dateStr + "T00:00:00");
-        const day = d.getDay(); // 0=Sun
-        d.setDate(d.getDate() - day);
-        return d.toLocaleDateString("en-CA");
-      }
-
-      function formatDate(dateStr) {
-        return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", {
-          weekday: "short",
-          month: "short",
-          day: "numeric",
-        });
-      }
-
-      function formatDateShort(dateStr) {
-        return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        });
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // LOCAL STATE (today only, also cached in localStorage for speed)
-      // ═══════════════════════════════════════════════════════════════════
-      const LS_TODAY = "mp_today_v3";
-      const LS_WEEK = "mp_weekstart_v3";
-
-      let servings = {};
-      let customItems = [];
-
-      function loadTodayLS() {
-        try {
-          const raw = localStorage.getItem(LS_TODAY);
-          if (!raw) return null;
-          const obj = JSON.parse(raw);
-          if (obj.date !== todayStr()) return null;
-          return obj;
-        } catch (e) {
-          return null;
-        }
-      }
-
-      function saveTodayLS() {
-        localStorage.setItem(
-          LS_TODAY,
-          JSON.stringify({ date: todayStr(), servings, customItems }),
-        );
-      }
-
-      function loadWeekStart() {
-        let s = localStorage.getItem(LS_WEEK);
-        if (!s) {
-          s = weekStartFor(todayStr());
-          localStorage.setItem(LS_WEEK, s);
-        }
-        return s;
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // COMPUTED
-      // ═══════════════════════════════════════════════════════════════════
-      function computeTotals() {
-        let cal = 0,
-          p = 0,
-          c = 0,
-          f = 0,
-          cost = 0;
-        CORE_ITEMS.forEach((item) => {
-          const srv = servings[item.id] || 0;
-          cal += item.cal * srv;
-          p += item.p * srv;
-          c += item.c * srv;
-          f += item.f * srv;
-          cost += item.costPerServing * srv;
-        });
-        customItems.forEach((item) => {
-          cal += parseFloat(item.cal) || 0;
-          p += parseFloat(item.p) || 0;
-          c += parseFloat(item.c) || 0;
-          f += parseFloat(item.f) || 0;
-          cost += parseFloat(item.todayCost) || 0;
-        });
-        return { cal, p, c, f, cost };
-      }
-
-      function targetCostPerDay() {
-        return CORE_ITEMS.reduce(
-          (s, item) => s + item.costPerServing * item.target,
-          0,
-        );
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // PERSIST — save today snapshot to IndexedDB
-      // ═══════════════════════════════════════════════════════════════════
-      async function persistState() {
-        saveTodayLS();
-        const tot = computeTotals();
-        // Only write to IDB if something has actually been logged
-        if (tot.cal === 0 && tot.cost === 0) return;
-        const snapshot = {
-          date: todayStr(),
-          servings: { ...servings },
-          customItems: [...customItems],
-          cal: tot.cal,
-          p: tot.p,
-          c: tot.c,
-          f: tot.f,
-          cost: tot.cost,
-        };
-        try {
-          await dbPut("days", snapshot);
-        } catch (e) {
-          console.warn("IDB write failed", e);
-        }
-        await updateWeekRecord();
-      }
-
-      async function updateWeekRecord() {
-        const weekStart = weekStartFor(todayStr());
-        let week;
-        try {
-          week = await dbGet("weeks", weekStart);
-        } catch (e) {
-          week = null;
-        }
-        if (!week) week = { weekStart, days: {} };
-        const tot = computeTotals();
-        // Only record today if there's actual data
-        if (tot.cal === 0 && tot.cost === 0) return;
-        week.days[todayStr()] = {
-          cal: tot.cal,
-          p: tot.p,
-          c: tot.c,
-          f: tot.f,
-          cost: tot.cost,
-        };
-        try {
-          await dbPut("weeks", week);
-        } catch (e) {
-          console.warn("IDB week write failed", e);
-        }
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // RENDER
-      // ═══════════════════════════════════════════════════════════════════
-      function render() {
-        renderHeader();
-        renderCoreItems();
-        renderCustomItems();
-        renderStats();
-        renderWeeklyCost();
-      }
-
-      function renderHeader() {
-        document.getElementById("hdr-date").textContent =
-          new Date().toLocaleDateString("en-US", {
-            weekday: "short",
-            month: "short",
-            day: "numeric",
-          });
-      }
-
-      function renderCoreItems() {
-        const list = document.getElementById("core-items-list");
-        list.innerHTML = "";
-        CORE_ITEMS.forEach((item) => {
-          const srv = servings[item.id] || 0;
-          const met = srv >= item.target;
-          const over = srv > item.target;
-          const countClass = over ? "over" : met ? "met" : "under";
-          const spentToday = (item.costPerServing * srv).toFixed(2);
-          const targetDay = (item.costPerServing * item.target).toFixed(2);
-          const card = document.createElement("div");
-          card.className =
-            "item-card" + (item.veggie ? " veggie" : "") + (met ? " done" : "");
-          card.innerHTML = `
-      <div class="serving-ctrl">
-        <button class="srv-btn" onclick="adjustServing('${item.id}',1)">+</button>
-        <div class="srv-count">
-          <div class="current ${countClass}">${srv}</div>
-          <div class="target">/ ${item.target}</div>
-        </div>
-        <button class="srv-btn" onclick="adjustServing('${item.id}',-1)">−</button>
-      </div>
-      <div class="item-info">
-        <div class="item-name">${item.name}</div>
-        <div class="item-serving-lbl">${item.freq} · $${item.costPerServing.toFixed(2)}/serving</div>
-        <div class="item-macros">
-          <span class="im im-cal">${item.cal * srv} kcal</span>
-          <span class="im im-p">P: ${(item.p * srv).toFixed(0)}g</span>
-          <span class="im im-c">C: ${(item.c * srv).toFixed(0)}g</span>
-          <span class="im im-f">F: ${(item.f * srv).toFixed(1)}g</span>
-          <span class="im" style="color:var(--muted)">(${item.cal}kcal ea)</span>
-        </div>
-      </div>
-      <div class="item-right">
-        <div class="item-cost-lbl">$${spentToday} spent</div>
-        <div class="item-cost-target">target: $${targetDay}/day</div>
-      </div>`;
-          list.appendChild(card);
-        });
-      }
-
-      function renderCustomItems() {
-        const list = document.getElementById("custom-items-list");
-        list.innerHTML = "";
-        if (customItems.length === 0) {
-          list.innerHTML =
-            "<div style=\"font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;\">No custom items today.</div>";
-          return;
-        }
-        customItems.forEach((item, idx) => {
-          const card = document.createElement("div");
-          card.className = "item-card custom-item done";
-          const srvLabel =
-            item.servingsEaten > 1
-              ? `${item.servingsEaten} servings`
-              : "1 serving";
-          card.innerHTML = `
-      <div class="serving-ctrl">
-        <div class="srv-count">
-          <div class="current met">${item.servingsEaten || 1}</div>
-          <div class="target">srv</div>
-        </div>
-      </div>
-      <div class="item-info">
-        <div class="item-name">${item.name}</div>
-        <div class="item-serving-lbl">custom · ${srvLabel} · $${parseFloat(item.costPerSrv || 0).toFixed(2)}/srv</div>
-        <div class="item-macros">
-          <span class="im im-cal">${item.cal} kcal</span>
-          <span class="im im-p">P: ${item.p}g</span>
-          <span class="im im-c">C: ${item.c}g</span>
-          <span class="im im-f">F: ${item.f}g</span>
-        </div>
-      </div>
-      <div class="item-right">
-        <div class="item-cost-lbl">$${parseFloat(item.todayCost || 0).toFixed(2)} today</div>
-        ${item.bulkPrice ? `<div class="item-cost-target">$${parseFloat(item.bulkPrice).toFixed(2)} bulk / ${item.bulkServings} srv</div>` : ""}
-        <button class="remove-btn" onclick="removeCustomItem(${idx})">remove</button>
-      </div>`;
-          list.appendChild(card);
-        });
-      }
-
-      function renderStats() {
-        const tot = computeTotals();
-        const tgtCal = CORE_ITEMS.reduce((s, i) => s + i.cal * i.target, 0);
-
-        document.getElementById("tot-cal").textContent = Math.round(tot.cal);
-        document.getElementById("tot-cal-sub").textContent =
-          `/ ${tgtCal} target`;
-        document.getElementById("tot-p").textContent = Math.round(tot.p) + "g";
-        document.getElementById("tot-c").textContent = Math.round(tot.c) + "g";
-        document.getElementById("tot-f").textContent = tot.f.toFixed(1) + "g";
-        document.getElementById("tot-spent").textContent =
-          "$" + tot.cost.toFixed(2);
-        document.getElementById("tot-target-cost").textContent =
-          "$" + targetCostPerDay().toFixed(2);
-
-        // Calorie fill
-        document.getElementById("cal-fill").style.width =
-          Math.min((tot.cal / 2000) * 100, 100) + "%";
-
-        // Meter note
-        const note = document.getElementById("meter-note");
-        if (tot.cal === 0) {
-          note.innerHTML = `<strong>Nothing logged yet.</strong> Target: ${tgtCal} kcal at full servings.`;
-        } else if (tot.cal < 1250) {
-          note.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(1250 - tot.cal)} kcal to floor. Wiggle room for extras.`;
-        } else if (tot.cal <= 1750) {
-          note.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> — in range! ${Math.round(1750 - tot.cal)} kcal ceiling remaining.`;
-        } else {
-          note.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(tot.cal - 1750)} kcal over ceiling.`;
-        }
-
-        // Status banner
-        const dot = document.getElementById("status-dot");
-        const banner = document.getElementById("status-banner");
-        const txt = document.getElementById("status-text");
-        if (tot.cal === 0) {
-          dot.style.cssText = "background:var(--muted);box-shadow:none;";
-          banner.style.borderLeftColor = "var(--muted)";
-          txt.innerHTML = `Nothing logged yet. Tap <strong>+</strong> on each item as you eat.`;
-        } else if (tot.cal < 1250) {
-          dot.style.cssText =
-            "background:var(--accent3);box-shadow:0 0 8px var(--accent3);";
-          banner.style.borderLeftColor = "var(--accent3)";
-          txt.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> logged · <strong style="color:var(--accent3)">${Math.round(1250 - tot.cal)} kcal</strong> below floor · <strong style="color:var(--accent)">${Math.round(1750 - tot.cal)} kcal</strong> of wiggle room for extras.`;
-        } else if (tot.cal <= 1750) {
-          dot.style.cssText =
-            "background:var(--protein);box-shadow:0 0 8px var(--protein);";
-          banner.style.borderLeftColor = "var(--protein)";
-          txt.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> logged — in range! <strong style="color:var(--protein)">${Math.round(1750 - tot.cal)} kcal</strong> of ceiling remaining.`;
-        } else {
-          dot.style.cssText =
-            "background:var(--warn);box-shadow:0 0 8px var(--warn);";
-          banner.style.borderLeftColor = "var(--warn)";
-          txt.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — <strong style="color:var(--warn)">${Math.round(tot.cal - 1750)} kcal over</strong> your 1,750 ceiling.`;
-        }
-
-        // Macros
-        const calP = tot.p * 4,
-          calC = tot.c * 4,
-          calF = tot.f * 9;
-        const totalMC = calP + calC + calF || 1;
-        const pPct = ((calP / totalMC) * 100).toFixed(0);
-        const cPct = ((calC / totalMC) * 100).toFixed(0);
-        const fPct = ((calF / totalMC) * 100).toFixed(0);
-        document.getElementById("bar-p").style.width = pPct + "%";
-        document.getElementById("bar-c").style.width = cPct + "%";
-        document.getElementById("bar-f").style.width = fPct + "%";
-        document.getElementById("leg-p").textContent =
-          pPct + "% · " + Math.round(tot.p) + "g";
-        document.getElementById("leg-c").textContent =
-          cPct + "% · " + Math.round(tot.c) + "g";
-        document.getElementById("leg-f").textContent =
-          fPct + "% · " + tot.f.toFixed(1) + "g";
-      }
-
-      async function renderWeeklyCost() {
-        // TARGET column — static per-item breakdown
-        const targetRows = document.getElementById("weekly-target-rows");
-        targetRows.innerHTML = "";
-        let targetTotal = 0;
-        CORE_ITEMS.forEach((item) => {
-          const weeklyAmt = item.costPerServing * item.target * 7;
-          targetTotal += weeklyAmt;
-          const row = document.createElement("div");
-          row.className = "cost-row";
-          row.innerHTML = `<span>${item.name.split(" ").slice(0, 3).join(" ")}</span><span class="amt target-amt">$${weeklyAmt.toFixed(2)}</span>`;
-          targetRows.appendChild(row);
-        });
-        document.getElementById("weekly-target-total").textContent =
-          "$" + targetTotal.toFixed(2);
-
-        // ACTUAL column — sum from IDB week record
-        const weekStart = weekStartFor(todayStr());
-        document.getElementById("week-start-label").textContent =
-          formatDate(weekStart);
-
-        let week;
-        try {
-          week = await dbGet("weeks", weekStart);
-        } catch (e) {
-          week = null;
-        }
-        const days = week ? week.days : {};
-
-        const actualRows = document.getElementById("weekly-actual-rows");
-        actualRows.innerHTML = "";
-
-        // Group by core items: compute from all days in this week
-        let coreActual = 0;
-        let customActual = 0;
-        let totalActual = 0;
-
-        // Today's running totals (from live state, not DB snapshot which may be stale mid-day)
-        const dayDates = Object.keys(days).sort();
-        dayDates.forEach((dateStr) => {
-          totalActual += days[dateStr].cost || 0;
-        });
-
-        // Also ensure today is current (live state overrides DB for today)
-        const todayTot = computeTotals();
-        if (days[todayStr()]) {
-          // Subtract the DB version of today, add live version
-          totalActual =
-            totalActual - (days[todayStr()].cost || 0) + todayTot.cost;
-        } else {
-          totalActual += todayTot.cost;
-        }
-
-        // Per-day rows in actual
-        const allDates = new Set([...dayDates, todayStr()]);
-        const sortedDates = [...allDates].sort();
-
-        sortedDates.forEach((dateStr) => {
-          let dayCost;
-          if (dateStr === todayStr()) {
-            dayCost = todayTot.cost;
-          } else {
-            dayCost = days[dateStr] ? days[dateStr].cost : 0;
-          }
-          if (dayCost === 0 && dateStr !== todayStr()) return;
-          const row = document.createElement("div");
-          row.className = "cost-row";
-          const isToday = dateStr === todayStr();
-          row.innerHTML = `<span>${formatDateShort(dateStr)}${isToday ? ' <em style="color:var(--accent);font-style:normal;font-size:9px">today</em>' : ""}</span><span class="amt actual-amt">$${dayCost.toFixed(2)}</span>`;
-          actualRows.appendChild(row);
-        });
-
-        if (
-          sortedDates.filter(
-            (d) => d === todayStr() || (days[d] && days[d].cost > 0),
-          ).length === 0
-        ) {
-          actualRows.innerHTML =
-            "<div style=\"font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:6px 0;\">No spending logged yet this week.</div>";
-        }
-
-        document.getElementById("weekly-actual-total").textContent =
-          "$" + totalActual.toFixed(2);
-        document.getElementById("tot-week-cost") &&
-          (document.getElementById("tot-week-cost").textContent =
-            "$" + totalActual.toFixed(2));
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // HISTORY RENDER
-      // ═══════════════════════════════════════════════════════════════════
-      async function renderHistory() {
-        const container = document.getElementById("history-content");
-        container.innerHTML =
-          "<div style=\"color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;padding:20px 0;\">Loading...</div>";
-
-        let weeks;
-        try {
-          weeks = await dbGetAll("weeks");
-        } catch (e) {
-          weeks = [];
-        }
-
-        if (!weeks || weeks.length === 0) {
-          container.innerHTML =
-            '<div class="no-history">No history yet.<br><br>Your daily logs will appear here as you track over time.</div>';
-          return;
-        }
-
-        // Sort weeks newest first
-        weeks.sort((a, b) => b.weekStart.localeCompare(a.weekStart));
-
-        container.innerHTML = "";
-
-        weeks.forEach((week) => {
-          const days = week.days || {};
-          const dayDates = Object.keys(days).sort((a, b) => b.localeCompare(a));
-          if (dayDates.length === 0) return;
-
-          const weekTotal = dayDates.reduce(
-            (s, d) => s + (days[d].cost || 0),
-            0,
-          );
-          const weekCal = dayDates.reduce((s, d) => s + (days[d].cal || 0), 0);
-          const avgCal =
-            dayDates.length > 0 ? Math.round(weekCal / dayDates.length) : 0;
-
-          const weekEnd = (() => {
-            const d = new Date(week.weekStart + "T00:00:00");
-            d.setDate(d.getDate() + 6);
-            return d.toLocaleDateString("en-CA");
-          })();
-
-          const block = document.createElement("div");
-          block.className = "week-block";
-
-          const isCurrentWeek = week.weekStart === weekStartFor(todayStr());
-
-          block.innerHTML = `
-      <div class="week-header" onclick="toggleWeek(this)">
-        <div class="week-header-left">
-          <div class="week-label">${formatDateShort(week.weekStart)} – ${formatDateShort(weekEnd)} ${isCurrentWeek ? "<span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono',monospace;\">current</span>" : ""}</div>
-          <div class="week-days-logged">${dayDates.length} day(s) logged</div>
-        </div>
-        <div class="week-header-right">
-          <div class="week-summary-stat">avg <span>${avgCal} kcal</span>/day</div>
-          <div class="week-summary-stat">total <span class="wcost">$${weekTotal.toFixed(2)}</span></div>
-          <div class="week-chevron">▼</div>
-        </div>
-      </div>
-      <div class="week-days">
-        <table class="days-table">
-          <thead>
-            <tr>
-              <th>Date</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fat</th><th>Cost</th>
-            </tr>
-          </thead>
-          <tbody>
-        ${dayDates
-          .map((d) => {
-            const day = days[d];
-            const inRange = day.cal >= 1250 && day.cal <= 1750;
-            const rangeLabel =
-              day.cal === 0
-                ? ""
-                : inRange
-                  ? '<br><span class="in-range">✓ in range</span>'
-                  : '<br><span class="out-range">⚠ out</span>';
-            return `<tr>
-            <td><span class="day-date">${formatDate(d)}</span>${rangeLabel}</td>
-            <td class="day-cal">${Math.round(day.cal)} kcal</td>
-            <td class="day-p">${Math.round(day.p)}g</td>
-            <td class="day-c">${Math.round(day.c)}g</td>
-            <td class="day-f">${day.f ? day.f.toFixed(1) : 0}g</td>
-            <td class="day-cost">$${(day.cost || 0).toFixed(2)}</td>
-          </tr>`;
-          })
-          .join("")}
-          <tr class="week-total-row">
-            <td>Week Total</td>
-            <td class="day-cal">${Math.round(weekCal)} kcal</td>
-            <td class="day-p">${Math.round(dayDates.reduce((s, d) => s + (days[d].p || 0), 0))}g</td>
-            <td class="day-c">${Math.round(dayDates.reduce((s, d) => s + (days[d].c || 0), 0))}g</td>
-            <td class="day-f">${dayDates.reduce((s, d) => s + (days[d].f || 0), 0).toFixed(1)}g</td>
-            <td class="day-cost">$${weekTotal.toFixed(2)}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>`;
-
-          // Auto-open current week
-          if (isCurrentWeek) block.classList.add("open");
-          container.appendChild(block);
-        });
-      }
-
-      function toggleWeek(header) {
-        header.parentElement.classList.toggle("open");
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // ACTIONS
-      // ═══════════════════════════════════════════════════════════════════
-      function adjustServing(id, delta) {
-        servings[id] = Math.max(0, (servings[id] || 0) + delta);
-        persistState();
-        render();
-      }
-
-      // Custom item cost calculator
-      function calcCostPerServing() {
-        const bulkPrice =
-          parseFloat(document.getElementById("cf-bulk-price").value) || 0;
-        const bulkServings =
-          parseFloat(document.getElementById("cf-bulk-servings").value) || 0;
-        const eatenToday =
-          parseFloat(document.getElementById("cf-servings-eaten").value) || 1;
-
-        if (bulkPrice > 0 && bulkServings > 0) {
-          const perSrv = bulkPrice / bulkServings;
-          document.getElementById("cf-cost-per-srv").value = perSrv.toFixed(2);
-          document.getElementById("cf-cost-hint").textContent =
-            `= $${perSrv.toFixed(2)} per serving`;
-        }
-
-        const perSrv =
-          parseFloat(document.getElementById("cf-cost-per-srv").value) || 0;
-        const todayCost = perSrv * eatenToday;
-        document.getElementById("cf-today-cost-hint").textContent =
-          `today's cost: $${todayCost.toFixed(2)}`;
-      }
-
-      function clearBulkIfManual() {
-        // User typed cost/srv manually — clear bulk fields so they don't conflict
-        document.getElementById("cf-bulk-price").value = "";
-        document.getElementById("cf-bulk-servings").value = "";
-        document.getElementById("cf-cost-hint").textContent =
-          "or enter manually";
-        const perSrv =
-          parseFloat(document.getElementById("cf-cost-per-srv").value) || 0;
-        const eaten =
-          parseFloat(document.getElementById("cf-servings-eaten").value) || 1;
-        document.getElementById("cf-today-cost-hint").textContent =
-          `today's cost: $${(perSrv * eaten).toFixed(2)}`;
-      }
-
-      function addCustomItem() {
-        const name = document.getElementById("cf-name").value.trim();
-        if (!name) {
-          document.getElementById("cf-name").focus();
-          return;
-        }
-
-        const servingsEaten =
-          parseFloat(document.getElementById("cf-servings-eaten").value) || 1;
-        const costPerSrv =
-          parseFloat(document.getElementById("cf-cost-per-srv").value) || 0;
-        const bulkPrice =
-          parseFloat(document.getElementById("cf-bulk-price").value) || 0;
-        const bulkServings =
-          parseFloat(document.getElementById("cf-bulk-servings").value) || 0;
-        const todayCost = costPerSrv * servingsEaten;
-
-        // Macros are per serving eaten (total for today)
-        const calPerSrv =
-          parseFloat(document.getElementById("cf-cal").value) || 0;
-        const pPerSrv = parseFloat(document.getElementById("cf-p").value) || 0;
-        const cPerSrv = parseFloat(document.getElementById("cf-c").value) || 0;
-        const fPerSrv = parseFloat(document.getElementById("cf-f").value) || 0;
-
-        customItems.push({
-          name,
-          cal: calPerSrv * servingsEaten,
-          p: pPerSrv * servingsEaten,
-          c: cPerSrv * servingsEaten,
-          f: fPerSrv * servingsEaten,
-          servingsEaten,
-          costPerSrv,
-          todayCost,
-          bulkPrice: bulkPrice || null,
-          bulkServings: bulkServings || null,
-        });
-
-        persistState();
-        render();
-        [
-          "cf-name",
-          "cf-cal",
-          "cf-p",
-          "cf-c",
-          "cf-f",
-          "cf-bulk-price",
-          "cf-bulk-servings",
-          "cf-cost-per-srv",
-        ].forEach((id) => (document.getElementById(id).value = ""));
-        document.getElementById("cf-servings-eaten").value = "1";
-        document.getElementById("cf-cost-hint").textContent =
-          "or enter manually";
-        document.getElementById("cf-today-cost-hint").textContent =
-          "today's cost: $0.00";
-        document.getElementById("cf-name").focus();
-      }
-
-      function removeCustomItem(idx) {
-        customItems.splice(idx, 1);
-        persistState();
-        render();
-      }
-
-      async function resetWeeklyCost() {
-        if (
-          !confirm(
-            "Reset the weekly cost tracker? This deletes all logged days for this week.",
-          )
-        )
-          return;
-        const weekStart = weekStartFor(todayStr());
-        try {
-          await dbDelete("weeks", weekStart);
-        } catch (e) {}
-        render();
-        renderWeeklyCost();
-      }
-
-      function confirmResetDay() {
-        if (
-          !confirm(
-            "Reset today's log? All serving counts and custom items will be cleared.",
-          )
-        )
-          return;
-        servings = {};
-        CORE_ITEMS.forEach((item) => {
-          servings[item.id] = 0;
-        });
-        customItems = [];
-        persistState();
-        render();
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // TAB SWITCHING
-      // ═══════════════════════════════════════════════════════════════════
-      function switchTab(name) {
-        document
-          .querySelectorAll(".tab-view")
-          .forEach((v) => v.classList.remove("active"));
-        document
-          .querySelectorAll(".nav-tab")
-          .forEach((t) => t.classList.remove("active"));
-        document.getElementById("tab-" + name).classList.add("active");
-        event.target.classList.add("active");
-        if (name === "history") renderHistory();
-      }
-
-      // ═══════════════════════════════════════════════════════════════════
-      // ENTER KEY in custom form
-      // ═══════════════════════════════════════════════════════════════════
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && document.activeElement?.id?.startsWith("cf-"))
-          addCustomItem();
-      });
-
-      // ═══════════════════════════════════════════════════════════════════
-      // INIT
-      // ═══════════════════════════════════════════════════════════════════
-      async function cleanupOldRecords() {
-        const cutoff = new Date();
-        cutoff.setMonth(cutoff.getMonth() - 6);
-        const cutoffStr = cutoff.toLocaleDateString("en-CA");
-
-        try {
-          const allDays = await dbGetAll("days");
-          for (const day of allDays) {
-            if (day.date < cutoffStr) await dbDelete("days", day.date);
-          }
-          const allWeeks = await dbGetAll("weeks");
-          for (const week of allWeeks) {
-            if (week.weekStart < cutoffStr)
-              await dbDelete("weeks", week.weekStart);
-          }
-        } catch (e) {
-          console.warn("Cleanup failed", e);
-        }
-      }
-
-      async function init() {
-        await openDB();
-        await cleanupOldRecords();
-        const saved = loadTodayLS();
-        if (saved) {
-          servings = saved.servings || {};
-          customItems = saved.customItems || [];
-        }
-        CORE_ITEMS.forEach((item) => {
-          if (servings[item.id] === undefined) servings[item.id] = 0;
-        });
-        render();
-        // Only persist on init if there's already data loaded from today
-        const initTot = computeTotals();
-        if (initTot.cal > 0 || initTot.cost > 0) await persistState();
-      }
-
-      init();
-    </script>
+    <!-- ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script src="script.js" type="module"></script>
   </body>
 </html>
