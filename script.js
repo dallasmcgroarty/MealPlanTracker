@@ -1,9 +1,35 @@
 import * as db from "./db.js";
 import * as items from "./items.js";
 
+let calRange = { low: 1250, high: 1750 };
+
+function showConfirm(message) {
+  return new Promise(resolve => {
+    const modal = document.getElementById("confirm-modal");
+    document.getElementById("confirm-message").textContent = message;
+    modal.classList.add("open");
+    const ok = document.getElementById("confirm-ok");
+    const cancel = document.getElementById("confirm-cancel");
+    function cleanup(result) {
+      modal.classList.remove("open");
+      ok.removeEventListener("click", onOk);
+      cancel.removeEventListener("click", onCancel);
+      modal.removeEventListener("click", onBackdrop);
+      resolve(result);
+    }
+    function onOk() { cleanup(true); }
+    function onCancel() { cleanup(false); }
+    function onBackdrop(e) { if (e.target === modal) cleanup(false); }
+    ok.addEventListener("click", onOk);
+    cancel.addEventListener("click", onCancel);
+    modal.addEventListener("click", onBackdrop);
+  });
+}
+
 // Update freq preview label in core item form
 function updateFreqPreview() {
-  const target = parseFloat(document.getElementById("ci-target").value) || 1;
+  const raw = document.getElementById("ci-target").value;
+  const target = raw === "" ? 1 : (parseFloat(raw) || 0);
   document.getElementById("ci-freq-preview").textContent = `${target} srv/day`;
 }
 window.updateFreqPreview = updateFreqPreview;
@@ -31,30 +57,25 @@ function renderCoreItemsMgmt() {
     return;
   }
   items.CORE_ITEMS.forEach((item, idx) => {
-    const activeLabel = item.inactive ? '<span style="color:var(--muted);font-size:11px;">(inactive)</span>' : '';
-    const row = document.createElement("div");
-    row.className = "item-card" + (item.inactive ? " done" : "");
-    row.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span style="font-weight:700;">${item.name}</span> ${activeLabel}
+    const card = document.createElement("div");
+    card.className = "mgmt-card" + (item.inactive ? " done" : "");
+    card.innerHTML = `
+      <div class="mgmt-card-top">
+        <div class="mgmt-card-name">${item.name}${item.inactive ? ' <span class="mgmt-card-status">inactive</span>' : ''}</div>
+        <button class="mgmt-edit-btn" onclick="window.editCoreItem(${idx})">Edit</button>
       </div>
-      <div style="display:flex;gap:10px;align-items:center;">
-        <button class="edit-btn" style="padding:4px 12px;font-size:12px;" onclick="window.editCoreItem(${idx})">Edit</button>
-        <button class="ghost-btn delete-btn" style="padding:4px 12px;font-size:12px;" onclick="window.deleteCoreItem(${idx})">Delete</button>
-        <button class="ghost-btn active-btn${item.inactive ? ' activate-outline' : ''}" style="padding:4px 12px;font-size:12px;" onclick="window.toggleActiveCoreItem(this,${idx})">${item.inactive ? 'Activate' : 'Inactivate'}</button>
+      <div class="mgmt-card-actions">
+        <button class="mgmt-delete-btn" onclick="window.deleteCoreItem(${idx})">Delete</button>
+        <button class="mgmt-active-btn${item.inactive ? ' activate-outline' : ''}" onclick="window.toggleActiveCoreItem(this,${idx})">${item.inactive ? 'Show' : 'Hide'}</button>
       </div>
     `;
-    row.style.display = "flex";
-    row.style.justifyContent = "space-between";
-    row.style.alignItems = "center";
-    row.style.marginBottom = "8px";
-    list.appendChild(row);
-    // Accordion edit form
+    list.appendChild(card);
+    // Accordion edit form spans full grid width
     if (editingCoreItemIdx === idx) {
       const editForm = document.createElement("div");
+      editForm.className = "mgmt-edit-form-row";
       editForm.innerHTML = getCoreItemFormHTML(true);
       editForm.firstChild.style.display = "block";
-      editForm.style.margin = "16px 0 24px 0";
       list.appendChild(editForm);
       setTimeout(() => fillCoreItemForm(idx), 0);
     }
@@ -135,7 +156,7 @@ function showAddCoreItemForm() {
     document.getElementById("ci-bulk-price").value = "";
     document.getElementById("ci-bulk-servings").value = "";
     document.getElementById("ci-cost").value = "";
-    document.getElementById("ci-target").value = "";
+    document.getElementById("ci-target").value = "1";
     document.getElementById("ci-freq").value = "";
     document.getElementById("ci-freq-preview").textContent = `1 srv/day`;
     document.getElementById("ci-cost-hint").textContent = "or enter manually";
@@ -172,13 +193,17 @@ function fillCoreItemForm(idx) {
   document.getElementById("ci-cost-hint").textContent = "or enter manually";
   document.getElementById("core-item-form-submit").onclick = async function(e) {
     if (e) e.preventDefault();
-    item.name = document.getElementById("ci-name").value.trim();
+    const updatedName = document.getElementById("ci-name").value.trim();
+    if (!updatedName) return;
+    if (!await showConfirm(`Save changes to "${updatedName}"?`)) return;
+    item.name = updatedName;
     item.cal = parseFloat(document.getElementById("ci-cal").value) || 0;
     item.p = parseFloat(document.getElementById("ci-p").value) || 0;
     item.c = parseFloat(document.getElementById("ci-c").value) || 0;
     item.f = parseFloat(document.getElementById("ci-f").value) || 0;
     item.costPerServing = parseFloat(document.getElementById("ci-cost").value) || 0;
-    item.target = parseFloat(document.getElementById("ci-target").value) || 1;
+    const targetRaw = document.getElementById("ci-target").value;
+    item.target = targetRaw === "" ? 1 : (parseFloat(targetRaw) || 0);
     const freqDetails = document.getElementById("ci-freq").value.trim();
     item.freq = `${item.target} srv/day${freqDetails ? ' · ' + freqDetails : ''}`;
     await items.saveCoreItem(item);
@@ -227,7 +252,8 @@ async function handleAddCoreItem(e) {
   const c = parseFloat(document.getElementById("ci-c").value) || 0;
   const f = parseFloat(document.getElementById("ci-f").value) || 0;
   const cost = parseFloat(document.getElementById("ci-cost").value) || 0;
-  const target = parseFloat(document.getElementById("ci-target").value) || 1;
+  const targetRaw = document.getElementById("ci-target").value;
+  const target = targetRaw === "" ? 1 : (parseFloat(targetRaw) || 0);
   if (!name) return;
   const freqDetails = document.getElementById("ci-freq").value.trim();
   const freq = `${target} srv/day${freqDetails ? ' · ' + freqDetails : ''}`;
@@ -243,6 +269,7 @@ async function handleAddCoreItem(e) {
     freq,
     inactive: false
   };
+  if (!await showConfirm(`Add "${name}" as a core item?`)) return;
   items.CORE_ITEMS.push(newItem);
   await items.saveCoreItem(newItem);
   hideAddCoreItemForm();
@@ -252,7 +279,7 @@ async function handleAddCoreItem(e) {
 window.handleAddCoreItem = handleAddCoreItem;
 
 async function deleteCoreItem(idx) {
-  if (!confirm("Delete this core item?")) return;
+  if (!await showConfirm("Delete this core item?")) return;
   const item = items.CORE_ITEMS[idx];
   items.CORE_ITEMS.splice(idx, 1);
   await items.deleteCoreItemFromDB(item.id);
@@ -264,7 +291,7 @@ window.deleteCoreItem = deleteCoreItem;
 function toggleActiveCoreItem(btn, idx) {
   const item = items.CORE_ITEMS[idx];
   item.inactive = !item.inactive;
-  btn.textContent = item.inactive ? 'Activate' : 'Inactivate';
+  btn.textContent = item.inactive ? 'Show' : 'Hide';
   // Persist inactive state
   items.saveCoreItem(item);
   renderCoreItemsMgmt();
@@ -470,7 +497,8 @@ function renderCustomItems() {
 
 function renderStats() {
     // Calorie range indicator (target zone)
-    const low = 1250, high = 1750, maxCal = 2000;
+    const low = calRange.low, high = calRange.high;
+    const maxCal = 2000;
     const zone = document.querySelector('.target-zone');
     if (zone) {
       const left = (low / maxCal) * 100;
@@ -495,19 +523,8 @@ function renderStats() {
 
   // Calorie fill
   document.getElementById("cal-fill").style.width =
-    Math.min((tot.cal / 2000) * 100, 100) + "%";
+    Math.min((tot.cal / maxCal) * 100, 100) + "%";
 
-  // Meter note
-  const note = document.getElementById("meter-note");
-  if (tot.cal === 0) {
-    note.innerHTML = `<strong>Nothing logged yet.</strong> Target: ${tgtCal} kcal at full servings.`;
-  } else if (tot.cal < 1250) {
-    note.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(1250 - tot.cal)} kcal to floor. Wiggle room for extras.`;
-  } else if (tot.cal <= 1750) {
-    note.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> — in range! ${Math.round(1750 - tot.cal)} kcal ceiling remaining.`;
-  } else {
-    note.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — ${Math.round(tot.cal - 1750)} kcal over ceiling.`;
-  }
 
   // Status banner
   const dot = document.getElementById("status-dot");
@@ -517,21 +534,21 @@ function renderStats() {
     dot.style.cssText = "background:var(--muted);box-shadow:none;";
     banner.style.borderLeftColor = "var(--muted)";
     txt.innerHTML = `Nothing logged yet. Tap <strong>+</strong> on each item as you eat.`;
-  } else if (tot.cal < 1250) {
+  } else if (tot.cal < low) {
     dot.style.cssText =
       "background:var(--accent3);box-shadow:0 0 8px var(--accent3);";
     banner.style.borderLeftColor = "var(--accent3)";
-    txt.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> logged · <strong style="color:var(--accent3)">${Math.round(1250 - tot.cal)} kcal</strong> below floor · <strong style="color:var(--accent)">${Math.round(1750 - tot.cal)} kcal</strong> of wiggle room for extras.`;
-  } else if (tot.cal <= 1750) {
+    txt.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> logged · <strong style="color:var(--accent3)">${Math.round(low - tot.cal)} kcal</strong> below floor · <strong style="color:var(--accent)">${Math.round(high - tot.cal)} kcal</strong> of wiggle room for extras.`;
+  } else if (tot.cal <= high) {
     dot.style.cssText =
       "background:var(--protein);box-shadow:0 0 8px var(--protein);";
     banner.style.borderLeftColor = "var(--protein)";
-    txt.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> logged — in range! <strong style="color:var(--protein)">${Math.round(1750 - tot.cal)} kcal</strong> of ceiling remaining.`;
+    txt.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> logged — in range! <strong style="color:var(--protein)">${Math.round(high - tot.cal)} kcal</strong> of ceiling remaining.`;
   } else {
     dot.style.cssText =
       "background:var(--warn);box-shadow:0 0 8px var(--warn);";
     banner.style.borderLeftColor = "var(--warn)";
-    txt.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — <strong style="color:var(--warn)">${Math.round(tot.cal - 1750)} kcal over</strong> your 1,750 ceiling.`;
+    txt.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — <strong style="color:var(--warn)">${Math.round(tot.cal - high)} kcal over</strong> your ${high.toLocaleString()} ceiling.`;
   }
 
   // Macros
@@ -691,8 +708,8 @@ async function renderHistory() {
   allDays.sort((a, b) => a.date.localeCompare(b.date));
   calLabels = allDays.map(d => d.date);
   calData = allDays.map(d => d.cal);
-  calTargetLow = allDays.map(() => 1250);
-  calTargetHigh = allDays.map(() => 1750);
+  calTargetLow = allDays.map(() => calRange.low);
+  calTargetHigh = allDays.map(() => calRange.high);
 
   // Weekly cost
   weeks.sort((a, b) => a.weekStart.localeCompare(b.weekStart));
@@ -717,16 +734,29 @@ async function renderHistory() {
       window.addEventListener('resize', () => chart.resize(), { passive: true });
     }
 
+    const shortDate = val => {
+      const d = new Date(val + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+
     // Calories per day line chart
     const caloriesDom = document.getElementById("chart-calories");
     window._echartCalories = echarts.init(caloriesDom);
     window._echartCalories.setOption({
       tooltip: { trigger: 'axis' },
-      grid: { left: 40, right: 20, top: 20, bottom: 30 },
+      grid: { left: 40, right: 20, top: 20, bottom: 55 },
       xAxis: {
         type: 'category',
         data: calLabels,
-        axisLabel: { show: false }
+        axisLabel: {
+          show: true,
+          interval: 'auto',
+          rotate: 35,
+          fontSize: 10,
+          color: '#7a7f96',
+          formatter: shortDate,
+        },
+        axisTick: { alignWithLabel: true },
       },
       yAxis: {
         type: 'value',
@@ -745,7 +775,7 @@ async function renderHistory() {
           areaStyle: { color: 'rgba(96,200,240,0.12)' },
         },
         {
-          name: 'Target Low (1250)',
+          name: `Target Low (${calRange.low})`,
           type: 'line',
           data: calTargetLow,
           smooth: true,
@@ -753,7 +783,7 @@ async function renderHistory() {
           lineStyle: { color: '#60f0a0', type: 'dashed', width: 2 },
         },
         {
-          name: 'Target High (1750)',
+          name: `Target High (${calRange.high})`,
           type: 'line',
           data: calTargetHigh,
           smooth: true,
@@ -770,11 +800,19 @@ async function renderHistory() {
     window._echartWeeklyCost = echarts.init(weekDom);
     window._echartWeeklyCost.setOption({
       tooltip: { trigger: 'axis' },
-      grid: { left: 40, right: 20, top: 20, bottom: 30 },
+      grid: { left: 40, right: 20, top: 20, bottom: 55 },
       xAxis: {
         type: 'category',
         data: weekLabels,
-        axisLabel: { show: false }
+        axisLabel: {
+          show: true,
+          interval: 'auto',
+          rotate: 35,
+          fontSize: 10,
+          color: '#7a7f96',
+          formatter: shortDate,
+        },
+        axisTick: { alignWithLabel: true },
       },
       yAxis: {
         type: 'value',
@@ -855,6 +893,7 @@ async function renderHistory() {
       },
     });
     resizeECharts(window._echartMacros, macrosDom);
+
   }
 
   // Sort weeks oldest first for grouping
@@ -897,7 +936,7 @@ async function renderHistory() {
           mStats.totalProtein += day.p || 0;
           mStats.totalCarb += day.c || 0;
           mStats.totalFat += day.f || 0;
-          if (day.cal >= 1250 && day.cal <= 1750) mStats.inRangeDays++;
+          if (day.cal >= calRange.low && day.cal <= calRange.high) mStats.inRangeDays++;
         }
       });
     });
@@ -923,7 +962,7 @@ async function renderHistory() {
           font-family:'DM Mono',monospace;
         " data-month="${month}">
           <div class="month-header-label-row" style="display:flex;align-items:center;gap:10px;width:100%;justify-content:space-between;">
-            <div class="month-label" style="font-size:18px;font-weight:700;letter-spacing:0.01em;color:var(--fg);font-family:'DM Mono',monospace;">${monthLabel}</div>
+            <div class="month-label" style="font-size:16px;font-weight:700;letter-spacing:0.01em;color:var(--fg);font-family:'Syne', sans-serif,monospace;">${monthLabel}</div>
             <div class="month-chevron week-chevron" style="color:var(--muted);font-size:20px;transition:transform 0.2s;font-family:'DM Mono',monospace;">▼</div>
           </div>
           <div class="month-stats-scroll" style="position:relative;overflow-x:auto;width:100%;margin-top:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
@@ -978,7 +1017,7 @@ async function renderHistory() {
       block.innerHTML = `
         <div class="week-header" onclick="toggleWeek(this)">
         <div class="week-header-left">
-            <div class="week-label">${formatDateShort(week.weekStart)} – ${formatDateShort(weekEnd)} ${isCurrentWeek ? "<span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono',monospace;\">current</span>" : ""}</div>
+            <div class="week-label">${formatDateShort(week.weekStart)} – ${formatDateShort(weekEnd)} ${isCurrentWeek ? "<span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono', sans-serif;\">current</span>" : ""}</div>
             <div class="week-days-logged">${dayDates.length} day(s) logged</div>
         </div>
         <div class="week-header-right">
@@ -998,7 +1037,7 @@ async function renderHistory() {
         ${dayDates
           .map((d) => {
             const day = days[d];
-            const inRange = day.cal >= 1250 && day.cal <= 1750;
+            const inRange = day.cal >= calRange.low && day.cal <= calRange.high;
             const rangeLabel =
               day.cal === 0
                 ? ""
@@ -1175,11 +1214,7 @@ function handleRemoveCustomItem(idx) {
 }
 
 async function resetWeeklyCost() {
-  if (
-    !confirm(
-      "Reset the weekly cost tracker? This deletes all logged days for this week.",
-    )
-  )
+  if (!await showConfirm("Reset the weekly cost tracker? This deletes all logged days for this week."))
     return;
   const weekStart = items.weekStartFor(items.todayStr());
   try {
@@ -1189,12 +1224,8 @@ async function resetWeeklyCost() {
   renderWeeklyCost();
 }
 
-function confirmResetDay() {
-  if (
-    !confirm(
-      "Reset today's log? All serving counts and custom items will be cleared.",
-    )
-  )
+async function confirmResetDay() {
+  if (!await showConfirm("Reset today's log? All serving counts and custom items will be cleared."))
     return;
   // Mutate, don't reassign ES module exports
   Object.keys(items.servings).forEach(k => { delete items.servings[k]; });
@@ -1248,6 +1279,30 @@ document.addEventListener("keydown", (e) => {
     items.addCustomItem();
 });
 
+function showCalRangeEditor() {
+  document.getElementById("cal-range-editor").style.display = "block";
+  document.getElementById("cal-range-low-input").value = calRange.low;
+  document.getElementById("cal-range-high-input").value = calRange.high;
+}
+window.showCalRangeEditor = showCalRangeEditor;
+
+async function saveCalRange() {
+  const low = parseInt(document.getElementById("cal-range-low-input").value) || calRange.low;
+  const high = parseInt(document.getElementById("cal-range-high-input").value) || calRange.high;
+  if (low >= high) return;
+  if (!await showConfirm(`Set calorie range to ${low.toLocaleString()} – ${high.toLocaleString()} kcal?`)) return;
+  calRange = { low, high };
+  await db.dbPut("settings", { key: "calRange", low, high });
+  document.getElementById("cal-range-editor").style.display = "none";
+  renderStats();
+}
+window.saveCalRange = saveCalRange;
+
+function cancelCalRange() {
+  document.getElementById("cal-range-editor").style.display = "none";
+}
+window.cancelCalRange = cancelCalRange;
+
 // Expose functions for inline HTML event handlers
 window.addCustomItem = handleAddCustomItem;
 window.clearBulkIfManual = clearBulkIfManual;
@@ -1255,6 +1310,17 @@ window.adjustServing = handleAdjustServing;
 window.removeCustomItem = handleRemoveCustomItem;
 window.switchTab = switchTab;
 window.toggleWeek = toggleWeek;
+window.toggleStatsAccordion = function() {
+  const wrap = document.getElementById("history-charts-overall");
+  wrap.classList.toggle("open");
+  if (wrap.classList.contains("open")) {
+    setTimeout(() => {
+      if (window._echartCalories) window._echartCalories.resize();
+      if (window._echartWeeklyCost) window._echartWeeklyCost.resize();
+      if (window._echartMacros) window._echartMacros.resize();
+    }, 50);
+  }
+};
 window.confirmResetDay = confirmResetDay;
 window.resetWeeklyCost = resetWeeklyCost;
 
@@ -1283,6 +1349,10 @@ async function cleanupOldRecords() {
 
 async function init() {
   await db.openDB();
+  try {
+    const saved = await db.dbGet("settings", "calRange");
+    if (saved) calRange = { low: saved.low, high: saved.high };
+  } catch (e) {}
   await items.loadCoreItems();
   const saved = db.loadTodayLS(items.todayStr());
   if (saved) {
