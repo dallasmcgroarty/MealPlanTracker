@@ -6,38 +6,20 @@ export let servings = {};
 export let customItems = [];
 export let TARGET_WEEKLY = 0;
 
-// Load core items from IndexedDB and merge with JSON if present
+// Load core items from IndexedDB
 export async function loadCoreItems() {
   let dbItems = [];
-  let jsonItems = [];
   try {
     dbItems = await dbGetAll("coreitems");
   } catch (e) {
     dbItems = [];
   }
-  try {
-    const resp = await fetch("core_items.json");
-    if (resp.ok) {
-      jsonItems = await resp.json();
-    } else {
-      console.warn("core_items.json fetch failed", resp.status);
-    }
-  } catch (e) {
-    console.warn("core_items.json fetch error", e);
-    jsonItems = [];
-  }
-  const dbIds = new Set(dbItems.map(i => i.id));
-  const merged = [...dbItems];
-  jsonItems.forEach(j => {
-    if (!dbIds.has(j.id)) merged.push(j);
-  });
   CORE_ITEMS.length = 0;
-  CORE_ITEMS.push(...merged);
+  CORE_ITEMS.push(...dbItems);
   TARGET_WEEKLY = CORE_ITEMS.reduce(
     (sum, item) => sum + item.costPerServing * item.target * 7,
     0,
   );
-  console.log("All items loaded");
 }
 
 // Save or update a core item in IndexedDB
