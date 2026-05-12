@@ -483,6 +483,94 @@
 
       #core-items-mgmt-list {
         margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .mgmt-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 12px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 8px;
+        transition: opacity 0.2s;
+      }
+      .mgmt-card.done {
+        opacity: 0.5;
+      }
+      .mgmt-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .mgmt-card-name {
+        font-weight: 600;
+        font-size: 12px;
+        word-break: break-word;
+        flex: 1;
+      }
+      .mgmt-card-status {
+        font-size: 10px;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+        font-weight: 400;
+      }
+      .mgmt-card-actions {
+        display: flex;
+        gap: 6px;
+      }
+      .mgmt-card-top button,
+      .mgmt-card-actions button {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.15s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .mgmt-card-actions button {
+        flex: 1;
+      }
+      .mgmt-edit-btn {
+        background: var(--accent);
+        border-color: var(--accent) !important;
+        color: #0e0f13;
+        font-weight: 700;
+      }
+      .mgmt-edit-btn:hover { opacity: 0.85; }
+      .mgmt-delete-btn {
+        background: none;
+        color: var(--muted);
+      }
+      .mgmt-delete-btn:hover {
+        border-color: var(--warn) !important;
+        color: var(--warn);
+      }
+      .mgmt-active-btn {
+        background: none;
+        color: var(--muted);
+      }
+      .mgmt-active-btn:hover {
+        border-color: var(--text) !important;
+        color: var(--text);
+      }
+      .mgmt-active-btn.activate-outline:hover {
+        border-color: var(--protein) !important;
+        color: var(--protein) !important;
+      }
+      .mgmt-edit-form-row {
+        grid-column: 1 / -1;
+      }
+
+      .month-weeks {
+        padding: 0 6px 6px 6px;
       }
 
       /* ADD CUSTOM ITEM */
@@ -694,6 +782,50 @@
       }
 
       /* ── HISTORY VIEW ── */
+      /* ── STATS ACCORDION ── */
+      .stats-accordion-wrap {
+        margin-bottom: 28px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .stats-accordion-toggle {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 13px 16px;
+        background: var(--surface);
+        border: none;
+        cursor: pointer;
+        font-family: "Syne", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        text-align: left;
+        transition: background 0.15s;
+      }
+      .stats-accordion-toggle:hover {
+        background: var(--surface2);
+      }
+      .stats-accordion-chevron {
+        font-size: 11px;
+        color: var(--muted);
+        transition: transform 0.2s;
+        flex-shrink: 0;
+      }
+      .stats-accordion-wrap.open .stats-accordion-chevron {
+        transform: rotate(180deg);
+      }
+      .stats-accordion-body {
+        display: none;
+        padding: 20px 16px 16px;
+        background: var(--bg);
+      }
+      .stats-accordion-wrap.open .stats-accordion-body {
+        display: block;
+      }
+
       .history-header {
         display: flex;
         justify-content: space-between;
@@ -739,6 +871,7 @@
       .week-label {
         font-weight: 700;
         font-size: 14px;
+        font-family: 'Syne', sans-serif;
       }
       .week-days-logged {
         font-family: "DM Mono", monospace;
@@ -897,26 +1030,97 @@
         .item-right {
           display: none;
         }
+        #core-items-mgmt-list {
+          grid-template-columns: repeat(2, 1fr);
+        }
         .zone-label-high,
         .zone-label-low {
           display: none;
         }
       }
+      /* ── CONFIRM MODAL ── */
+      #confirm-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.65);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      #confirm-modal.open {
+        display: flex;
+      }
+      .confirm-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 24px 20px;
+        max-width: 360px;
+        width: 100%;
+      }
+      .confirm-box p {
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--text);
+        margin-bottom: 20px;
+      }
+      .confirm-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+      .confirm-actions button {
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        padding: 9px 18px;
+        border-radius: 7px;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.15s;
+      }
+      #confirm-cancel {
+        background: none;
+        color: var(--muted);
+      }
+      #confirm-cancel:hover {
+        border-color: var(--muted);
+        color: var(--text);
+      }
+      #confirm-ok {
+        background: var(--warn);
+        border-color: var(--warn);
+        color: #0e0f13;
+        font-weight: 600;
+      }
+      #confirm-ok:hover {
+        opacity: 0.85;
+      }
     </style>
   </head>
   <body>
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
     <div class="page">
       <!-- NAV -->
 
       <nav class="nav-tabs">
         <button class="nav-tab active" onclick="window.switchTab('today')">
-          📋 Today
+          Today
         </button>
         <button class="nav-tab" onclick="window.switchTab('coreitems')">
-          🗂️ Core Items
+          Core Items
         </button>
         <button class="nav-tab" onclick="window.switchTab('history')">
-          📅 History
+          History
         </button>
       </nav>
 
@@ -928,10 +1132,19 @@
             <div class="label">Core Diet Items</div>
             <h1>Manage Core Items</h1>
             <p class="subtitle">
-              View, edit, activate/inactivate, delete, or add core diet items.
+              View, edit, hide/show, delete, or add core diet items.
             </p>
           </div>
         </header>
+        <div class="status-banner" style="border-left-color:var(--accent2);margin-bottom:20px;">
+          <div class="status-dot" style="background:var(--accent2);box-shadow:0 0 8px var(--accent2);"></div>
+          <div class="status-text">
+            <strong>Target/Day</strong> must be greater than <strong>0</strong> for an item to count toward
+            <strong>daily target calories</strong>, <strong>daily target cost</strong>, and
+            <strong>weekly cost projections</strong>. A target of 0 means the item is still trackable
+            but excluded from all targets and projections.
+          </div>
+        </div>
         <div style="margin-bottom:24px;">
           <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Core Item</button>
         </div>
@@ -992,9 +1205,28 @@
 
         <!-- CALORIE METER + MACROS -->
         <div class="meter-section">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+          <div style="display: flex; flex-direction: column; gap: 20px">
             <div>
-              <div class="section-title">Calories Logged Today</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div class="section-title" style="margin-bottom:0;">Calories Logged Today</div>
+                <button class="ghost-btn" style="padding:3px 8px;font-size:10px;" onclick="window.showCalRangeEditor()">Edit Range</button>
+              </div>
+              <div id="cal-range-editor" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px;">
+                <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+                  <div class="field-group" style="flex:1;min-width:80px;">
+                    <span class="field-label">Floor (kcal)</span>
+                    <input id="cal-range-low-input" type="number" min="0" step="50" />
+                  </div>
+                  <div class="field-group" style="flex:1;min-width:80px;">
+                    <span class="field-label">Ceiling (kcal)</span>
+                    <input id="cal-range-high-input" type="number" min="0" step="50" />
+                  </div>
+                  <div style="display:flex;gap:6px;">
+                    <button class="add-btn" style="padding:6px 14px;font-size:12px;" onclick="window.saveCalRange()">Save</button>
+                    <button class="ghost-btn" style="padding:6px 12px;font-size:12px;" onclick="window.cancelCalRange()">Cancel</button>
+                  </div>
+                </div>
+              </div>
               <div class="cal-meter">
                 <div class="cal-fill" id="cal-fill" style="width: 0%"></div>
                 <div class="target-zone">
@@ -1006,11 +1238,6 @@
                 <span>0</span><span>500</span><span>1,000</span
                 ><span>1,500</span><span>2,000</span>
               </div>
-              <p
-                class="meter-note"
-                id="meter-note"
-                style="margin-top: 18px"
-              ></p>
             </div>
             <div>
               <div class="section-title">Macro Split (logged)</div>
@@ -1254,8 +1481,13 @@
             >stored locally · up to 9 months</span
           >
         </div>
-        <!-- Overall charts -->
-        <div id="history-charts-overall" style="margin-bottom:32px;display:none;">
+        <!-- Overall charts accordion -->
+        <div id="history-charts-overall" class="stats-accordion-wrap" style="display:none;">
+          <button class="stats-accordion-toggle" onclick="window.toggleStatsAccordion()">
+            <span>Your Stats</span>
+            <span class="stats-accordion-chevron">&#9660;</span>
+          </button>
+          <div class="stats-accordion-body" id="stats-accordion-body">
           <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
             <div style="min-width:320px;max-width:420px;width:100%;">
               <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Calories per Day</div>
@@ -1303,6 +1535,7 @@
                 </style>
             </div>
           </div>
+          </div><!-- end stats-accordion-body -->
         </div>
         <div id="history-content"></div>
       </div>
