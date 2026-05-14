@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Meal Plan Tracker</title>
+    <title>Foop</title>
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
       rel="stylesheet"
@@ -100,7 +100,7 @@
         margin-bottom: 6px;
       }
       h1 {
-        font-size: 32px;
+        font-size: 24px;
         font-weight: 800;
         line-height: 1;
         color: var(--accent);
@@ -154,6 +154,67 @@
       .status-text {
         font-size: 13px;
         line-height: 1.6;
+      }
+
+      /* GROUPED INFO BANNERS */
+      .info-banners {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .info-banner {
+        border-left: 3px solid transparent;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.15s;
+      }
+      .info-banner:not(:last-child) {
+        border-bottom: 1px solid var(--border);
+      }
+      .info-banner:hover {
+        background: var(--surface2);
+      }
+      .info-banner-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+      }
+      .info-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .info-banner-label {
+        flex: 1;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .info-label-warn { color: var(--accent2); }
+      .info-label-info { color: var(--muted); }
+      .info-banner-chevron {
+        font-size: 9px;
+        color: var(--muted);
+        transition: transform 0.2s;
+        flex-shrink: 0;
+      }
+      .info-banner.open .info-banner-chevron {
+        transform: rotate(180deg);
+      }
+      .info-banner-body {
+        display: none;
+        font-family: 'DM Mono', monospace;
+        padding: 0 14px 12px 32px;
+        font-size: 11px;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+      .info-banner-body strong { color: var(--text); }
+      .info-banner.open .info-banner-body {
+        display: block;
       }
 
       /* TOTALS GRID */
@@ -525,6 +586,18 @@
       }
       .mgmt-card-top button,
       .mgmt-card-actions button {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.15s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .btn {
         font-family: "DM Mono", monospace;
         font-size: 11px;
         padding: 5px 10px;
@@ -643,7 +716,7 @@
         border-radius: 6px;
         font-family: "Syne", sans-serif;
         font-size: 12px;
-        font-weight: 800;
+        font-weight: 700;
         padding: 0 16px;
         cursor: pointer;
         transition: opacity 0.15s;
@@ -661,7 +734,7 @@
         border-radius: 6px;
         font-family: "Syne", sans-serif;
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 700;
         padding: 0 12px;
         cursor: pointer;
         transition: opacity 0.15s;
@@ -837,6 +910,49 @@
         font-weight: 800;
         color: var(--accent);
       }
+      .export-dropdown {
+        position: relative;
+      }
+      .export-dropdown .ghost-btn.export-dropdown-trigger:hover {
+        border-color: var(--text) !important;
+        color: var(--text);
+      }
+      .export-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        width: 100%;
+        z-index: 100;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      }
+      .export-dropdown.open .export-dropdown-menu {
+        display: block;
+      }
+      .export-dropdown-menu button {
+        display: block;
+        width: 100%;
+        padding: 9px 14px;
+        background: none;
+        border: none;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        text-align: center;
+        cursor: pointer;
+        transition: background 0.1s, color 0.1s;
+      }
+      .export-dropdown-menu button:not(:last-child) {
+        border-bottom: 1px solid var(--border);
+      }
+      .export-dropdown-menu button:hover {
+        background: var(--surface2);
+        color: var(--text);
+      }
       .week-block {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -965,8 +1081,12 @@
         background: var(--surface2);
         font-weight: 700;
       }
+      .week-total-label {
+        font-family: "Syne", sans-serif;
+      }
       .day-date {
         font-weight: 700;
+        font-family: "Syne", sans-serif;
       }
       .day-cal {
         color: var(--accent2);
@@ -1043,7 +1163,7 @@
         display: none;
         position: fixed;
         inset: 0;
-        z-index: 1000;
+        z-index: 2000;
         background: rgba(0, 0, 0, 0.65);
         align-items: center;
         justify-content: center;
@@ -1097,6 +1217,442 @@
       #confirm-ok:hover {
         opacity: 0.85;
       }
+
+      /* ── PROGRAMS TAB ── */
+      #tab-programs header {
+        margin-bottom: 28px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .program-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+      }
+      .program-card:hover {
+        border-color: var(--accent);
+        background: var(--surface2);
+      }
+      .program-card-info { flex: 1; min-width: 0; }
+      .program-card-name {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .program-card-desc {
+        font-size: 12px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .program-card-meta {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .program-card-meta-sep { color: var(--border); }
+      .program-card-arrow {
+        color: var(--muted);
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: color 0.15s;
+      }
+      .program-card:hover .program-card-arrow { color: var(--accent); }
+
+      /* ── PROGRAM MODALS ── */
+      .pg-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1001;
+        background: rgba(0,0,0,0.7);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .pg-modal.open { display: flex; }
+      .pg-modal-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        max-width: 480px;
+        width: 100%;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .pg-modal-box-lg { max-width: 680px; }
+      .pg-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 22px 22px 16px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      .pg-modal-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 2px;
+      }
+      .pg-modal-subtitle {
+        font-size: 12px;
+        font-family: 'DM Mono', monospace;
+        color: var(--muted);
+      }
+      .pg-close-btn {
+        background: none;
+        border: none;
+        color: var(--muted);
+        font-size: 22px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0 0 0 12px;
+        flex-shrink: 0;
+        transition: color 0.15s;
+      }
+      .pg-close-btn:hover { color: var(--text); }
+      .pg-modal-body {
+        padding: 20px 22px;
+        overflow-y: auto;
+        flex: 1;
+      }
+      .pg-modal-footer {
+        padding: 14px 22px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+        gap: 10px;
+      }
+      .pg-delete-btn:hover {
+        border-color: var(--warn) !important;
+        color: var(--warn) !important;
+      }
+
+      /* ── STEP INDICATOR ── */
+      .pg-step-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+      }
+      .pg-step {
+        color: var(--muted);
+        padding: 3px 10px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+      }
+      .pg-step-active {
+        color: var(--accent);
+        border-color: var(--accent);
+        background: rgba(200,240,96,0.08);
+      }
+      .pg-step-sep { color: var(--muted); font-size: 14px; }
+
+      /* ── TEXTAREA ── */
+      .pg-textarea {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        padding: 8px 9px;
+        width: 100%;
+        min-height: 80px;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .pg-textarea:focus { border-color: var(--accent); }
+      .pg-textarea::placeholder { color: var(--muted); }
+
+      /* ── DAY SECTIONS (view modal) ── */
+      .pg-day-section {
+        margin-bottom: 18px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .pg-day-section:last-child { margin-bottom: 0; }
+      .pg-day-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .pg-day-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--accent);
+        font-family: "Syne", sans-serif;
+      }
+      .pg-day-count {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .pg-exercise-item {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+      }
+      .pg-exercise-item:last-child { border-bottom: none; }
+      .pg-exercise-name {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+      .pg-exercise-meta {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .pg-exercise-notes {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        margin-top: 4px;
+        font-style: italic;
+      }
+
+      /* ── DAY SECTIONS (form / edit) ── */
+      .pg-day-form-section {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .pg-day-form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .pg-form-exercise-list { padding: 6px 0; }
+      .pg-form-exercise {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--border);
+      }
+      .pg-form-exercise:last-child { border-bottom: none; }
+      .pg-form-exercise-info { flex: 1; min-width: 0; }
+      .pg-form-exercise-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .pg-arrow-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-size: 9px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.1s;
+        flex-shrink: 0;
+      }
+      .pg-arrow-btn:hover { background: var(--surface); border-color: var(--muted); }
+      .pg-arrow-btn-ph { width: 28px; flex-shrink: 0; display: none; }
+      .pg-del-ex-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        background: none;
+        color: var(--muted);
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.1s;
+        flex-shrink: 0;
+      }
+      .pg-del-ex-btn:hover { border-color: var(--warn); color: var(--warn); }
+      .pg-empty-day {
+        padding: 14px;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+      }
+      .pg-add-day-btn {
+        width: 100%;
+        padding: 10px;
+        background: none;
+        border: 1px dashed var(--border);
+        border-radius: 8px;
+        color: var(--muted);
+        font-family: "Syne", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        margin-top: 4px;
+      }
+      .pg-add-day-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+      /* ── EXERCISE SEARCH ── */
+      .pg-ex-search-wrap {
+        margin-bottom: 16px;
+        position: relative;
+      }
+      .pg-ex-search-input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-family: "DM Mono", monospace;
+        font-size: 13px;
+        padding: 10px 14px;
+        width: 100%;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .pg-ex-search-input:focus { border-color: var(--accent); }
+      .pg-ex-search-input::placeholder { color: var(--muted); }
+      .pg-ex-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .pg-ex-card {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: border-color 0.15s;
+      }
+      .pg-ex-card:hover { border-color: var(--muted); }
+      .pg-ex-card-name {
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+      .pg-ex-card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        flex: 0;
+      }
+      .pg-ex-badge {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 2px 6px;
+        color: var(--muted);
+      }
+      .pg-ex-card-notes {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+        padding: 0px 6px 0px 0px;
+        flex: 1;
+      }
+      .pg-ex-add-btn {
+        background: var(--accent);
+        color: #0e0f13;
+        border: none;
+        border-radius: 6px;
+        font-family: "Syne", sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 7px 0;
+        cursor: pointer;
+        width: 100%;
+        transition: opacity 0.15s;
+      }
+      .pg-ex-add-btn:hover { opacity: 0.85; }
+      .pg-ex-create-card {
+        border: 2px dashed var(--accent);
+        cursor: pointer;
+        align-items: center;
+        text-align: center;
+        background: rgba(200,240,96,0.04);
+      }
+      .pg-ex-create-card:hover { background: rgba(200,240,96,0.09); }
+      .pg-ex-create-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(200,240,96,0.15);
+        color: var(--accent);
+        font-size: 22px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+      .pg-ex-create-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .pg-ex-create-sub {
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      /* ── EXERCISE FORM GRID ── */
+      .pg-ex-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      @media (max-width: 520px) {
+        .pg-modal-box, .pg-modal-box-lg { max-width: 100%; border-radius: 10px 10px 0 0; }
+        .pg-modal { align-items: flex-end; padding: 0; }
+        .pg-ex-grid { grid-template-columns: 1fr 1fr; }
+      }
     </style>
   </head>
   <body>
@@ -1117,7 +1673,10 @@
           Today
         </button>
         <button class="nav-tab" onclick="window.switchTab('coreitems')">
-          Core Items
+          Foods
+        </button>
+        <button class="nav-tab" onclick="window.switchTab('programs')">
+          Programs
         </button>
         <button class="nav-tab" onclick="window.switchTab('history')">
           History
@@ -1129,24 +1688,39 @@
       <div class="tab-view" id="tab-coreitems">
         <header>
           <div class="header-left">
-            <div class="label">Core Diet Items</div>
-            <h1>Manage Core Items</h1>
+            <h1>Manage Saved Foods</h1>
             <p class="subtitle">
-              View, edit, hide/show, delete, or add core diet items.
+              View, edit, hide/show, delete, or add foods
             </p>
           </div>
         </header>
-        <div class="status-banner" style="border-left-color:var(--accent2);margin-bottom:20px;">
-          <div class="status-dot" style="background:var(--accent2);box-shadow:0 0 8px var(--accent2);"></div>
-          <div class="status-text">
-            <strong>Target/Day</strong> must be greater than <strong>0</strong> for an item to count toward
-            <strong>daily target calories</strong>, <strong>daily target cost</strong>, and
-            <strong>weekly cost projections</strong>. A target of 0 means the item is still trackable
-            but excluded from all targets and projections.
+        <div class="info-banners">
+          <div class="info-banner" onclick="this.classList.toggle('open')">
+            <div class="info-banner-header">
+              <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
+              <span class="info-banner-label info-label-warn">Target/Day controls what counts toward your daily goals</span>
+              <span class="info-banner-chevron">▼</span>
+            </div>
+            <div class="info-banner-body">
+              <strong>Target/Day</strong> must be greater than <strong>0</strong> for a food to count toward
+              daily target calories, daily target cost, and weekly cost projections.
+              A target of <strong>0</strong> means the food is still loggable but excluded from all targets.
+            </div>
+          </div>
+          <div class="info-banner" onclick="this.classList.toggle('open')">
+            <div class="info-banner-header">
+              <div class="info-dot" style="background:var(--muted);box-shadow: 0 0 6px var(--muted);"></div>
+              <span class="info-banner-label info-label-info">Hiding a food removes it from tracking but keeps it saved</span>
+              <span class="info-banner-chevron">▼</span>
+            </div>
+            <div class="info-banner-body">
+              <strong>Hide</strong> removes a food from the daily tracker, daily cost target, and expected
+              weekly cost. The food stays in storage and can be restored any time with <strong>Show</strong>.
+            </div>
           </div>
         </div>
         <div style="margin-bottom:24px;">
-          <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Core Item</button>
+          <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Food</button>
         </div>
         <div id="add-core-item-form-container"></div>
         <div id="core-items-mgmt-list"></div>
@@ -1154,8 +1728,7 @@
       <div class="tab-view active" id="tab-today">
         <header>
           <div class="header-left">
-            <div class="label">Daily Tracker</div>
-            <h1>Meal Plan</h1>
+            <h1>Daily Tracker</h1>
             <p class="subtitle">
               Log servings · Track calories & cost · Add custom foods
             </p>
@@ -1268,7 +1841,7 @@
         <div class="items-section">
           <div class="section-header">
             <div class="section-title" style="margin-bottom: 0">
-              Core Diet Items
+              Saved Foods
             </div>
             <span
               style="
@@ -1382,9 +1955,7 @@
             <div class="add-row add-row-3">
               <div></div>
               <div></div>
-              <button class="add-btn" onclick="window.addCustomItem()">
-                Add to Today
-              </button>
+              <button class="add-btn" onclick="window.addCustomItem()">+ Add to Today</button>
             </div>
           </div>
         </div>
@@ -1467,19 +2038,21 @@
 
       <!-- ══════════════ HISTORY TAB ══════════════ -->
       <div class="tab-view" id="tab-history">
-        <div class="history-header">
+        <div class="history-header header-left">
           <div>
-            <div class="label">Food Log</div>
-            <h2>History</h2>
+            <h1>History</h1>
+            <p class="subtitle">View your past logs · See trends over time</p>
           </div>
-          <span
-            style="
-              font-family: &quot;DM Mono&quot;, monospace;
-              font-size: 10px;
-              color: var(--muted);
-            "
-            >stored locally · up to 9 months</span
-          >
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">stored locally · up to 9 months</span>
+            <div class="export-dropdown">
+              <button class="ghost-btn export-dropdown-trigger" style="font-size:11px;padding:6px 12px;" onclick="window.toggleExportDropdown(event)">Export ▾</button>
+              <div class="export-dropdown-menu">
+                <button onclick="window.exportHistory('csv')">↓ CSV</button>
+                <button onclick="window.exportHistory('json')">↓ JSON</button>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- Overall charts accordion -->
         <div id="history-charts-overall" class="stats-accordion-wrap" style="display:none;">
@@ -1539,6 +2112,9 @@
         </div>
         <div id="history-content"></div>
       </div>
+
+      <!-- ══════════════ PROGRAMS TAB ══════════════ -->
+      <div class="tab-view" id="tab-programs"></div>
     </div>
     <!-- ECharts CDN -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>

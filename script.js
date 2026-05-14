@@ -1,5 +1,6 @@
 import * as db from "./db.js";
 import * as items from "./items.js";
+import * as programs from "./programs.js";
 
 let calRange = { low: 1250, high: 1750 };
 
@@ -84,7 +85,7 @@ function renderCoreItemsMgmt() {
 
 function getCoreItemFormHTML(isEdit) {
   return `<div id="add-core-item-form" class="add-section" style="display:${isEdit ? 'block' : 'none'};">
-    <h3 id="core-item-form-title" class="section-title" style="margin-bottom:12px;">${isEdit ? 'Edit Core Item' : 'Add Core Item'}</h3>
+    <h3 id="core-item-form-title" class="section-title" style="margin-bottom:12px;">${isEdit ? 'Edit Food' : 'Add Food'}</h3>
     <div class="add-row add-row-1">
       <div class="field-group">
         <span class="field-label">Name</span>
@@ -134,7 +135,7 @@ function getCoreItemFormHTML(isEdit) {
       </div>
     </div>
     <div style="margin-top:18px;display:flex;gap:10px;">
-      <button id="core-item-form-submit" class="add-btn">${isEdit ? 'Update' : 'Add'}</button>
+      <button id="core-item-form-submit" class="add-btn">${isEdit ? 'Update' : '+ Add'}</button>
       <button class="ghost-btn" onclick="window.cancelCoreItemForm()">Cancel</button>
     </div>
   </div>`;
@@ -145,7 +146,7 @@ function showAddCoreItemForm() {
   renderCoreItemsMgmt();
   setTimeout(() => {
     document.getElementById("add-core-item-form").style.display = "block";
-    document.getElementById("core-item-form-title").textContent = "Add Core Item";
+    document.getElementById("core-item-form-title").textContent = "Add Food";
     document.getElementById("core-item-form-submit").onclick = handleAddCoreItem;
     // Clear fields
     document.getElementById("ci-name").value = "";
@@ -172,7 +173,7 @@ window.cancelCoreItemForm = cancelCoreItemForm;
 
 function fillCoreItemForm(idx) {
   const item = items.CORE_ITEMS[idx];
-  document.getElementById("core-item-form-title").textContent = "Edit Core Item";
+  document.getElementById("core-item-form-title").textContent = "Edit Food";
   document.getElementById("core-item-form-submit").textContent = "Update";
   document.getElementById("ci-name").value = item.name;
   document.getElementById("ci-cal").value = item.cal;
@@ -279,7 +280,7 @@ async function handleAddCoreItem(e) {
 window.handleAddCoreItem = handleAddCoreItem;
 
 async function deleteCoreItem(idx) {
-  if (!await showConfirm("Delete this core item?")) return;
+  if (!await showConfirm("Delete this food?")) return;
   const item = items.CORE_ITEMS[idx];
   items.CORE_ITEMS.splice(idx, 1);
   await items.deleteCoreItemFromDB(item.id);
@@ -1045,22 +1046,22 @@ async function renderHistory() {
                   ? '<br><span class="in-range">✓ in range</span>'
                   : '<br><span class="out-range">⚠ out</span>';
             return `<tr>
-            <td><span class="day-date">${formatDate(d)}</span>${rangeLabel}</td>
-            <td class="day-cal">${Math.round(day.cal)} kcal</td>
-            <td class="day-p">${Math.round(day.p)}g</td>
-            <td class="day-c">${Math.round(day.c)}g</td>
-            <td class="day-f">${day.f ? day.f.toFixed(1) : 0}g</td>
-            <td class="day-cost">$${(day.cost || 0).toFixed(2)}</td>
+              <td><span class="day-date">${formatDate(d)}</span>${rangeLabel}</td>
+              <td class="day-cal">${Math.round(day.cal)} kcal</td>
+              <td class="day-p">${Math.round(day.p)}g</td>
+              <td class="day-c">${Math.round(day.c)}g</td>
+              <td class="day-f">${day.f ? day.f.toFixed(1) : 0}g</td>
+              <td class="day-cost">$${(day.cost || 0).toFixed(2)}</td>
             </tr>`;
           })
           .join("")}
             <tr class="week-total-row">
-            <td>Week Total</td>
-            <td class="day-cal">${Math.round(weekCal)} kcal</td>
-            <td class="day-p">${Math.round(dayDates.reduce((s, d) => s + (days[d].p || 0), 0))}g</td>
-            <td class="day-c">${Math.round(dayDates.reduce((s, d) => s + (days[d].c || 0), 0))}g</td>
-            <td class="day-f">${dayDates.reduce((s, d) => s + (days[d].f || 0), 0).toFixed(1)}g</td>
-            <td class="day-cost">$${weekTotal.toFixed(2)}</td>
+              <td class="week-total-label">Week Total</td>
+              <td class="day-cal">${Math.round(weekCal)} kcal</td>
+              <td class="day-p">${Math.round(dayDates.reduce((s, d) => s + (days[d].p || 0), 0))}g</td>
+              <td class="day-c">${Math.round(dayDates.reduce((s, d) => s + (days[d].c || 0), 0))}g</td>
+              <td class="day-f">${dayDates.reduce((s, d) => s + (days[d].f || 0), 0).toFixed(1)}g</td>
+              <td class="day-cost">$${weekTotal.toFixed(2)}</td>
             </tr>
             </tbody>
         </table>
@@ -1269,6 +1270,7 @@ function switchTab(name) {
   event.target.classList.add("active");
   if (name === "history") renderHistory();
   if (name === "coreitems") renderCoreItemsMgmt();
+  if (name === "programs") programs.renderProgramsTab();
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1306,6 +1308,7 @@ window.cancelCalRange = cancelCalRange;
 // Expose functions for inline HTML event handlers
 window.addCustomItem = handleAddCustomItem;
 window.clearBulkIfManual = clearBulkIfManual;
+window.calcCostPerServing = calcCostPerServing;
 window.adjustServing = handleAdjustServing;
 window.removeCustomItem = handleRemoveCustomItem;
 window.switchTab = switchTab;
@@ -1323,6 +1326,66 @@ window.toggleStatsAccordion = function() {
 };
 window.confirmResetDay = confirmResetDay;
 window.resetWeeklyCost = resetWeeklyCost;
+
+// ═══════════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════════
+async function exportHistory(format) {
+  // Close the dropdown
+  document.querySelector(".export-dropdown")?.classList.remove("open");
+
+  if (!await showConfirm(`Export history as ${format.toUpperCase()}?`)) return;
+
+  let allDays;
+  try {
+    allDays = await db.dbGetAll("days");
+  } catch (e) {
+    allDays = [];
+  }
+  if (!allDays || allDays.length === 0) {
+    alert("No history to export.");
+    return;
+  }
+  allDays.sort((a, b) => a.date.localeCompare(b.date));
+
+  const timestamp = new Date().toLocaleDateString("en-CA");
+  let content, mime, filename;
+
+  if (format === "json") {
+    const exportData = allDays.map(({ date, cal, p, c, f, cost }) => ({ date, cal, protein_g: p, carbs_g: c, fat_g: f, cost }));
+    content = JSON.stringify(exportData, null, 2);
+    mime = "application/json";
+    filename = `foop-history-${timestamp}.json`;
+  } else {
+    const rows = [["date", "calories", "protein_g", "carbs_g", "fat_g", "cost"]];
+    allDays.forEach(({ date, cal, p, c, f, cost }) => {
+      rows.push([date, Math.round(cal), Math.round(p), Math.round(c), f.toFixed(1), cost.toFixed(2)]);
+    });
+    content = rows.map(r => r.join(",")).join("\n");
+    mime = "text/csv";
+    filename = `foop-history-${timestamp}.csv`;
+  }
+
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content], { type: mime }));
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+window.exportHistory = exportHistory;
+
+function toggleExportDropdown(e) {
+  e.stopPropagation();
+  const dd = e.currentTarget.closest(".export-dropdown");
+  const wasOpen = dd.classList.contains("open");
+  document.querySelectorAll(".export-dropdown.open").forEach(el => el.classList.remove("open"));
+  if (!wasOpen) dd.classList.add("open");
+}
+window.toggleExportDropdown = toggleExportDropdown;
+
+document.addEventListener("click", () => {
+  document.querySelectorAll(".export-dropdown.open").forEach(el => el.classList.remove("open"));
+});
 
 // ═══════════════════════════════════════════════════════════════════
 // INIT
@@ -1354,6 +1417,7 @@ async function init() {
     if (saved) calRange = { low: saved.low, high: saved.high };
   } catch (e) {}
   await items.loadCoreItems();
+  await programs.loadAll();
   const saved = db.loadTodayLS(items.todayStr());
   if (saved) {
     Object.assign(items.servings, saved.servings || {});
