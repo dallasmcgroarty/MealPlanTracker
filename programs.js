@@ -27,12 +27,20 @@ export async function saveExercise(exercise) {
   if (idx >= 0) EXERCISES[idx] = exercise; else EXERCISES.push(exercise);
 }
 
+export async function deleteExerciseFromDB(id) {
+  await db.dbDelete('exercises', id);
+  const idx = EXERCISES.findIndex(e => e.id === id);
+  if (idx >= 0) EXERCISES.splice(idx, 1);
+}
+
 // ── Form state ──
 // formState: { id, step, name, description, days: [{ dayNumber, exercises: [{exerciseId,exerciseName,sets,reps,rest,notes}] }] }
 let formState = null;
 let viewingProgramId = null;
 let exerciseSearchContext = null; // { dayIdx, exerciseIdx: number|null }
 let exerciseSearchQuery = '';
+let currentRestUnit = 's';
+let currentTimeUnit = 's';
 
 // ── Entry point ──
 export function renderProgramsTab() {
@@ -97,15 +105,15 @@ function renderViewModal(program) {
         <span class="pg-day-title">Day ${day.dayNumber}</span>
         <span class="pg-day-count">${day.exercises.length} exercise${day.exercises.length !== 1 ? 's' : ''}</span>
       </div>
-      ${day.exercises.map(ex => `
+      ${day.exercises.map(ex => {
+        const meta = metaParts(ex);
+        return `
         <div class="pg-exercise-item">
           <div class="pg-exercise-name">${esc(ex.exerciseName)}</div>
-          <div class="pg-exercise-meta">
-            Sets: ${ex.sets || '—'} · Reps: ${ex.reps || '—'} · Rest: ${ex.rest ? ex.rest + 's' : '—'}
-          </div>
+          ${meta ? `<div class="pg-exercise-meta">${meta}</div>` : ''}
           ${ex.notes ? `<div class="pg-exercise-notes">${esc(ex.notes)}</div>` : ''}
-        </div>
-      `).join('')}
+        </div>`;
+      }).join('')}
     </div>
   `).join('');
 
@@ -232,11 +240,13 @@ function renderStep2(modal, isEdit) {
 }
 
 function renderDayFormSection(day, dayIdx) {
-  const exercisesHtml = day.exercises.map((ex, exIdx) => `
+  const exercisesHtml = day.exercises.map((ex, exIdx) => {
+    const meta = metaParts(ex);
+    return `
     <div class="pg-form-exercise">
       <div class="pg-form-exercise-info">
         <div class="pg-exercise-name">${esc(ex.exerciseName)}</div>
-        <div class="pg-exercise-meta">Sets: ${ex.sets || '—'} · Reps: ${ex.reps || '—'} · Rest: ${ex.rest ? ex.rest + 's' : '—'}</div>
+        ${meta ? `<div class="pg-exercise-meta">${meta}</div>` : ''}
       </div>
       <div class="pg-form-exercise-actions">
         ${exIdx > 0
@@ -249,7 +259,8 @@ function renderDayFormSection(day, dayIdx) {
         <button class="ghost-btn" onclick="window.pgRemoveExercise(${dayIdx},${exIdx})">Remove</button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   return `
     <div class="pg-day-form-section">
@@ -258,7 +269,7 @@ function renderDayFormSection(day, dayIdx) {
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
           <button class="add-btn" style="font-size:11px;padding:5px 12px;height:auto;" onclick="window.pgOpenExSearch(${dayIdx})">+ Add Exercise</button>
           ${formState.days.length > 1
-            ? `<button class="ghost-btn" style="padding:5px 10px;font-size:11px;color:var(--warn);" onclick="window.pgRemoveDay(${dayIdx})">Remove Day</button>`
+            ? `<button class="ghost-btn" style="padding:5px 10px;font-size:11px;color:var(--warn);" onclick="window.pgRemoveDay(${dayIdx})">Remove</button>`
             : ''}
         </div>
       </div>
@@ -282,17 +293,25 @@ function openExSearch(dayIdx, editExIdx = null) {
 function buildExerciseGridHTML() {
   const q = exerciseSearchQuery.toLowerCase().trim();
   const filtered = q ? EXERCISES.filter(e => e.name.toLowerCase().includes(q)) : EXERCISES;
-  const cards = filtered.map(ex => `
+  const cards = filtered.map(ex => {
+    const timeVal = Number(ex.time);
+    const restVal = Number(ex.rest);
+    return `
     <div class="pg-ex-card">
       <div class="pg-ex-card-name">${esc(ex.name)}</div>
       <div class="pg-ex-card-meta">
-        ${ex.sets ? `<span class="pg-ex-badge">Sets: ${esc(ex.sets)}</span>` : ''}
-        ${ex.reps ? `<span class="pg-ex-badge">Reps: ${esc(ex.reps)}</span>` : ''}
+        ${ex.sets ? `<span class="pg-ex-badge">Sets:${esc(ex.sets)}</span>` : ''}
+        ${ex.reps ? `<span class="pg-ex-badge">Reps:${esc(ex.reps)}</span>` : ''}
+        ${timeVal ? `<span class="pg-ex-badge">Time:${timeVal}${esc(ex.timeUnit || 's')}</span>` : ''}
       </div>
       ${ex.notes ? `<div class="pg-ex-card-notes">${esc(ex.notes)}</div>` : ''}
       <button class="pg-ex-add-btn" onclick="window.pgAddFromLibrary('${ex.id}')">+ Add</button>
-    </div>
-  `).join('');
+      <div style="display:flex;gap:6px;">
+        <button class="ghost-btn" style="flex:1;font-size:10px;padding:4px 0;" onclick="window.pgEditFromLibrary('${ex.id}')">Edit</button>
+        <button class="ghost-btn" style="flex:1;font-size:10px;padding:4px 0;color:var(--warn);" onclick="window.pgDeleteFromLibrary('${ex.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
   return `
     <div class="pg-ex-card pg-ex-create-card" onclick="window.pgOpenExForm()">
       <div class="pg-ex-create-icon">+</div>
@@ -308,7 +327,10 @@ function renderExSearchModal() {
   modal.innerHTML = `
     <div class="pg-modal-box pg-modal-box-lg">
       <div class="pg-modal-header">
-        <div class="pg-modal-title">Exercise Library (${EXERCISES.length} exercise${EXERCISES.length !== 1 ? 's' : ''})</div>
+        <div class="pg-modal-header__left">
+          <div class="pg-modal-title">Exercise Library</div>
+          <div class="pg-modal-subtitle">${EXERCISES.length} exercise${EXERCISES.length !== 1 ? 's' : ''}</div>
+        </div>
         <button class="pg-close-btn" onclick="window.pgCloseExSearch()">×</button>
       </div>
       <div class="pg-modal-body">
@@ -324,9 +346,13 @@ function renderExSearchModal() {
 
 // ── Exercise Create/Edit Form ──
 function openExForm(prefill = {}, inlineEditContext = null) {
+  currentRestUnit = prefill.restUnit || 's';
+  currentTimeUnit = prefill.timeUnit || 's';
   ensureModal('pg-ex-form-modal');
+  document.body.appendChild(document.getElementById('pg-ex-form-modal'));
   const isInlineEdit = !!inlineEditContext;
   const title = isInlineEdit ? 'Edit Exercise' : 'Create Exercise';
+  const unitLabel = { s: 'seconds', min: 'minutes', hr: 'hours' };
 
   document.getElementById('pg-ex-form-modal').innerHTML = `
     <div class="pg-modal-box">
@@ -348,9 +374,32 @@ function openExForm(prefill = {}, inlineEditContext = null) {
             <span class="field-label">Reps</span>
             <input type="number" id="pgex-reps" placeholder="10" min="1" value="${prefill.reps || ''}" />
           </div>
-          <div class="field-group">
-            <span class="field-label">Rest (sec)</span>
-            <input type="number" id="pgex-rest" placeholder="60" min="0" value="${prefill.rest || ''}" />
+          <div class="field-group" style="grid-column: 1 / -1;">
+            <span class="field-label">Rest</span>
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="pgex-rest" placeholder="60" min="0" value="${prefill.rest || ''}" style="flex:1;min-width:0;" />
+              <div class="export-dropdown" id="pgex-rest-unit-dd" style="min-width:90px;">
+                <button class="ghost-btn export-dropdown-trigger" style="width:100%;font-size:11px;padding:6px 10px;white-space:nowrap;" onclick="window.pgToggleRestUnit(event)">${esc(unitLabel[currentRestUnit] || currentRestUnit)} ▾</button>
+                <div class="export-dropdown-menu">
+                  <button onclick="window.pgSelectRestUnit('s')">seconds</button>
+                  <button onclick="window.pgSelectRestUnit('min')">minutes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="field-group" style="grid-column: 1 / -1;">
+            <span class="field-label">Time</span>
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="pgex-time" placeholder="30" min="0" value="${prefill.time || ''}" style="flex:1;min-width:0;" />
+              <div class="export-dropdown" id="pgex-time-unit-dd" style="min-width:90px;">
+                <button class="ghost-btn export-dropdown-trigger" style="width:100%;font-size:11px;padding:6px 10px;white-space:nowrap;" onclick="window.pgToggleTimeUnit(event)">${esc(unitLabel[currentTimeUnit] || currentTimeUnit)} ▾</button>
+                <div class="export-dropdown-menu">
+                  <button onclick="window.pgSelectTimeUnit('s')">seconds</button>
+                  <button onclick="window.pgSelectTimeUnit('min')">minutes</button>
+                  <button onclick="window.pgSelectTimeUnit('hr')">hours</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="field-group">
@@ -400,7 +449,7 @@ window.pgAddDay = () => {
 };
 
 window.pgRemoveDay = async (dayIdx) => {
-  if (!await confirm_(`Remove Day ${formState.days[dayIdx].dayNumber}?`)) return;
+  if (!await confirm_(`Remove Day ${formState.days[dayIdx].dayNumber}?`, 'Remove')) return;
   formState.days.splice(dayIdx, 1);
   formState.days.forEach((d, i) => { d.dayNumber = i + 1; });
   renderCreateForm();
@@ -421,7 +470,7 @@ window.pgEditExerciseInDay = (dayIdx, exIdx) => {
 
 window.pgRemoveExercise = async (dayIdx, exIdx) => {
   const name = formState.days[dayIdx].exercises[exIdx].exerciseName;
-  if (!await confirm_(`Remove "${name}" from Day ${formState.days[dayIdx].dayNumber}?`)) return;
+  if (!await confirm_(`Remove "${name}" from Day ${formState.days[dayIdx].dayNumber}?`, 'Remove')) return;
   formState.days[dayIdx].exercises.splice(exIdx, 1);
   renderCreateForm();
 };
@@ -449,6 +498,9 @@ window.pgAddFromLibrary = (exerciseId) => {
     sets: ex.sets || '',
     reps: ex.reps || '',
     rest: ex.rest || '',
+    restUnit: ex.restUnit || 's',
+    time: ex.time || '',
+    timeUnit: ex.timeUnit || 's',
     notes: ex.notes || ''
   });
   window.pgCloseExSearch();
@@ -457,56 +509,119 @@ window.pgAddFromLibrary = (exerciseId) => {
 
 window.pgOpenExForm = () => openExForm();
 
+window.pgEditFromLibrary = (exerciseId) => {
+  const ex = EXERCISES.find(e => e.id === exerciseId);
+  if (!ex) return;
+  openExForm({ ...ex, exerciseName: ex.name }, { libraryEditId: exerciseId });
+};
+
+window.pgDeleteFromLibrary = async (exerciseId) => {
+  const ex = EXERCISES.find(e => e.id === exerciseId);
+  if (!ex) return;
+  if (!await confirm_(`Delete "${ex.name}" from the library?`, 'Delete')) return;
+  await deleteExerciseFromDB(exerciseId);
+  renderExSearchModal();
+};
+
 window.pgCloseExForm = () => {
   document.getElementById('pg-ex-form-modal')?.classList.remove('open');
+};
+
+window.pgToggleRestUnit = (e) => {
+  e.stopPropagation();
+  const dd = document.getElementById('pgex-rest-unit-dd');
+  if (!dd) return;
+  const wasOpen = dd.classList.contains('open');
+  document.querySelectorAll('.export-dropdown.open').forEach(el => el.classList.remove('open'));
+  if (!wasOpen) dd.classList.add('open');
+};
+
+window.pgSelectRestUnit = (unit) => {
+  currentRestUnit = unit;
+  const dd = document.getElementById('pgex-rest-unit-dd');
+  if (dd) {
+    dd.classList.remove('open');
+    const unitLabel = { s: 'seconds', min: 'minutes' };
+    const trigger = dd.querySelector('.export-dropdown-trigger');
+    if (trigger) trigger.textContent = (unitLabel[unit] || unit) + ' ▾';
+  }
+};
+
+window.pgToggleTimeUnit = (e) => {
+  e.stopPropagation();
+  const dd = document.getElementById('pgex-time-unit-dd');
+  if (!dd) return;
+  const wasOpen = dd.classList.contains('open');
+  document.querySelectorAll('.export-dropdown.open').forEach(el => el.classList.remove('open'));
+  if (!wasOpen) dd.classList.add('open');
+};
+
+window.pgSelectTimeUnit = (unit) => {
+  currentTimeUnit = unit;
+  const dd = document.getElementById('pgex-time-unit-dd');
+  if (dd) {
+    dd.classList.remove('open');
+    const unitLabel = { s: 'seconds', min: 'minutes', hr: 'hours' };
+    const trigger = dd.querySelector('.export-dropdown-trigger');
+    if (trigger) trigger.textContent = (unitLabel[unit] || unit) + ' ▾';
+  }
 };
 
 window.pgSaveExForm = async () => {
   const name = document.getElementById('pgex-name')?.value.trim();
   if (!name) { document.getElementById('pgex-name')?.focus(); return; }
-  if (!await confirm_(`Save exercise "${name}"?`)) return;
+  if (!await confirm_(`Save exercise "${name}"?`, 'Save')) return;
 
   const sets = document.getElementById('pgex-sets')?.value !== '' ? parseInt(document.getElementById('pgex-sets').value) : '';
   const reps = document.getElementById('pgex-reps')?.value !== '' ? parseInt(document.getElementById('pgex-reps').value) : '';
   const rest = document.getElementById('pgex-rest')?.value !== '' ? parseInt(document.getElementById('pgex-rest').value) : '';
+  const restUnit = currentRestUnit || 's';
+  const time = document.getElementById('pgex-time')?.value !== '' ? parseInt(document.getElementById('pgex-time').value) : '';
+  const timeUnit = currentTimeUnit || 's';
   const notes = document.getElementById('pgex-notes')?.value.trim() || '';
 
   const inlineEdit = document.getElementById('pg-ex-form-modal')._inlineEdit;
 
-  if (inlineEdit) {
+  if (inlineEdit?.libraryEditId) {
+    const libEx = EXERCISES.find(e => e.id === inlineEdit.libraryEditId);
+    if (libEx) await saveExercise({ ...libEx, name, sets, reps, rest, restUnit, time, timeUnit, notes });
+    window.pgCloseExForm();
+    renderExSearchModal();
+  } else if (inlineEdit) {
     const { dayIdx, exIdx } = inlineEdit;
     const ex = formState.days[dayIdx].exercises[exIdx];
-    Object.assign(ex, { exerciseName: name, sets, reps, rest, notes });
+    Object.assign(ex, { exerciseName: name, sets, reps, rest, restUnit, time, timeUnit, notes });
     if (ex.exerciseId) {
       const libEx = EXERCISES.find(e => e.id === ex.exerciseId);
-      if (libEx) await saveExercise({ ...libEx, name, sets, reps, rest, notes });
+      if (libEx) await saveExercise({ ...libEx, name, sets, reps, rest, restUnit, time, timeUnit, notes });
     }
+    window.pgCloseExForm();
+    renderCreateForm();
   } else {
-    const newEx = { id: 'ex_' + Date.now(), name, sets, reps, rest, notes, muscleGroup: '', difficulty: '' };
+    const newEx = { id: 'ex_' + Date.now(), name, sets, reps, rest, restUnit, time, timeUnit, notes, muscleGroup: '', difficulty: '' };
     await saveExercise(newEx);
     if (exerciseSearchContext) {
       const { dayIdx } = exerciseSearchContext;
       formState.days[dayIdx].exercises.push({
         exerciseId: newEx.id,
         exerciseName: name,
-        sets, reps, rest, notes
+        sets, reps, rest, restUnit, time, timeUnit, notes
       });
     }
     document.getElementById('pg-ex-search-modal')?.classList.remove('open');
     exerciseSearchContext = null;
+    window.pgCloseExForm();
+    renderCreateForm();
   }
-
-  window.pgCloseExForm();
-  renderCreateForm();
 };
 
 window.pgSaveProgram = async () => {
-  if (!formState.name.trim()) { alert('Program name is required.'); return; }
+  if (!formState.name.trim()) { await alert_('Program name is required.'); return; }
   for (const day of formState.days) {
-    if (!day.exercises.length) { alert(`Day ${day.dayNumber} needs at least one exercise.`); return; }
+    if (!day.exercises.length) { await alert_(`Day ${day.dayNumber} needs at least one exercise.`); return; }
   }
   const isEdit = !!formState.id;
-  if (!await confirm_(`${isEdit ? 'Save changes to' : 'Create'} "${formState.name}"?`)) return;
+  if (!await confirm_(`${isEdit ? 'Save changes to' : 'Create'} "${formState.name}"?`, isEdit ? 'Save' : 'Create')) return;
 
   const existing = isEdit ? PROGRAMS.find(p => p.id === formState.id) : null;
   const program = {
@@ -528,7 +643,7 @@ window.pgCloseView = () => closeViewModal();
 window.pgDeleteProgram = async (programId) => {
   const program = PROGRAMS.find(p => p.id === programId);
   if (!program) return;
-  if (!await confirm_(`Delete "${program.name}"? This cannot be undone.`)) return;
+  if (!await confirm_(`Delete "${program.name}"? This cannot be undone.`, 'Delete')) return;
   await deleteProgramFromDB(programId);
   closeViewModal();
   renderProgramsList();
@@ -542,6 +657,17 @@ window.pgEditProgram = (programId) => {
 };
 
 // ── Helpers ──
+function metaParts(ex) {
+  const parts = [];
+  if (ex.sets) parts.push(`Sets: ${ex.sets}`);
+  if (ex.reps) parts.push(`Reps: ${ex.reps}`);
+  const timeVal = Number(ex.time);
+  if (timeVal) parts.push(`Time: ${timeVal}${ex.timeUnit || 's'}`);
+  const restVal = Number(ex.rest);
+  if (restVal) parts.push(`Rest: ${restVal}${ex.restUnit || 's'}`);
+  return parts.join(' · ');
+}
+
 function ensureModal(id) {
   if (!document.getElementById(id)) {
     const el = document.createElement('div');
@@ -557,15 +683,41 @@ function esc(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function confirm_(message) {
+function alert_(message) {
   return new Promise(resolve => {
     const modal = document.getElementById('confirm-modal');
+    const ok = document.getElementById('confirm-ok');
+    const cancelBtn = document.getElementById('confirm-cancel');
     document.getElementById('confirm-message').textContent = message;
+    ok.textContent = 'OK';
+    cancelBtn.style.display = 'none';
     modal.classList.add('open');
+    function cleanup() {
+      modal.classList.remove('open');
+      ok.textContent = 'Confirm';
+      cancelBtn.style.display = '';
+      ok.removeEventListener('click', onOk);
+      modal.removeEventListener('click', onBd);
+      resolve();
+    }
+    function onOk() { cleanup(); }
+    function onBd(e) { if (e.target === modal) cleanup(); }
+    ok.addEventListener('click', onOk);
+    modal.addEventListener('click', onBd);
+  });
+}
+
+function confirm_(message, okLabel = 'Confirm') {
+  return new Promise(resolve => {
+    const modal = document.getElementById('confirm-modal');
     const ok = document.getElementById('confirm-ok');
     const cancel = document.getElementById('confirm-cancel');
+    document.getElementById('confirm-message').textContent = message;
+    ok.textContent = okLabel;
+    modal.classList.add('open');
     function cleanup(result) {
       modal.classList.remove('open');
+      ok.textContent = 'Confirm';
       ok.removeEventListener('click', onOk);
       cancel.removeEventListener('click', onCancel);
       modal.removeEventListener('click', onBd);

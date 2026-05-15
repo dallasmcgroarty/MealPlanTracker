@@ -4,15 +4,17 @@ import * as programs from "./programs.js";
 
 let calRange = { low: 1250, high: 1750 };
 
-function showConfirm(message) {
+function showConfirm(message, okLabel = 'Confirm') {
   return new Promise(resolve => {
     const modal = document.getElementById("confirm-modal");
-    document.getElementById("confirm-message").textContent = message;
-    modal.classList.add("open");
     const ok = document.getElementById("confirm-ok");
     const cancel = document.getElementById("confirm-cancel");
+    document.getElementById("confirm-message").textContent = message;
+    ok.textContent = okLabel;
+    modal.classList.add("open");
     function cleanup(result) {
       modal.classList.remove("open");
+      ok.textContent = 'Confirm';
       ok.removeEventListener("click", onOk);
       cancel.removeEventListener("click", onCancel);
       modal.removeEventListener("click", onBackdrop);
@@ -39,20 +41,96 @@ window.updateFreqPreview = updateFreqPreview;
 // ═══════════════════════════════════════════════════════════════════
 let editingCoreItemIdx = null;
 
+function ensureFoodModal() {
+  if (!document.getElementById('food-form-modal')) {
+    const el = document.createElement('div');
+    el.id = 'food-form-modal';
+    el.className = 'pg-modal';
+    el.addEventListener('click', (e) => { if (e.target === el) closeFoodModal(); });
+    document.body.appendChild(el);
+  }
+}
+
+function openFoodModal(isEdit) {
+  ensureFoodModal();
+  const modal = document.getElementById('food-form-modal');
+  modal.innerHTML = `
+    <div class="pg-modal-box pg-modal-box-lg">
+      <div class="pg-modal-header">
+        <div class="pg-modal-title">${isEdit ? 'Edit Food' : 'Add Food'}</div>
+        <button class="pg-close-btn" onclick="window.cancelCoreItemForm()">×</button>
+      </div>
+      <div class="pg-modal-body">
+        <div class="add-row add-row-1">
+          <div class="field-group">
+            <span class="field-label">Name</span>
+            <input id="ci-name" type="text" placeholder="e.g. Chicken Breast" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Calories</span>
+            <input id="ci-cal" type="number" placeholder="120" min="0" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Protein (g)</span>
+            <input id="ci-p" type="number" placeholder="24" min="0" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Carbs (g)</span>
+            <input id="ci-c" type="number" placeholder="0" min="0" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Fat (g)</span>
+            <input id="ci-f" type="number" placeholder="2" min="0" />
+          </div>
+        </div>
+        <div class="add-row add-row-2" style="margin-top:12px;">
+          <div class="field-group">
+            <span class="field-label">Bulk Total Price ($)</span>
+            <input type="number" id="ci-bulk-price" placeholder="15.00" min="0" step="0.01" oninput="window.calcCoreCostPerServing()" />
+            <span class="field-hint">total you paid</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Servings in Package</span>
+            <input type="number" id="ci-bulk-servings" placeholder="30" min="1" oninput="window.calcCoreCostPerServing()" />
+            <span class="field-hint">total servings</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Cost / Serving ($)</span>
+            <input type="number" id="ci-cost" placeholder="0.50" min="0" step="0.01" oninput="window.clearCoreBulkIfManual()" />
+            <span class="field-hint" id="ci-cost-hint">or enter manually</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Target/Day</span>
+            <input type="number" id="ci-target" placeholder="2" min="1" oninput="window.updateFreqPreview()" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Freq Details</span>
+            <input type="text" id="ci-freq" placeholder="e.g. 2 bags/wk · $32/wk" />
+            <span class="field-hint" id="ci-freq-preview">1 srv/day</span>
+          </div>
+        </div>
+      </div>
+      <div class="pg-modal-footer">
+        ${isEdit ? `<button class="ghost-btn pg-delete-btn" id="food-modal-delete-btn">Delete</button>` : '<div></div>'}
+        <div style="display:flex;gap:8px;">
+          <button class="ghost-btn" onclick="window.cancelCoreItemForm()">Cancel</button>
+          <button id="food-modal-submit" class="add-btn">${isEdit ? 'Update' : '+ Add'}</button>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.classList.add('open');
+}
+
+function closeFoodModal() {
+  const modal = document.getElementById('food-form-modal');
+  if (modal) modal.classList.remove('open');
+  editingCoreItemIdx = null;
+}
+
 function renderCoreItemsMgmt() {
-  // Render add form at top if not editing
-  const addFormContainer = document.getElementById("add-core-item-form-container");
-  const addBtn = document.getElementById("add-core-item-btn");
   const list = document.getElementById("core-items-mgmt-list");
   list.innerHTML = "";
-  addFormContainer.innerHTML = "";
-  if (editingCoreItemIdx === null) {
-    addBtn.style.display = "inline-block";
-    addFormContainer.innerHTML = getCoreItemFormHTML();
-    document.getElementById("add-core-item-form").style.display = "none";
-  } else {
-    addBtn.style.display = "inline-block";
-  }
   if (!items.CORE_ITEMS.length) {
     list.innerHTML = '<div style="color:var(--muted);padding:20px 0;">No core items found.</div>';
     return;
@@ -71,110 +149,26 @@ function renderCoreItemsMgmt() {
       </div>
     `;
     list.appendChild(card);
-    // Accordion edit form spans full grid width
-    if (editingCoreItemIdx === idx) {
-      const editForm = document.createElement("div");
-      editForm.className = "mgmt-edit-form-row";
-      editForm.innerHTML = getCoreItemFormHTML(true);
-      editForm.firstChild.style.display = "block";
-      list.appendChild(editForm);
-      setTimeout(() => fillCoreItemForm(idx), 0);
-    }
   });
-}
-
-function getCoreItemFormHTML(isEdit) {
-  return `<div id="add-core-item-form" class="add-section" style="display:${isEdit ? 'block' : 'none'};">
-    <h3 id="core-item-form-title" class="section-title" style="margin-bottom:12px;">${isEdit ? 'Edit Food' : 'Add Food'}</h3>
-    <div class="add-row add-row-1">
-      <div class="field-group">
-        <span class="field-label">Name</span>
-        <input id="ci-name" type="text" placeholder="e.g. Chicken Breast" />
-      </div>
-      <div class="field-group">
-        <span class="field-label">Calories</span>
-        <input id="ci-cal" type="number" placeholder="120" min="0" />
-      </div>
-      <div class="field-group">
-        <span class="field-label">Protein (g)</span>
-        <input id="ci-p" type="number" placeholder="24" min="0" />
-      </div>
-      <div class="field-group">
-        <span class="field-label">Carbs (g)</span>
-        <input id="ci-c" type="number" placeholder="0" min="0" />
-      </div>
-      <div class="field-group">
-        <span class="field-label">Fat (g)</span>
-        <input id="ci-f" type="number" placeholder="2" min="0" />
-      </div>
-    </div>
-    <div class="add-row add-row-2">
-      <div class="field-group">
-        <span class="field-label">Bulk Total Price ($)</span>
-        <input type="number" id="ci-bulk-price" placeholder="15.00" min="0" step="0.01" oninput="window.calcCoreCostPerServing()" />
-        <span class="field-hint">total you paid</span>
-      </div>
-      <div class="field-group">
-        <span class="field-label">Servings in Package</span>
-        <input type="number" id="ci-bulk-servings" placeholder="30" min="1" oninput="window.calcCoreCostPerServing()" />
-        <span class="field-hint">total servings</span>
-      </div>
-      <div class="field-group">
-        <span class="field-label">Cost / Serving ($)</span>
-        <input type="number" id="ci-cost" placeholder="0.50" min="0" step="0.01" oninput="window.clearCoreBulkIfManual()" />
-        <span class="field-hint" id="ci-cost-hint">or enter manually</span>
-      </div>
-      <div class="field-group">
-        <span class="field-label">Target/Day</span>
-        <input type="number" id="ci-target" placeholder="2" min="1" oninput="window.updateFreqPreview()" />
-      </div>
-      <div class="field-group">
-        <span class="field-label">Freq Details</span>
-        <input type="text" id="ci-freq" placeholder="e.g. 2 bags/wk · $32/wk" />
-        <span class="field-hint" id="ci-freq-preview">1 srv/day</span>
-      </div>
-    </div>
-    <div style="margin-top:18px;display:flex;gap:10px;">
-      <button id="core-item-form-submit" class="add-btn">${isEdit ? 'Update' : '+ Add'}</button>
-      <button class="ghost-btn" onclick="window.cancelCoreItemForm()">Cancel</button>
-    </div>
-  </div>`;
 }
 
 function showAddCoreItemForm() {
   editingCoreItemIdx = null;
-  renderCoreItemsMgmt();
-  setTimeout(() => {
-    document.getElementById("add-core-item-form").style.display = "block";
-    document.getElementById("core-item-form-title").textContent = "Add Food";
-    document.getElementById("core-item-form-submit").onclick = handleAddCoreItem;
-    // Clear fields
-    document.getElementById("ci-name").value = "";
-    document.getElementById("ci-cal").value = "";
-    document.getElementById("ci-p").value = "";
-    document.getElementById("ci-c").value = "";
-    document.getElementById("ci-f").value = "";
-    document.getElementById("ci-bulk-price").value = "";
-    document.getElementById("ci-bulk-servings").value = "";
-    document.getElementById("ci-cost").value = "";
-    document.getElementById("ci-target").value = "1";
-    document.getElementById("ci-freq").value = "";
-    document.getElementById("ci-freq-preview").textContent = `1 srv/day`;
-    document.getElementById("ci-cost-hint").textContent = "or enter manually";
-  }, 0);
+  openFoodModal(false);
+  document.getElementById('ci-target').value = '1';
+  document.getElementById('ci-freq-preview').textContent = '1 srv/day';
+  document.getElementById('ci-cost-hint').textContent = 'or enter manually';
+  document.getElementById('food-modal-submit').onclick = handleAddCoreItem;
 }
 window.showAddCoreItemForm = showAddCoreItemForm;
 
 function cancelCoreItemForm() {
-  editingCoreItemIdx = null;
-  renderCoreItemsMgmt();
+  closeFoodModal();
 }
 window.cancelCoreItemForm = cancelCoreItemForm;
 
 function fillCoreItemForm(idx) {
   const item = items.CORE_ITEMS[idx];
-  document.getElementById("core-item-form-title").textContent = "Edit Food";
-  document.getElementById("core-item-form-submit").textContent = "Update";
   document.getElementById("ci-name").value = item.name;
   document.getElementById("ci-cal").value = item.cal;
   document.getElementById("ci-p").value = item.p;
@@ -192,11 +186,19 @@ function fillCoreItemForm(idx) {
   document.getElementById("ci-freq").value = freqDetails;
   document.getElementById("ci-freq-preview").textContent = `${item.target} srv/day`;
   document.getElementById("ci-cost-hint").textContent = "or enter manually";
-  document.getElementById("core-item-form-submit").onclick = async function(e) {
+  document.getElementById("food-modal-delete-btn").onclick = async function() {
+    if (!await showConfirm("Delete this food?", 'Delete')) return;
+    items.CORE_ITEMS.splice(idx, 1);
+    await items.deleteCoreItemFromDB(item.id);
+    closeFoodModal();
+    renderCoreItemsMgmt();
+    renderCoreItems();
+  };
+  document.getElementById("food-modal-submit").onclick = async function(e) {
     if (e) e.preventDefault();
     const updatedName = document.getElementById("ci-name").value.trim();
     if (!updatedName) return;
-    if (!await showConfirm(`Save changes to "${updatedName}"?`)) return;
+    if (!await showConfirm(`Save changes to "${updatedName}"?`, 'Save')) return;
     item.name = updatedName;
     item.cal = parseFloat(document.getElementById("ci-cal").value) || 0;
     item.p = parseFloat(document.getElementById("ci-p").value) || 0;
@@ -208,7 +210,7 @@ function fillCoreItemForm(idx) {
     const freqDetails = document.getElementById("ci-freq").value.trim();
     item.freq = `${item.target} srv/day${freqDetails ? ' · ' + freqDetails : ''}`;
     await items.saveCoreItem(item);
-    editingCoreItemIdx = null;
+    closeFoodModal();
     renderCoreItemsMgmt();
     renderCoreItems();
   };
@@ -240,11 +242,6 @@ window.clearCoreBulkIfManual = clearCoreBulkIfManual;
 
 window.renderCoreItemsMgmt = renderCoreItemsMgmt;
 
-function hideAddCoreItemForm() {
-  document.getElementById("add-core-item-form").style.display = "none";
-}
-window.hideAddCoreItemForm = hideAddCoreItemForm;
-
 async function handleAddCoreItem(e) {
   if (e) e.preventDefault();
   const name = document.getElementById("ci-name").value.trim();
@@ -259,7 +256,7 @@ async function handleAddCoreItem(e) {
   const freqDetails = document.getElementById("ci-freq").value.trim();
   const freq = `${target} srv/day${freqDetails ? ' · ' + freqDetails : ''}`;
   const newItem = {
-    id: name.toLowerCase().replace(/\s+/g, "_"),
+    id: 'food_' + Date.now(),
     name,
     cal,
     p,
@@ -270,17 +267,17 @@ async function handleAddCoreItem(e) {
     freq,
     inactive: false
   };
-  if (!await showConfirm(`Add "${name}" as a core item?`)) return;
+  if (!await showConfirm(`Add "${name}" as a core item?`, 'Add')) return;
   items.CORE_ITEMS.push(newItem);
   await items.saveCoreItem(newItem);
-  hideAddCoreItemForm();
+  closeFoodModal();
   renderCoreItemsMgmt();
   renderCoreItems();
 }
 window.handleAddCoreItem = handleAddCoreItem;
 
 async function deleteCoreItem(idx) {
-  if (!await showConfirm("Delete this food?")) return;
+  if (!await showConfirm("Delete this food?", 'Delete')) return;
   const item = items.CORE_ITEMS[idx];
   items.CORE_ITEMS.splice(idx, 1);
   await items.deleteCoreItemFromDB(item.id);
@@ -303,7 +300,8 @@ window.toggleActiveCoreItem = toggleActiveCoreItem;
 
 function editCoreItem(idx) {
   editingCoreItemIdx = idx;
-  renderCoreItemsMgmt();
+  openFoodModal(true);
+  fillCoreItemForm(idx);
 }
 window.editCoreItem = editCoreItem;
 
@@ -467,7 +465,7 @@ function renderCustomItems() {
   }
   items.customItems.forEach((item, idx) => {
     const card = document.createElement("div");
-    card.className = "item-card custom-item done";
+    card.className = "item-card custom-item";
     const srvLabel =
       item.servingsEaten > 1 ? `${item.servingsEaten} servings` : "1 serving";
     card.innerHTML = `
@@ -488,9 +486,8 @@ function renderCustomItems() {
     </div>
     </div>
     <div class="item-right">
-    <div class="item-cost-lbl">$${parseFloat(item.todayCost || 0).toFixed(2)} today</div>
-    ${item.bulkPrice ? `<div class="item-cost-target">$${parseFloat(item.bulkPrice).toFixed(2)} bulk / ${item.bulkServings} srv</div>` : ""}
-    <button class="remove-btn" onclick="window.removeCustomItem(${idx})">remove</button>
+      <button class="mgmt-edit-btn edit-btn" style="width:100%" onclick="window.editCustomItem(${idx})">Edit</button>
+      <button class="remove-btn" style="width:100%" onclick="window.removeCustomItem(${idx})">Delete</button>
     </div>`;
     list.appendChild(card);
   });
@@ -568,7 +565,7 @@ function renderStats() {
   document.getElementById("leg-c").textContent =
     cPct + "% · " + Math.round(tot.c) + "g";
   document.getElementById("leg-f").textContent =
-    fPct + "% · " + tot.f.toFixed(1) + "g";
+    fPct + "% · " + Math.round(tot.f) + "g";
 }
 
 async function renderWeeklyCost() {
@@ -1158,7 +1155,7 @@ function clearBulkIfManual() {
     `today's cost: $${(perSrv * eaten).toFixed(2)}`;
 }
 
-function handleAddCustomItem() {
+async function handleAddCustomItem() {
   const name = document.getElementById("cf-name").value.trim();
   if (!name) {
     document.getElementById("cf-name").focus();
@@ -1177,6 +1174,7 @@ function handleAddCustomItem() {
   const pPerSrv = parseFloat(document.getElementById("cf-p").value) || 0;
   const cPerSrv = parseFloat(document.getElementById("cf-c").value) || 0;
   const fPerSrv = parseFloat(document.getElementById("cf-f").value) || 0;
+  if (!await showConfirm(`Add "${name}" to today's log?`, 'Add')) return;
   items.addCustomItem({
     name,
     cal: calPerSrv * servingsEaten,
@@ -1208,14 +1206,133 @@ function handleAddCustomItem() {
   document.getElementById("cf-name").focus();
 }
 
-function handleRemoveCustomItem(idx) {
+async function handleRemoveCustomItem(idx) {
+  if (!await showConfirm('Delete this custom food?', 'Delete')) return;
   items.removeCustomItem(idx);
   persistState();
   render();
 }
 
+function openCustomFoodEditModal(idx) {
+  const item = items.customItems[idx];
+  if (!item) return;
+  const srv = item.servingsEaten || 1;
+  const calPerSrv = Math.round((item.cal / srv) * 10) / 10;
+  const pPerSrv = Math.round((item.p / srv) * 10) / 10;
+  const cPerSrv = Math.round((item.c / srv) * 10) / 10;
+  const fPerSrv = Math.round((item.f / srv) * 10) / 10;
+  const safeName = String(item.name || '').replace(/"/g, '&quot;');
+
+  if (!document.getElementById('custom-food-edit-modal')) {
+    const el = document.createElement('div');
+    el.id = 'custom-food-edit-modal';
+    el.className = 'pg-modal';
+    el.addEventListener('click', (e) => { if (e.target === el) el.classList.remove('open'); });
+    document.body.appendChild(el);
+  }
+
+  const modal = document.getElementById('custom-food-edit-modal');
+  modal.innerHTML = `
+    <div class="pg-modal-box pg-modal-box-lg">
+      <div class="pg-modal-header">
+        <div class="pg-modal-title">Edit Custom Food</div>
+        <button class="pg-close-btn" onclick="document.getElementById('custom-food-edit-modal').classList.remove('open')">×</button>
+      </div>
+      <div class="pg-modal-body">
+        <div class="add-row add-row-1">
+          <div class="field-group">
+            <span class="field-label">Name</span>
+            <input type="text" id="cfe-name" placeholder="e.g. Banana" value="${safeName}" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Calories</span>
+            <input type="number" id="cfe-cal" placeholder="105" min="0" value="${calPerSrv || ''}" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Protein (g)</span>
+            <input type="number" id="cfe-p" placeholder="1" min="0" value="${pPerSrv || ''}" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Carbs (g)</span>
+            <input type="number" id="cfe-c" placeholder="27" min="0" value="${cPerSrv || ''}" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Fat (g)</span>
+            <input type="number" id="cfe-f" placeholder="0" min="0" value="${fPerSrv || ''}" />
+          </div>
+        </div>
+        <div class="add-row add-row-2" style="margin-top:12px;">
+          <div class="field-group">
+            <span class="field-label">Bulk Total Price ($)</span>
+            <input type="number" id="cfe-bulk-price" placeholder="15.00" min="0" step="0.01" value="${item.bulkPrice || ''}" />
+            <span class="field-hint">total you paid</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Servings in Package</span>
+            <input type="number" id="cfe-bulk-servings" placeholder="30" min="1" value="${item.bulkServings || ''}" />
+            <span class="field-hint">total servings</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Cost / Serving ($)</span>
+            <input type="number" id="cfe-cost-per-srv" placeholder="0.50" min="0" step="0.01" value="${item.costPerSrv || ''}" />
+          </div>
+          <div class="field-group">
+            <span class="field-label">Servings Eaten Today</span>
+            <input type="number" id="cfe-servings-eaten" placeholder="1" min="1" value="${item.servingsEaten || 1}" />
+          </div>
+        </div>
+      </div>
+      <div class="pg-modal-footer">
+        <button class="ghost-btn pg-delete-btn" onclick="window.deleteCustomItemFromModal(${idx})">Delete</button>
+        <div style="display:flex;gap:8px;">
+          <button class="ghost-btn" onclick="document.getElementById('custom-food-edit-modal').classList.remove('open')">Cancel</button>
+          <button class="add-btn" onclick="window.saveCustomItemEdit(${idx})">Save</button>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.classList.add('open');
+}
+window.editCustomItem = openCustomFoodEditModal;
+
+window.saveCustomItemEdit = async (idx) => {
+  const name = document.getElementById('cfe-name').value.trim();
+  if (!name) { document.getElementById('cfe-name').focus(); return; }
+  if (!await showConfirm(`Save changes to "${name}"?`, 'Save')) return;
+  const servingsEaten = parseFloat(document.getElementById('cfe-servings-eaten').value) || 1;
+  const calPerSrv = parseFloat(document.getElementById('cfe-cal').value) || 0;
+  const pPerSrv = parseFloat(document.getElementById('cfe-p').value) || 0;
+  const cPerSrv = parseFloat(document.getElementById('cfe-c').value) || 0;
+  const fPerSrv = parseFloat(document.getElementById('cfe-f').value) || 0;
+  const costPerSrv = parseFloat(document.getElementById('cfe-cost-per-srv').value) || 0;
+  const bulkPrice = parseFloat(document.getElementById('cfe-bulk-price').value) || null;
+  const bulkServings = parseFloat(document.getElementById('cfe-bulk-servings').value) || null;
+  const item = items.customItems[idx];
+  item.name = name;
+  item.cal = calPerSrv * servingsEaten;
+  item.p = pPerSrv * servingsEaten;
+  item.c = cPerSrv * servingsEaten;
+  item.f = fPerSrv * servingsEaten;
+  item.servingsEaten = servingsEaten;
+  item.costPerSrv = costPerSrv;
+  item.todayCost = costPerSrv * servingsEaten;
+  item.bulkPrice = bulkPrice;
+  item.bulkServings = bulkServings;
+  document.getElementById('custom-food-edit-modal').classList.remove('open');
+  persistState();
+  render();
+};
+
+window.deleteCustomItemFromModal = async (idx) => {
+  if (!await showConfirm('Delete this custom food?', 'Delete')) return;
+  document.getElementById('custom-food-edit-modal').classList.remove('open');
+  items.removeCustomItem(idx);
+  persistState();
+  render();
+};
+
 async function resetWeeklyCost() {
-  if (!await showConfirm("Reset the weekly cost tracker? This deletes all logged days for this week."))
+  if (!await showConfirm("Reset the weekly cost tracker? This deletes all logged days for this week.", 'Reset'))
     return;
   const weekStart = items.weekStartFor(items.todayStr());
   try {
@@ -1226,7 +1343,7 @@ async function resetWeeklyCost() {
 }
 
 async function confirmResetDay() {
-  if (!await showConfirm("Reset today's log? All serving counts and custom items will be cleared."))
+  if (!await showConfirm("Reset today's log? All serving counts and custom items will be cleared.", 'Reset'))
     return;
   // Mutate, don't reassign ES module exports
   Object.keys(items.servings).forEach(k => { delete items.servings[k]; });
@@ -1292,7 +1409,7 @@ async function saveCalRange() {
   const low = parseInt(document.getElementById("cal-range-low-input").value) || calRange.low;
   const high = parseInt(document.getElementById("cal-range-high-input").value) || calRange.high;
   if (low >= high) return;
-  if (!await showConfirm(`Set calorie range to ${low.toLocaleString()} – ${high.toLocaleString()} kcal?`)) return;
+  if (!await showConfirm(`Set calorie range to ${low.toLocaleString()} – ${high.toLocaleString()} kcal?`, 'Save')) return;
   calRange = { low, high };
   await db.dbPut("settings", { key: "calRange", low, high });
   document.getElementById("cal-range-editor").style.display = "none";
@@ -1334,7 +1451,7 @@ async function exportHistory(format) {
   // Close the dropdown
   document.querySelector(".export-dropdown")?.classList.remove("open");
 
-  if (!await showConfirm(`Export history as ${format.toUpperCase()}?`)) return;
+  if (!await showConfirm(`Export history as ${format.toUpperCase()}?`, 'Export')) return;
 
   let allDays;
   try {
