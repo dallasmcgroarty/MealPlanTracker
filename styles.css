@@ -1227,6 +1227,14 @@ input[readonly] {
   opacity: 0.85;
 }
 
+.pg-exercise-manage-btn:hover {
+  border-color: var(--text) !important;
+  color: var(--text) !important;
+}
+.pg-exercise-manage-btn {
+  height: 30px;
+}
+
 /* ── PROGRAMS TAB ── */
 #tab-programs header {
   margin-bottom: 28px;

@@ -989,7 +989,13 @@ async function renderHistory() {
       return `${mo}/${day}/${yr}`;
     };
     window._echartCalories.setOption({
-      tooltip: { trigger: 'axis' },
+      tooltip: { 
+        trigger: 'axis',
+        formatter: params => {
+          const p = params[0];
+          return `${fmtCalDate(p.axisValue)}<br/>Calories: ${p.value || 0} kcal`;
+        }
+      },
       grid: { left: 40, right: 20, top: 20, bottom: 55 },
       xAxis: {
         type: 'category',
@@ -1086,10 +1092,15 @@ async function renderHistory() {
           type: 'bar',
           data: weekCostData,
           itemStyle: {
-            color: '#c8f060',
+            color: '#FF6B6B',
             borderRadius: [6, 6, 0, 0],
           },
-          barWidth: 24,
+          emphasis: {
+            itemStyle: {
+              color: '#c8f060'
+            }
+          },
+          barWidth: '98%',
         },
       ],
       legend: { show: false },
@@ -1218,7 +1229,9 @@ async function renderHistory() {
         <div class="month-header week-header" style="
           cursor:pointer;user-select:none;
           padding:16px 18px 12px 18px;
-          background:var(--bg2);
+          border-bottom-right-radius: 0px;
+          border-bottom-left-radius: 0px;
+          background: var(--surface);
           display:flex;align-items:flex-start;gap:8px;flex-direction:column;
           font-family:'DM Mono',monospace;
         " data-month="${month}">
@@ -1252,7 +1265,7 @@ async function renderHistory() {
             <!-- fade removed -->
           </div>
         </div>
-        <div class="month-weeks" style="display:none;"></div>
+        <div class="month-weeks" style="display:none; margin-top: 12px;"></div>
       </div>
     `;
 

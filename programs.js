@@ -41,6 +41,7 @@ let exerciseSearchContext = null; // { dayIdx, exerciseIdx: number|null }
 let exerciseSearchQuery = '';
 let currentRestUnit = 's';
 let currentTimeUnit = 's';
+let exLibraryMode = false; // true when opened from the Exercise Library button (no day context)
 
 // ── Entry point ──
 export function renderProgramsTab() {
@@ -55,7 +56,10 @@ function renderProgramsList() {
         <h1>Programs</h1>
         <p class="subtitle">Create & manage your workout programs</p>
       </div>
-      <button class="add-btn" onclick="window.pgOpenCreate()">+ New Program</button>
+      <div style="display:flex;gap:8px;flex-direction: column;">
+        <button style="align-self: auto;" class="add-btn" onclick="window.pgOpenCreate()">+ New Program</button>
+        <button style="align-self: auto;" class="ghost-btn pg-exercise-manage-btn" onclick="window.pgOpenExLibrary()">Exercise Library</button>
+      </div>
     </header>
     <div id="programs-list"></div>
   `;
@@ -282,7 +286,18 @@ function renderDayFormSection(day, dayIdx) {
 
 // ── Exercise Search Modal ──
 function openExSearch(dayIdx, editExIdx = null) {
+  exLibraryMode = false;
   exerciseSearchContext = { dayIdx, editExIdx };
+  exerciseSearchQuery = '';
+  ensureModal('pg-ex-search-modal');
+  renderExSearchModal();
+  document.getElementById('pg-ex-search-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pg-ex-search-input')?.focus(), 50);
+}
+
+function openExLibrary() {
+  exLibraryMode = true;
+  exerciseSearchContext = null;
   exerciseSearchQuery = '';
   ensureModal('pg-ex-search-modal');
   renderExSearchModal();
@@ -305,7 +320,7 @@ function buildExerciseGridHTML() {
         ${timeVal ? `<span class="pg-ex-badge">Time:${timeVal}${esc(ex.timeUnit || 's')}</span>` : ''}
       </div>
       ${ex.notes ? `<div class="pg-ex-card-notes">${esc(ex.notes)}</div>` : ''}
-      <button class="pg-ex-add-btn" onclick="window.pgAddFromLibrary('${ex.id}')">+ Add</button>
+      ${!exLibraryMode ? `<button class="pg-ex-add-btn" onclick="window.pgAddFromLibrary('${ex.id}')">+ Add</button>` : ''}
       <div style="display:flex;gap:6px;">
         <button class="ghost-btn" style="flex:1;font-size:10px;padding:4px 0;" onclick="window.pgEditFromLibrary('${ex.id}')">Edit</button>
         <button class="ghost-btn" style="flex:1;font-size:10px;padding:4px 0;color:var(--warn);" onclick="window.pgDeleteFromLibrary('${ex.id}')">Delete</button>
@@ -476,10 +491,12 @@ window.pgRemoveExercise = async (dayIdx, exIdx) => {
 };
 
 window.pgOpenExSearch = (dayIdx) => openExSearch(dayIdx);
+window.pgOpenExLibrary = () => openExLibrary();
 
 window.pgCloseExSearch = () => {
   document.getElementById('pg-ex-search-modal')?.classList.remove('open');
   exerciseSearchContext = null;
+  exLibraryMode = false;
 };
 
 window.pgExSearchInput = (val) => {
@@ -600,18 +617,24 @@ window.pgSaveExForm = async () => {
   } else {
     const newEx = { id: 'ex_' + Date.now(), name, sets, reps, rest, restUnit, time, timeUnit, notes, muscleGroup: '', difficulty: '' };
     await saveExercise(newEx);
-    if (exerciseSearchContext) {
-      const { dayIdx } = exerciseSearchContext;
-      formState.days[dayIdx].exercises.push({
-        exerciseId: newEx.id,
-        exerciseName: name,
-        sets, reps, rest, restUnit, time, timeUnit, notes
-      });
+    if (exLibraryMode) {
+      window.pgCloseExForm();
+      renderExSearchModal();
+      document.getElementById('pg-ex-search-modal').classList.add('open');
+    } else {
+      if (exerciseSearchContext) {
+        const { dayIdx } = exerciseSearchContext;
+        formState.days[dayIdx].exercises.push({
+          exerciseId: newEx.id,
+          exerciseName: name,
+          sets, reps, rest, restUnit, time, timeUnit, notes
+        });
+      }
+      document.getElementById('pg-ex-search-modal')?.classList.remove('open');
+      exerciseSearchContext = null;
+      window.pgCloseExForm();
+      renderCreateForm();
     }
-    document.getElementById('pg-ex-search-modal')?.classList.remove('open');
-    exerciseSearchContext = null;
-    window.pgCloseExForm();
-    renderCreateForm();
   }
 };
 
