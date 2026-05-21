@@ -153,12 +153,7 @@ function renderCoreItemsMgmt() {
 }
 
 function showAddCoreItemForm() {
-  editingCoreItemIdx = null;
-  openFoodModal(false);
-  document.getElementById('ci-target').value = '1';
-  document.getElementById('ci-freq-preview').textContent = '1 srv/day';
-  document.getElementById('ci-cost-hint').textContent = 'or enter manually';
-  document.getElementById('food-modal-submit').onclick = handleAddCoreItem;
+  showAddFoodChoiceModal();
 }
 window.showAddCoreItemForm = showAddCoreItemForm;
 
@@ -166,6 +161,252 @@ function cancelCoreItemForm() {
   closeFoodModal();
 }
 window.cancelCoreItemForm = cancelCoreItemForm;
+
+// ═══════════════════════════════════════════════════════════════════
+// ADD FOOD CHOICE MODAL
+// ═══════════════════════════════════════════════════════════════════
+
+function showAddFoodChoiceModal() {
+  let modal = document.getElementById('add-food-choice-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'add-food-choice-modal';
+    modal.className = 'pg-modal';
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeAddFoodChoiceModal(); });
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="pg-modal-box choice-modal-box">
+      <div class="pg-modal-header">
+        <div class="pg-modal-title">Add Food</div>
+        <button class="pg-close-btn" onclick="window.closeAddFoodChoiceModal()">×</button>
+      </div>
+      <div class="pg-modal-body choice-modal-body">
+        <div class="choice-options">
+          <button class="choice-btn choice-btn-scan" onclick="window.startBarcodeFlow()">
+            <div class="choice-btn-text">
+              <div class="choice-btn-label">Scan Barcode</div>
+              <div class="choice-btn-desc">Auto-fill from product barcode</div>
+            </div>
+          </button>
+          <button class="choice-btn choice-btn-manual" onclick="window.addFoodManually()">
+            <div class="choice-btn-text">
+              <div class="choice-btn-label">Add Manually</div>
+              <div class="choice-btn-desc">Enter nutrition info yourself</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.classList.add('open');
+}
+
+function closeAddFoodChoiceModal() {
+  const modal = document.getElementById('add-food-choice-modal');
+  if (modal) modal.classList.remove('open');
+}
+window.closeAddFoodChoiceModal = closeAddFoodChoiceModal;
+
+function addFoodManually() {
+  closeAddFoodChoiceModal();
+  editingCoreItemIdx = null;
+  openFoodModal(false);
+  document.getElementById('ci-target').value = '1';
+  document.getElementById('ci-freq-preview').textContent = '1 srv/day';
+  document.getElementById('ci-cost-hint').textContent = 'or enter manually';
+  document.getElementById('food-modal-submit').onclick = handleAddCoreItem;
+}
+window.addFoodManually = addFoodManually;
+
+// ═══════════════════════════════════════════════════════════════════
+// BARCODE SCANNING
+// ═══════════════════════════════════════════════════════════════════
+
+let html5QrCodeInstance = null;
+
+async function startBarcodeFlow() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showScannerError('Your browser does not support camera access. Please add food manually or use a modern browser.');
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    stream.getTracks().forEach(t => t.stop());
+  } catch (err) {
+    let msg = 'Could not access the camera. Please add food manually.';
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      msg = 'Camera permission was denied. Allow camera access in your browser settings and try again.';
+    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+      msg = 'No camera was found on this device. Please add food manually.';
+    }
+    showScannerError(msg);
+    return;
+  }
+  closeAddFoodChoiceModal();
+  openScannerModal();
+}
+window.startBarcodeFlow = startBarcodeFlow;
+
+function showScannerError(message) {
+  const modal = document.getElementById('add-food-choice-modal');
+  if (!modal) return;
+  modal.innerHTML = `
+    <div class="pg-modal-box choice-modal-box">
+      <div class="pg-modal-header">
+        <div class="pg-modal-title">Camera Error</div>
+        <button class="pg-close-btn" onclick="window.closeAddFoodChoiceModal()">×</button>
+      </div>
+      <div class="pg-modal-body scanner-error-body">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2.5"/>
+        </svg>
+        <p class="scanner-error-msg">${message}</p>
+        <button style="align-self: center;" class="add-btn" onclick="window.addFoodManually()">Add Manually Instead</button>
+      </div>
+    </div>
+  `;
+}
+
+function openScannerModal() {
+  let modal = document.getElementById('barcode-scanner-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'barcode-scanner-modal';
+    modal.className = 'pg-modal';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="pg-modal-box scanner-modal-box">
+      <div class="pg-modal-header">
+        <div class="pg-modal-title">Scan Barcode</div>
+        <button class="pg-close-btn" onclick="window.closeScannerModal()">×</button>
+      </div>
+      <div class="pg-modal-body scanner-body">
+        <div id="barcode-video-container" class="barcode-video-container"></div>
+        <div id="scanner-status-text" class="scanner-status-text">Point camera at product barcode</div>
+      </div>
+      <div class="pg-modal-footer">
+        <div></div>
+        <button class="ghost-btn" onclick="window.closeScannerModal()">Cancel</button>
+      </div>
+    </div>
+  `;
+  modal.classList.add('open');
+  setTimeout(initBarcodeScanner, 150);
+}
+
+function closeScannerModal() {
+  stopBarcodeScanner();
+  const modal = document.getElementById('barcode-scanner-modal');
+  if (modal) modal.classList.remove('open');
+}
+window.closeScannerModal = closeScannerModal;
+
+function initBarcodeScanner() {
+  const Html5Qrcode = window.Html5Qrcode;
+  if (!Html5Qrcode) {
+    const el = document.getElementById('scanner-status-text');
+    if (el) el.textContent = 'Barcode scanner library failed to load.';
+    return;
+  }
+  const Formats = window.Html5QrcodeSupportedFormats;
+  const formatsToSupport = Formats ? [
+    Formats.EAN_13, Formats.EAN_8, Formats.UPC_A, Formats.UPC_E,
+    Formats.CODE_128, Formats.CODE_39, Formats.QR_CODE
+  ] : undefined;
+
+  html5QrCodeInstance = new Html5Qrcode('barcode-video-container', { formatsToSupport, verbose: false });
+
+  html5QrCodeInstance.start(
+    { facingMode: 'environment' },
+    {
+      fps: 10,
+      qrbox: (w, h) => ({ width: Math.min(Math.round(w * 0.85), 300), height: Math.min(Math.round(h * 0.35), 100) })
+    },
+    async (decodedText) => {
+      const statusEl = document.getElementById('scanner-status-text');
+      if (statusEl) statusEl.textContent = 'Barcode detected! Looking up food data...';
+      const inst = html5QrCodeInstance;
+      html5QrCodeInstance = null;
+      try { await inst.stop(); } catch (_) {}
+      await handleBarcodeDetected(decodedText);
+    },
+    () => {}
+  ).catch(() => {
+    const el = document.getElementById('scanner-status-text');
+    if (el) el.textContent = 'Could not start camera. Please try again.';
+  });
+}
+
+function stopBarcodeScanner() {
+  if (html5QrCodeInstance) {
+    const inst = html5QrCodeInstance;
+    html5QrCodeInstance = null;
+    inst.stop().catch(() => {});
+  }
+}
+
+async function handleBarcodeDetected(barcode) {
+  closeScannerModal();
+  editingCoreItemIdx = null;
+  openFoodModal(false);
+  document.getElementById('ci-target').value = '1';
+  document.getElementById('ci-freq-preview').textContent = '1 srv/day';
+  document.getElementById('ci-cost-hint').textContent = 'or enter manually';
+  document.getElementById('food-modal-submit').onclick = handleAddCoreItem;
+  try {
+    const foodData = await lookupBarcodeOpenFoodFacts(barcode);
+    if (foodData && foodData.name) fillFoodFormFromScan(foodData);
+  } catch (_) {}
+}
+
+async function lookupBarcodeOpenFoodFacts(barcode) {
+  const resp = await fetch(
+    `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_en,serving_size,nutriments`
+  );
+  if (!resp.ok) return null;
+  const data = await resp.json();
+  if (data.status !== 1) return null;
+
+  const product = data.product;
+  const n = product.nutriments || {};
+  let cal, p, c, f;
+
+  if (n['energy-kcal_serving'] != null) {
+    cal = Math.round(n['energy-kcal_serving']);
+    p   = Math.round((n['proteins_serving']      || 0) * 10) / 10;
+    c   = Math.round((n['carbohydrates_serving'] || 0) * 10) / 10;
+    f   = Math.round((n['fat_serving']           || 0) * 10) / 10;
+  } else {
+    const servingG = parseServingGrams(product.serving_size);
+    const mult = servingG ? servingG / 100 : 1;
+    cal = Math.round((n['energy-kcal_100g'] || 0) * mult);
+    p   = Math.round((n['proteins_100g']      || 0) * mult * 10) / 10;
+    c   = Math.round((n['carbohydrates_100g'] || 0) * mult * 10) / 10;
+    f   = Math.round((n['fat_100g']           || 0) * mult * 10) / 10;
+  }
+
+  return {
+    name: (product.product_name || product.product_name_en || '').trim(),
+    cal, p, c, f
+  };
+}
+
+function parseServingGrams(servingSize) {
+  if (!servingSize) return null;
+  const match = servingSize.match(/(\d+(?:\.\d+)?)\s*g/i);
+  return match ? parseFloat(match[1]) : null;
+}
+
+function fillFoodFormFromScan(foodData) {
+  if (foodData.name) document.getElementById('ci-name').value = foodData.name;
+  if (foodData.cal)  document.getElementById('ci-cal').value  = foodData.cal;
+  if (foodData.p)    document.getElementById('ci-p').value    = foodData.p;
+  if (foodData.c)    document.getElementById('ci-c').value    = foodData.c;
+  if (foodData.f)    document.getElementById('ci-f').value    = foodData.f;
+  updateFreqPreview();
+}
 
 function fillCoreItemForm(idx) {
   const item = items.CORE_ITEMS[idx];
@@ -740,6 +981,13 @@ async function renderHistory() {
     // Calories per day line chart
     const caloriesDom = document.getElementById("chart-calories");
     window._echartCalories = echarts.init(caloriesDom);
+    const fmtCalDate = iso => {
+      const d = new Date(iso + 'T00:00:00');
+      const mo  = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const yr  = String(d.getFullYear()).slice(2);
+      return `${mo}/${day}/${yr}`;
+    };
     window._echartCalories.setOption({
       tooltip: { trigger: 'axis' },
       grid: { left: 40, right: 20, top: 20, bottom: 55 },
@@ -752,7 +1000,7 @@ async function renderHistory() {
           rotate: 35,
           fontSize: 10,
           color: '#7a7f96',
-          formatter: shortDate,
+          formatter: fmtCalDate,
         },
         axisTick: { alignWithLabel: true },
       },
@@ -778,6 +1026,7 @@ async function renderHistory() {
           data: calTargetLow,
           smooth: true,
           symbol: 'none',
+          tooltip: { show: false },
           lineStyle: { color: '#60f0a0', type: 'dashed', width: 2 },
         },
         {
@@ -786,6 +1035,7 @@ async function renderHistory() {
           data: calTargetHigh,
           smooth: true,
           symbol: 'none',
+          tooltip: { show: false },
           lineStyle: { color: '#f0a060', type: 'dashed', width: 2 },
         },
       ],
@@ -794,10 +1044,23 @@ async function renderHistory() {
     resizeECharts(window._echartCalories, caloriesDom);
 
     // Weekly cost bar chart
+    const fmtWeekDate = iso => {
+      const d = new Date(iso + 'T00:00:00');
+      const mo  = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const yr  = String(d.getFullYear()).slice(2);
+      return `${mo}/${day}/${yr}`;
+    };
     const weekDom = document.getElementById("chart-weekly-cost");
     window._echartWeeklyCost = echarts.init(weekDom);
     window._echartWeeklyCost.setOption({
-      tooltip: { trigger: 'axis' },
+      tooltip: {
+        trigger: 'axis',
+        formatter: params => {
+          const p = params[0];
+          return `${fmtWeekDate(p.axisValue)}<br/>Cost: $${(p.value || 0).toFixed(2)}`;
+        }
+      },
       grid: { left: 40, right: 20, top: 20, bottom: 55 },
       xAxis: {
         type: 'category',
@@ -808,7 +1071,7 @@ async function renderHistory() {
           rotate: 35,
           fontSize: 10,
           color: '#7a7f96',
-          formatter: shortDate,
+          formatter: fmtWeekDate,
         },
         axisTick: { alignWithLabel: true },
       },
@@ -819,7 +1082,7 @@ async function renderHistory() {
       },
       series: [
         {
-          name: 'Weekly Cost',
+          name: 'Cost',
           type: 'bar',
           data: weekCostData,
           itemStyle: {
@@ -837,7 +1100,7 @@ async function renderHistory() {
     const macrosDom = document.getElementById("chart-macros");
     window._echartMacros = echarts.init(macrosDom);
     window._echartMacros.setOption({
-      tooltip: { trigger: 'item' },
+      tooltip: { trigger: 'item', formatter: '{b}: {d}%' },
       series: [
         {
           name: 'Macros',
