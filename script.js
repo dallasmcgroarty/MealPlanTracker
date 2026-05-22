@@ -224,8 +224,10 @@ window.addFoodManually = addFoodManually;
 // ═══════════════════════════════════════════════════════════════════
 
 let html5QrCodeInstance = null;
+let _barcodeTarget = 'food'; // 'food' | 'custom'
 
 async function startBarcodeFlow() {
+  _barcodeTarget = 'food';
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     showScannerError('Your browser does not support camera access. Please add food manually or use a modern browser.');
     return;
@@ -247,6 +249,56 @@ async function startBarcodeFlow() {
   openScannerModal();
 }
 window.startBarcodeFlow = startBarcodeFlow;
+
+async function startBarcodeFlowForCustomFood() {
+  _barcodeTarget = 'custom';
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showScannerAlert('Camera Error', 'Your browser does not support camera access. Please add food manually or use a modern browser.');
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    stream.getTracks().forEach(t => t.stop());
+  } catch (err) {
+    let msg = 'Could not access the camera. Please add food manually.';
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      msg = 'Camera permission was denied. Allow camera access in your browser settings and try again.';
+    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+      msg = 'No camera was found on this device. Please add food manually.';
+    }
+    showScannerAlert('Camera Error', msg);
+    return;
+  }
+  openScannerModal();
+}
+window.startBarcodeFlowForCustomFood = startBarcodeFlowForCustomFood;
+
+function showScannerAlert(title, message) {
+  let modal = document.getElementById('scanner-alert-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'scanner-alert-modal';
+    modal.className = 'pg-modal';
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="pg-modal-box choice-modal-box">
+      <div class="pg-modal-header">
+        <div class="pg-modal-title">${title}</div>
+        <button class="pg-close-btn" onclick="document.getElementById('scanner-alert-modal').classList.remove('open')">×</button>
+      </div>
+      <div class="pg-modal-body scanner-error-body">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2.5"/>
+        </svg>
+        <p class="scanner-error-msg">${message}</p>
+        <button style="align-self:center;" class="add-btn" onclick="document.getElementById('scanner-alert-modal').classList.remove('open')">OK</button>
+      </div>
+    </div>
+  `;
+  modal.classList.add('open');
+}
 
 function showScannerError(message) {
   const modal = document.getElementById('add-food-choice-modal');
@@ -349,6 +401,19 @@ function stopBarcodeScanner() {
 
 async function handleBarcodeDetected(barcode) {
   closeScannerModal();
+  if (_barcodeTarget === 'custom') {
+    try {
+      const foodData = await lookupBarcodeOpenFoodFacts(barcode);
+      if (!foodData) {
+        showScannerAlert('No Data Found', 'No nutrition info available for this product.');
+      } else {
+        fillCustomFoodFormFromScan(foodData);
+      }
+    } catch (_) {
+      showScannerAlert('No Data Found', 'No nutrition info available for this product.');
+    }
+    return;
+  }
   editingCoreItemIdx = null;
   openFoodModal(false);
   document.getElementById('ci-target').value = '1';
@@ -357,7 +422,11 @@ async function handleBarcodeDetected(barcode) {
   document.getElementById('food-modal-submit').onclick = handleAddCoreItem;
   try {
     const foodData = await lookupBarcodeOpenFoodFacts(barcode);
-    if (foodData && foodData.name) fillFoodFormFromScan(foodData);
+    if (!foodData) {
+      showScannerAlert('No Data Found', 'No nutrition info available for this product.');
+    } else {
+      fillFoodFormFromScan(foodData);
+    }
   } catch (_) {}
 }
 
@@ -400,12 +469,20 @@ function parseServingGrams(servingSize) {
 }
 
 function fillFoodFormFromScan(foodData) {
-  if (foodData.name) document.getElementById('ci-name').value = foodData.name;
-  if (foodData.cal)  document.getElementById('ci-cal').value  = foodData.cal;
-  if (foodData.p)    document.getElementById('ci-p').value    = foodData.p;
-  if (foodData.c)    document.getElementById('ci-c').value    = foodData.c;
-  if (foodData.f)    document.getElementById('ci-f').value    = foodData.f;
+  document.getElementById('ci-name').value = foodData.name || '';
+  document.getElementById('ci-cal').value  = foodData.cal  ?? 0;
+  document.getElementById('ci-p').value    = foodData.p    ?? 0;
+  document.getElementById('ci-c').value    = foodData.c    ?? 0;
+  document.getElementById('ci-f').value    = foodData.f    ?? 0;
   updateFreqPreview();
+}
+
+function fillCustomFoodFormFromScan(foodData) {
+  document.getElementById('cf-name').value = foodData.name || '';
+  document.getElementById('cf-cal').value  = foodData.cal  ?? 0;
+  document.getElementById('cf-p').value    = foodData.p    ?? 0;
+  document.getElementById('cf-c').value    = foodData.c    ?? 0;
+  document.getElementById('cf-f').value    = foodData.f    ?? 0;
 }
 
 function fillCoreItemForm(idx) {
@@ -1803,6 +1880,38 @@ async function cleanupOldRecords() {
   }
 }
 
+async function maybeShowWelcome() {
+  try {
+    const flag = await db.dbGet("settings", "journeyStarted");
+    if (flag) return;
+  } catch (_) { return; }
+  let modal = document.getElementById('welcome-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'welcome-modal';
+    modal.className = 'pg-modal';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="pg-modal-box welcome-modal-box">
+      <div class="welcome-modal-content">
+        <div class="welcome-wordmark">Foop</div>
+        <h2 class="welcome-title">Welcome to Foop!</h2>
+        <p class="welcome-subtitle">Fuel smarter, spend less. Track your daily macros and food costs so you always know exactly where you stand — one meal at a time.</p>
+        <button class="add-btn welcome-start-btn" onclick="window.startJourney()">Start your journey!</button>
+      </div>
+    </div>
+  `;
+  modal.classList.add('open');
+}
+
+async function startJourney() {
+  await db.dbPut("settings", { key: "journeyStarted", value: true });
+  const modal = document.getElementById('welcome-modal');
+  if (modal) modal.classList.remove('open');
+}
+window.startJourney = startJourney;
+
 async function init() {
   await db.openDB();
   try {
@@ -1824,6 +1933,7 @@ async function init() {
   // Only persist on init if there's already data loaded from today
   const initTot = items.computeTotals();
   if (initTot.cal > 0 || initTot.cost > 0) await persistState();
+  await maybeShowWelcome();
 
   // Auto-reset daily log at midnight
   let lastDate = items.todayStr();

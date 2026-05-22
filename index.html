@@ -48,7 +48,11 @@
               View, edit, hide/show, delete, or add foods
             </p>
           </div>
+          <div style="display: flex;">
+            <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Food</button>
+          </div>
         </header>
+        <div id="core-items-mgmt-list"></div>
         <div class="info-banners">
           <div class="info-banner" onclick="this.classList.toggle('open')">
             <div class="info-banner-header">
@@ -73,11 +77,18 @@
               weekly cost. The food stays in storage and can be restored any time with <strong>Show</strong>.
             </div>
           </div>
+          <div class="info-banner" onclick="this.classList.toggle('open')">
+            <div class="info-banner-header">
+              <div class="info-dot" style="background:var(--carbs);box-shadow: 0 0 6px var(--carbs);"></div>
+              <span class="info-banner-label info-label-warn-2">Barcode scanning a food/product is <strong>not</strong> always accurate</span>
+              <span class="info-banner-chevron">▼</span>
+            </div>
+            <div class="info-banner-body">
+              The barcode scanner uses a community driven food library and may not always provide accurate nutritional information. 
+              Always double-check the details before logging a food item.
+            </div>
+          </div>
         </div>
-        <div style="margin-bottom:24px;">
-          <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Food</button>
-        </div>
-        <div id="core-items-mgmt-list"></div>
       </div>
       <div class="tab-view active" id="tab-today">
         <header>
@@ -314,6 +325,7 @@
               <div></div>
               <div></div>
               <button class="add-btn" onclick="window.addCustomItem()">+ Add to Today</button>
+              <button class="ghost-btn scan-cf-btn" onclick="window.startBarcodeFlowForCustomFood()">Scan Barcode</button>
             </div>
             </div><!-- end cf-accordion-body -->
           </div>

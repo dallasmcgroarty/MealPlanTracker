@@ -185,6 +185,9 @@ h1 {
 .info-label-warn {
   color: var(--accent2);
 }
+.info-label-warn-2 {
+  color: var(--carbs);
+}
 .info-label-info {
   color: var(--muted);
 }
@@ -555,7 +558,7 @@ h1 {
 }
 
 #core-items-mgmt-list {
-  margin-top: 12px;
+  margin: 12px 0px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
@@ -704,7 +707,7 @@ h1 {
   grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 .add-row-3 {
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr auto auto;
 }
 .field-group {
   display: flex;
@@ -889,6 +892,10 @@ input[readonly] {
 .ghost-btn:hover {
   border-color: var(--warn);
   color: var(--warn);
+}
+.scan-cf-btn:hover {
+  border-color: var(--accent2);
+  color: var(--accent2);
 }
 
 /* ── HISTORY VIEW ── */
@@ -1816,6 +1823,48 @@ input[readonly] {
   text-align: center;
   border-top: 1px solid var(--border);
   background: var(--surface);
+}
+
+/* ── Welcome modal ──────────────────────────────────────────────── */
+.welcome-modal-box {
+  max-width: 400px;
+  text-align: center;
+}
+.welcome-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 32px 40px;
+  gap: 14px;
+}
+.welcome-wordmark {
+  font-family: "Syne", sans-serif;
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.welcome-title {
+  font-family: "Syne", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+.welcome-subtitle {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 4px 0 8px;
+  max-width: 300px;
+}
+.welcome-start-btn {
+  font-size: 13px;
+  padding: 10px 28px;
+  height: auto;
+  align-self: center;
 }
 
 @media (max-width: 520px) {
