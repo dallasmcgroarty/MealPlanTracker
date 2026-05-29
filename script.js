@@ -132,7 +132,7 @@ function renderCoreItemsMgmt() {
   const list = document.getElementById("core-items-mgmt-list");
   list.innerHTML = "";
   if (!items.CORE_ITEMS.length) {
-    list.innerHTML = '<div style="color:var(--muted);padding:20px 0;">No core items found.</div>';
+    list.innerHTML = '<div class="no-foods" style="color:var(--muted);padding:20px 0;">No saved foods found.</div>';
     return;
   }
   items.CORE_ITEMS.forEach((item, idx) => {
@@ -734,6 +734,11 @@ function renderHeader() {
 function renderCoreItems() {
   const list = document.getElementById("core-items-list");
   list.innerHTML = "";
+  if (items.CORE_ITEMS.length === 0) {
+    list.innerHTML =
+      "<div style=\"font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;\">No saved foods available.</div>";
+    return;
+  }
   items.CORE_ITEMS.forEach((item) => {
     if (item.inactive) return;
     const srv = items.servings[item.id] || 0;
@@ -814,7 +819,8 @@ function renderCustomItems() {
 function renderStats() {
     // Calorie range indicator (target zone)
     const low = calRange.low, high = calRange.high;
-    const maxCal = 2000;
+    // Dynamic max: ceiling + 250 headroom, rounded to nearest 500 (naturally 2000 at defaults)
+    const maxCal = Math.ceil((calRange.high + 250) / 500) * 500;
     const zone = document.querySelector('.target-zone');
     if (zone) {
       const left = (low / maxCal) * 100;
@@ -823,6 +829,25 @@ function renderStats() {
       zone.style.width = width + '%';
       zone.querySelector('.zone-label-low').textContent = low.toLocaleString();
       zone.querySelector('.zone-label-high').textContent = high.toLocaleString();
+    }
+    // Scale labels: absolutely positioned at exact percentages so they align with the bar
+    const scaleEl = document.getElementById("cal-scale");
+    if (scaleEl) {
+      scaleEl.innerHTML = "";
+      for (let v = 0; v <= maxCal; v += 500) {
+        const pct = (v / maxCal) * 100;
+        const label = v === 0 ? "0" : v < 1000 ? String(v) : `${v / 1000}k`;
+        const span = document.createElement("span");
+        span.textContent = label;
+        if (v === 0) {
+          span.style.cssText = "position:absolute;left:0;";
+        } else if (v === maxCal) {
+          span.style.cssText = "position:absolute;right:0;";
+        } else {
+          span.style.cssText = `position:absolute;left:${pct}%;transform:translateX(-50%);`;
+        }
+        scaleEl.appendChild(span);
+      }
     }
   const tot = items.computeTotals();
   const tgtCal = items.CORE_ITEMS.filter(i => !i.inactive).reduce((s, i) => s + i.cal * i.target, 0);
@@ -1090,7 +1115,7 @@ async function renderHistory() {
       yAxis: {
         type: 'value',
         min: 0,
-        max: 2200,
+        max: calData.length ? Math.ceil(Math.max(...calData, calRange.high) * 1.15 / 250) * 250 : 2000,
         splitLine: { show: false }
       },
       series: [
@@ -1141,7 +1166,11 @@ async function renderHistory() {
         trigger: 'axis',
         formatter: params => {
           const p = params[0];
-          return `${fmtWeekDate(p.axisValue)}<br/>Cost: $${(p.value || 0).toFixed(2)}`;
+          const start = new Date(p.axisValue + 'T00:00:00');
+          const end = new Date(p.axisValue + 'T00:00:00');
+          end.setDate(end.getDate() + 6);
+          const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          return `${fmt(start)} – ${fmt(end)}<br/>Cost: $${(p.value || 0).toFixed(2)}`;
         }
       },
       grid: { left: 40, right: 20, top: 20, bottom: 55 },
@@ -1248,12 +1277,21 @@ async function renderHistory() {
   // Sort weeks oldest first for grouping
   weeks.sort((a, b) => a.weekStart.localeCompare(b.weekStart));
 
-  // Group weeks by month (YYYY-MM)
+  // Group weeks by month; cross-month weeks appear in both months
   const monthMap = {};
   weeks.forEach((week) => {
-    const m = week.weekStart.slice(0, 7); // "YYYY-MM"
-    if (!monthMap[m]) monthMap[m] = [];
-    monthMap[m].push(week);
+    const weekEndDate = new Date(week.weekStart + "T00:00:00");
+    weekEndDate.setDate(weekEndDate.getDate() + 6);
+    const startMonth = week.weekStart.slice(0, 7);
+    const endMonth = weekEndDate.toLocaleDateString("en-CA").slice(0, 7);
+
+    if (!monthMap[startMonth]) monthMap[startMonth] = [];
+    monthMap[startMonth].push({ week, displayMonth: startMonth, isPartial: false });
+
+    if (endMonth !== startMonth) {
+      if (!monthMap[endMonth]) monthMap[endMonth] = [];
+      monthMap[endMonth].push({ week, displayMonth: endMonth, isPartial: true });
+    }
   });
 
 
@@ -1275,9 +1313,10 @@ async function renderHistory() {
       totalCarb: 0,
       totalFat: 0,
     };
-    monthWeeks.forEach((week) => {
-      const days = week.days || {};
-      Object.values(days).forEach((day) => {
+    monthWeeks.forEach(({ week: wk, displayMonth }) => {
+      const days = wk.days || {};
+      Object.entries(days).forEach(([date, day]) => {
+        if (!date.startsWith(displayMonth)) return;
         if (day.cal > 0 || day.cost > 0) {
           mStats.days++;
           mStats.totalCal += day.cal || 0;
@@ -1289,6 +1328,13 @@ async function renderHistory() {
         }
       });
     });
+    // Total calendar days in month (or days elapsed if current month)
+    const [mYr, mMo] = month.split("-").map(Number);
+    const todayMonth = items.todayStr().slice(0, 7);
+    const totalDays = month === todayMonth
+      ? parseInt(items.todayStr().slice(8, 10))
+      : new Date(mYr, mMo, 0).getDate();
+
     // Month accordion block
     const monthBlock = document.createElement("div");
     monthBlock.className = "month-block";
@@ -1317,9 +1363,10 @@ async function renderHistory() {
             <div class="month-chevron week-chevron" style="color:var(--muted);font-size:20px;transition:transform 0.2s;font-family:'DM Mono',monospace;">▼</div>
           </div>
           <div class="month-stats-scroll" style="position:relative;overflow-x:auto;width:100%;margin-top:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
-            <table style="margin-top:6px;font-size:12px;color:var(--muted);border-collapse:collapse;font-family:'DM Mono',monospace;min-width:700px;width:max-content;">
+            <table style="margin-top:6px;font-size:12px;color:var(--muted);border-collapse:collapse;font-family:'DM Mono',monospace;min-width:500px;width:max-content;">
               <thead>
-                <tr>
+                <tr style="text-transform:uppercase;font-size:10px">
+                  <th style="padding-right:18px;text-align:left;font-weight:500;">logged</th>
                   <th style="padding-right:18px;text-align:left;font-weight:500;">kcal/day</th>
                   <th style="padding-right:18px;text-align:left;font-weight:500;">$/day</th>
                   <th style="padding-right:18px;text-align:left;font-weight:500;">Hit rate</th>
@@ -1330,6 +1377,7 @@ async function renderHistory() {
               </thead>
               <tbody>
                 <tr>
+                  <td style="padding-right:18px;"><strong style="color:var(--muted);font-weight:600;">${mStats.days}</strong><span style="color:var(--muted);opacity:0.5;">/${totalDays} days</span></td>
                   <td style="padding-right:18px;">~<strong style="color:var(--protein);font-weight:600;">${mStats.days ? Math.round(mStats.totalCal / mStats.days) : 0}</strong></td>
                   <td style="padding-right:18px;">~<strong style="color:var(--accent);font-weight:600;">$${mStats.days ? (mStats.totalCost / mStats.days).toFixed(2) : '0.00'}</strong></td>
                   <td style="padding-right:18px;">~<strong style="color:var(--protein);font-weight:600;">${mStats.days ? Math.round((mStats.inRangeDays / mStats.days) * 100) : 0}%</strong></td>
@@ -1348,28 +1396,34 @@ async function renderHistory() {
 
     // Render weeks inside month
     const weeksContainer = monthBlock.querySelector('.month-weeks');
-    monthWeeks.sort((a, b) => b.weekStart.localeCompare(a.weekStart));
-    monthWeeks.forEach((week) => {
-      const days = week.days || {};
-      const dayDates = Object.keys(days).sort((a, b) => b.localeCompare(a));
+    monthWeeks.sort((a, b) => b.week.weekStart.localeCompare(a.week.weekStart));
+    monthWeeks.forEach(({ week: wk, displayMonth, isPartial }) => {
+      const days = wk.days || {};
+      // For partial (bleed-month) entries, only show days that fall in this calendar month
+      const dayDates = Object.keys(days)
+        .filter(d => !isPartial || d.startsWith(displayMonth))
+        .sort((a, b) => b.localeCompare(a));
       if (dayDates.length === 0) return;
 
       const weekTotal = dayDates.reduce((s, d) => s + (days[d].cost || 0), 0);
       const weekCal = dayDates.reduce((s, d) => s + (days[d].cal || 0), 0);
       const avgCal = dayDates.length > 0 ? Math.round(weekCal / dayDates.length) : 0;
       const weekEnd = (() => {
-        const d = new Date(week.weekStart + "T00:00:00");
+        const d = new Date(wk.weekStart + "T00:00:00");
         d.setDate(d.getDate() + 6);
         return d.toLocaleDateString("en-CA");
       })();
+      const prevMonthLabel = isPartial
+        ? new Date(wk.weekStart + "T00:00:00").toLocaleString("en-US", { month: "short" })
+        : null;
       const block = document.createElement("div");
       block.className = "week-block";
-      const isCurrentWeek = week.weekStart === items.weekStartFor(items.todayStr());
+      const isCurrentWeek = wk.weekStart === items.weekStartFor(items.todayStr());
       block.innerHTML = `
         <div class="week-header" onclick="toggleWeek(this)">
         <div class="week-header-left">
-            <div class="week-label">${formatDateShort(week.weekStart)} – ${formatDateShort(weekEnd)} ${isCurrentWeek ? "<span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono', sans-serif;\">current</span>" : ""}</div>
-            <div class="week-days-logged">${dayDates.length} day(s) logged</div>
+            <div class="week-label">${formatDateShort(wk.weekStart)} – ${formatDateShort(weekEnd)} ${isPartial ? `<span class="partial-week-badge">↑ from ${prevMonthLabel}</span>` : ""}${isCurrentWeek ? "<span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono', sans-serif;\">current</span>" : ""}</div>
+            <div class="week-days-logged">${dayDates.length} day(s) logged${isPartial ? " this month" : ""}</div>
         </div>
         <div class="week-header-right">
             <div class="week-summary-stat">avg <span>${avgCal} kcal</span>/day</div>
@@ -1406,7 +1460,7 @@ async function renderHistory() {
           })
           .join("")}
             <tr class="week-total-row">
-              <td class="week-total-label">Week Total</td>
+              <td class="week-total-label">${isPartial ? "Month Portion" : "Week Total"}</td>
               <td class="day-cal">${Math.round(weekCal)} kcal</td>
               <td class="day-p">${Math.round(dayDates.reduce((s, d) => s + (days[d].p || 0), 0))}g</td>
               <td class="day-c">${Math.round(dayDates.reduce((s, d) => s + (days[d].c || 0), 0))}g</td>
@@ -1730,14 +1784,11 @@ async function confirmResetDay() {
 // TAB SWITCHING
 // ═══════════════════════════════════════════════════════════════════
 function switchTab(name) {
-  document
-    .querySelectorAll(".tab-view")
-    .forEach((v) => v.classList.remove("active"));
-  document
-    .querySelectorAll(".nav-tab")
-    .forEach((t) => t.classList.remove("active"));
+  document.querySelectorAll(".tab-view").forEach((v) => v.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
   document.getElementById("tab-" + name).classList.add("active");
   event.target.classList.add("active");
+  document.querySelector(".footer-settings-btn")?.classList.remove("active");
   if (name === "history") renderHistory();
   if (name === "coreitems") renderCoreItemsMgmt();
   if (name === "programs") programs.renderProgramsTab();
@@ -1856,6 +1907,107 @@ window.toggleExportDropdown = toggleExportDropdown;
 document.addEventListener("click", () => {
   document.querySelectorAll(".export-dropdown.open").forEach(el => el.classList.remove("open"));
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════════════════
+function openSettings() {
+  document.querySelectorAll(".tab-view").forEach((v) => v.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
+  document.getElementById("tab-settings").classList.add("active");
+  document.querySelector(".footer-settings-btn").classList.add("active");
+  document.getElementById("settings-cal-low").value = calRange.low;
+  document.getElementById("settings-cal-high").value = calRange.high;
+}
+window.openSettings = openSettings;
+
+function closeSettings() {
+  document.querySelectorAll(".tab-view").forEach((v) => v.classList.remove("active"));
+  document.getElementById("tab-today").classList.add("active");
+  document.querySelectorAll(".nav-tab")[0].classList.add("active");
+  document.querySelector(".footer-settings-btn").classList.remove("active");
+}
+window.closeSettings = closeSettings;
+
+async function saveCalRangeFromSettings() {
+  const low = parseInt(document.getElementById("settings-cal-low").value) || calRange.low;
+  const high = parseInt(document.getElementById("settings-cal-high").value) || calRange.high;
+  if (low >= high) return;
+  if (!await showConfirm(`Set calorie range to ${low.toLocaleString()} – ${high.toLocaleString()} kcal?`, 'Save')) return;
+  calRange = { low, high };
+  await db.dbPut("settings", { key: "calRange", low, high });
+  renderStats();
+}
+window.saveCalRangeFromSettings = saveCalRangeFromSettings;
+
+// ═══════════════════════════════════════════════════════════════════
+// FULL BACKUP EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════════════
+async function exportFullBackup() {
+  if (!await showConfirm("Export all data as a backup JSON file?", "Export")) return;
+
+  const timestamp = new Date().toLocaleDateString("en-CA");
+  const storeNames = ["days", "weeks", "coreitems", "settings", "programs", "exercises"];
+  const stores = {};
+
+  for (const name of storeNames) {
+    try {
+      stores[name] = await db.dbGetAll(name);
+    } catch (_) {
+      stores[name] = [];
+    }
+  }
+
+  const content = JSON.stringify({ version: 1, exportedAt: timestamp, stores });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content], { type: "application/json" }));
+  a.download = `foop-backup-${timestamp}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+window.exportFullBackup = exportFullBackup;
+
+async function handleImportFile(e) {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+
+  let backup;
+  try {
+    backup = JSON.parse(await file.text());
+  } catch (_) {
+    alert("Could not read file. Make sure it's a valid Foop backup (.json).");
+    return;
+  }
+
+  if (!backup.version || !backup.stores) {
+    alert("Invalid backup format. This doesn't look like a Foop backup file.");
+    return;
+  }
+
+  if (!await showConfirm(
+    "This will overwrite ALL existing data — foods, programs, exercises, history, and settings. This cannot be undone.",
+    "Restore"
+  )) return;
+
+  const storeNames = ["days", "weeks", "coreitems", "settings", "programs", "exercises"];
+  try {
+    for (const name of storeNames) {
+      await db.dbClear(name);
+      for (const record of (backup.stores[name] || [])) {
+        await db.dbPut(name, record);
+      }
+    }
+    localStorage.removeItem(db.LS_TODAY);
+    localStorage.removeItem(db.LS_WEEK);
+  } catch (err) {
+    alert("Import failed: " + err.message);
+    return;
+  }
+
+  location.reload();
+}
+window.handleImportFile = handleImportFile;
 
 // ═══════════════════════════════════════════════════════════════════
 // INIT

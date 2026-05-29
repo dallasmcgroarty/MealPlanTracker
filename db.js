@@ -73,6 +73,15 @@ export function dbGetAll(store) {
 	});
 }
 
+export function dbClear(store) {
+	return new Promise((resolve, reject) => {
+		const tx = db.transaction(store, "readwrite");
+		const req = tx.objectStore(store).clear();
+		req.onsuccess = () => resolve();
+		req.onerror = () => reject(req.error);
+	});
+}
+
 // LocalStorage helpers
 export const LS_TODAY = "mp_today_v3";
 export const LS_WEEK = "mp_weekstart_v3";

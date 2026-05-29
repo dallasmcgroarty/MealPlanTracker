@@ -23,7 +23,7 @@ body {
   color: var(--text);
   font-family: "Syne", sans-serif;
   min-height: 100vh;
-  padding: 28px 20px;
+  padding: 28px 20px 60px;
 }
 .page {
   max-width: 900px;
@@ -328,8 +328,8 @@ h1 {
   transform: translateX(50%);
 }
 .cal-scale {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 12px;
   font-family: "DM Mono", monospace;
   font-size: 9px;
   color: var(--muted);
@@ -947,7 +947,9 @@ input[readonly] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 20px;
 }
 .history-header h2 {
   font-size: 20px;
@@ -1166,12 +1168,16 @@ input[readonly] {
   font-size: 9px;
   font-family: "DM Mono", monospace;
 }
-.no-history {
+.no-history, .no-foods {
   text-align: center;
   padding: 60px 20px;
   color: var(--muted);
   font-family: "DM Mono", monospace;
   font-size: 13px;
+}
+
+.no-foods {
+  grid-column: 1 / -1
 }
 
 /* ── CONFIRM MODAL ── */
@@ -1927,4 +1933,78 @@ input[readonly] {
   .zone-label-low {
     display: none;
   }
+}
+
+/* APP FOOTER */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  height: 44px;
+  z-index: 100;
+}
+.footer-settings-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: "Syne", sans-serif;
+  font-size: 24px;
+  line-height: 23px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.footer-settings-btn:hover {
+  color: var(--text);
+  background: var(--surface2);
+}
+.footer-settings-btn.active {
+  color: var(--accent);
+}
+
+.partial-week-badge {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: "DM Mono", monospace;
+  margin-left: 4px;
+}
+
+/* SETTINGS PAGE */
+.settings-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.settings-section-title {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.settings-section-body {
+  padding: 14px 16px;
+}
+.settings-desc {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 12px;
 }

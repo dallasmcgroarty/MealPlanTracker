@@ -43,7 +43,7 @@
       <div class="tab-view" id="tab-coreitems">
         <header>
           <div class="header-left">
-            <h1>Manage Saved Foods</h1>
+            <h1>Foods</h1>
             <p class="subtitle">
               View, edit, hide/show, delete, or add foods
             </p>
@@ -172,10 +172,7 @@
                   <span class="zone-label-high">1,750</span>
                 </div>
               </div>
-              <div class="cal-scale">
-                <span>0</span><span>500</span><span>1,000</span
-                ><span>1,500</span><span>2,000</span>
-              </div>
+              <div class="cal-scale" id="cal-scale"></div>
             </div>
             <div>
               <div class="section-title">Macro Split (logged)</div>
@@ -486,7 +483,60 @@
 
       <!-- ══════════════ PROGRAMS TAB ══════════════ -->
       <div class="tab-view" id="tab-programs"></div>
+
+      <!-- ══════════════ SETTINGS TAB ══════════════ -->
+      <div class="tab-view" id="tab-settings">
+        <header>
+          <div class="header-left">
+            <h1>Settings</h1>
+            <p class="subtitle">Preferences · Backup &amp; restore</p>
+          </div>
+          <button class="ghost-btn" style="font-size:11px;padding:6px 12px;" onclick="window.closeSettings()">← Back</button>
+        </header>
+
+        <!-- Calorie Range -->
+        <div class="settings-section">
+          <div class="settings-section-title">Calorie Target Range</div>
+          <div class="settings-section-body">
+            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+              <div class="field-group" style="flex:1;min-width:80px;">
+                <span class="field-label">Floor (kcal)</span>
+                <input id="settings-cal-low" type="number" min="0" step="50" />
+              </div>
+              <div class="field-group" style="flex:1;min-width:80px;">
+                <span class="field-label">Ceiling (kcal)</span>
+                <input id="settings-cal-high" type="number" min="0" step="50" />
+              </div>
+              <button class="add-btn" style="padding:6px 14px;font-size:12px;" onclick="window.saveCalRangeFromSettings()">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup -->
+        <div class="settings-section">
+          <div class="settings-section-title">Data Backup</div>
+          <div class="settings-section-body">
+            <p class="settings-desc">Export all your data — foods, programs, exercises, history, and settings — as a single JSON file. Use this to transfer everything to a new device.</p>
+            <button class="ghost-btn" onclick="window.exportFullBackup()">↓ Export Full Backup (JSON)</button>
+          </div>
+        </div>
+
+        <!-- Restore -->
+        <div class="settings-section">
+          <div class="settings-section-title">Data Restore</div>
+          <div class="settings-section-body">
+            <p class="settings-desc">Import a Foop backup file to restore your data. <strong style="color:var(--warn);">This will overwrite all existing data and cannot be undone.</strong></p>
+            <input type="file" id="settings-import-file" accept=".json" style="display:none" onchange="window.handleImportFile(event)" />
+            <button class="ghost-btn" onclick="document.getElementById('settings-import-file').click()">↑ Import Backup (JSON)</button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <footer class="app-footer">
+      <button class="footer-settings-btn" onclick="window.openSettings()" title="open settings page">⚙</button>
+    </footer>
+
     <!-- ECharts CDN -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     <!-- Barcode scanner -->
