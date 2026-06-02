@@ -1422,7 +1422,7 @@ async function renderHistory() {
       block.innerHTML = `
         <div class="week-header" onclick="toggleWeek(this)">
         <div class="week-header-left">
-            <div class="week-label">${formatDateShort(wk.weekStart)} – ${formatDateShort(weekEnd)} ${isPartial ? `<span class="partial-week-badge">↑ from ${prevMonthLabel}</span>` : ""}${isCurrentWeek ? "<span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono', sans-serif;\">current</span>" : ""}</div>
+            <div class="week-label">${formatDateShort(wk.weekStart)} – ${formatDateShort(weekEnd)} ${isPartial ? `<span class="partial-week-badge">↑ from ${prevMonthLabel}</span>` : ""}${isCurrentWeek ? "<div style=\"font-size:10px;\"><span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono', sans-serif;\">current</span></div>" : ""}</div>
             <div class="week-days-logged">${dayDates.length} day(s) logged${isPartial ? " this month" : ""}</div>
         </div>
         <div class="week-header-right">
