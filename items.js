@@ -32,17 +32,23 @@ export async function deleteCoreItemFromDB(id) {
   await dbDelete("coreitems", id);
 }
 
+function _isoDate(d) {
+  const mo = String(d.getMonth() + 1).padStart(2, '0');
+  const da = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mo}-${da}`;
+}
+
 // Utility: get today's date string
 export function todayStr() {
-	return new Date().toLocaleDateString("en-CA");
+  return _isoDate(new Date());
 }
 
 // Utility: get week start for a date string
 export function weekStartFor(dateStr) {
-	const d = new Date(dateStr + "T00:00:00");
-	const day = d.getDay();
-	d.setDate(d.getDate() - day);
-	return d.toLocaleDateString("en-CA");
+  const d = new Date(dateStr + "T00:00:00");
+  const day = d.getDay();
+  d.setDate(d.getDate() - day);
+  return _isoDate(d);
 }
 
 // Compute totals for today

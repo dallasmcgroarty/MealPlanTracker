@@ -4,6 +4,17 @@ import * as programs from "./programs.js";
 
 let calRange = { low: 1250, high: 1750 };
 
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function isoDate(d) {
+  const mo = String(d.getMonth() + 1).padStart(2, '0');
+  const da = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mo}-${da}`;
+}
+
 function showConfirm(message, okLabel = 'Confirm') {
   return new Promise(resolve => {
     const modal = document.getElementById("confirm-modal");
@@ -140,7 +151,7 @@ function renderCoreItemsMgmt() {
     card.className = "mgmt-card" + (item.inactive ? " done" : "");
     card.innerHTML = `
       <div class="mgmt-card-top">
-        <div class="mgmt-card-name">${item.name}${item.inactive ? ' <span class="mgmt-card-status">inactive</span>' : ''}</div>
+        <div class="mgmt-card-name">${esc(item.name)}${item.inactive ? ' <span class="mgmt-card-status">inactive</span>' : ''}</div>
         <button class="mgmt-edit-btn" onclick="window.editCoreItem(${idx})">Edit</button>
       </div>
       <div class="mgmt-card-actions">
@@ -318,6 +329,13 @@ function showScannerError(message) {
       </div>
     </div>
   `;
+}
+
+let _dbErrorShown = false;
+function showDbError() {
+  if (_dbErrorShown) return;
+  _dbErrorShown = true;
+  showScannerAlert('Storage Error', 'Your data could not be saved. Device storage may be full or browser storage is restricted. Export a backup from Settings to avoid losing data.');
 }
 
 function openScannerModal() {
@@ -518,13 +536,13 @@ function fillCoreItemForm(idx) {
     if (!updatedName) return;
     if (!await showConfirm(`Save changes to "${updatedName}"?`, 'Save')) return;
     item.name = updatedName;
-    item.cal = parseFloat(document.getElementById("ci-cal").value) || 0;
-    item.p = parseFloat(document.getElementById("ci-p").value) || 0;
-    item.c = parseFloat(document.getElementById("ci-c").value) || 0;
-    item.f = parseFloat(document.getElementById("ci-f").value) || 0;
-    item.costPerServing = parseFloat(document.getElementById("ci-cost").value) || 0;
+    item.cal = Math.max(0, parseFloat(document.getElementById("ci-cal").value) || 0);
+    item.p = Math.max(0, parseFloat(document.getElementById("ci-p").value) || 0);
+    item.c = Math.max(0, parseFloat(document.getElementById("ci-c").value) || 0);
+    item.f = Math.max(0, parseFloat(document.getElementById("ci-f").value) || 0);
+    item.costPerServing = Math.max(0, parseFloat(document.getElementById("ci-cost").value) || 0);
     const targetRaw = document.getElementById("ci-target").value;
-    item.target = targetRaw === "" ? 1 : (parseFloat(targetRaw) || 0);
+    item.target = Math.max(0, targetRaw === "" ? 1 : (parseFloat(targetRaw) || 0));
     const freqDetails = document.getElementById("ci-freq").value.trim();
     item.freq = `${item.target} srv/day${freqDetails ? ' · ' + freqDetails : ''}`;
     await items.saveCoreItem(item);
@@ -563,13 +581,13 @@ window.renderCoreItemsMgmt = renderCoreItemsMgmt;
 async function handleAddCoreItem(e) {
   if (e) e.preventDefault();
   const name = document.getElementById("ci-name").value.trim();
-  const cal = parseFloat(document.getElementById("ci-cal").value) || 0;
-  const p = parseFloat(document.getElementById("ci-p").value) || 0;
-  const c = parseFloat(document.getElementById("ci-c").value) || 0;
-  const f = parseFloat(document.getElementById("ci-f").value) || 0;
-  const cost = parseFloat(document.getElementById("ci-cost").value) || 0;
+  const cal = Math.max(0, parseFloat(document.getElementById("ci-cal").value) || 0);
+  const p = Math.max(0, parseFloat(document.getElementById("ci-p").value) || 0);
+  const c = Math.max(0, parseFloat(document.getElementById("ci-c").value) || 0);
+  const f = Math.max(0, parseFloat(document.getElementById("ci-f").value) || 0);
+  const cost = Math.max(0, parseFloat(document.getElementById("ci-cost").value) || 0);
   const targetRaw = document.getElementById("ci-target").value;
-  const target = targetRaw === "" ? 1 : (parseFloat(targetRaw) || 0);
+  const target = Math.max(0, targetRaw === "" ? 1 : (parseFloat(targetRaw) || 0));
   if (!name) return;
   const freqDetails = document.getElementById("ci-freq").value.trim();
   const freq = `${target} srv/day${freqDetails ? ' · ' + freqDetails : ''}`;
@@ -668,7 +686,7 @@ async function persistState() {
   try {
     await db.dbPut("days", snapshot);
   } catch (e) {
-    console.warn("IDB write failed", e);
+    showDbError();
   }
   await updateWeekRecord();
 }
@@ -690,7 +708,7 @@ async function updateWeekRecord() {
       try {
         await db.dbPut("weeks", week);
       } catch (e) {
-        console.warn("IDB week write failed", e);
+        showDbError();
       }
     }
     return;
@@ -760,8 +778,8 @@ function renderCoreItems() {
     <button class="srv-btn" onclick="window.adjustServing('${item.id}',-1)">−</button>
     </div>
     <div class="item-info">
-    <div class="item-name">${item.name}</div>
-    <div class="item-serving-lbl">${item.freq} · $${item.costPerServing.toFixed(2)}/serving</div>
+    <div class="item-name">${esc(item.name)}</div>
+    <div class="item-serving-lbl">${esc(item.freq)} · $${item.costPerServing.toFixed(2)}/serving</div>
     <div class="item-macros">
         <span class="im im-cal">${item.cal * srv} kcal</span>
         <span class="im im-p">P: ${(item.p * srv).toFixed(0)}g</span>
@@ -799,7 +817,7 @@ function renderCustomItems() {
     </div>
     </div>
     <div class="item-info">
-    <div class="item-name">${item.name}</div>
+    <div class="item-name">${esc(item.name)}</div>
     <div class="item-serving-lbl">custom · ${srvLabel} · $${parseFloat(item.costPerSrv || 0).toFixed(2)}/srv</div>
     <div class="item-macros">
         <span class="im im-cal">${item.cal} kcal</span>
@@ -921,7 +939,7 @@ async function renderWeeklyCost() {
     targetTotal += weeklyAmt;
     const row = document.createElement("div");
     row.className = "cost-row";
-    row.innerHTML = `<span>${item.name.split(" ").slice(0, 3).join(" ")}</span><span class="amt target-amt">$${weeklyAmt.toFixed(2)}</span>`;
+    row.innerHTML = `<span>${esc(item.name.split(" ").slice(0, 3).join(" "))}</span><span class="amt target-amt">$${weeklyAmt.toFixed(2)}</span>`;
     targetRows.appendChild(row);
   });
   document.getElementById("weekly-target-total").textContent =
@@ -1283,14 +1301,19 @@ async function renderHistory() {
     const weekEndDate = new Date(week.weekStart + "T00:00:00");
     weekEndDate.setDate(weekEndDate.getDate() + 6);
     const startMonth = week.weekStart.slice(0, 7);
-    const endMonth = weekEndDate.toLocaleDateString("en-CA").slice(0, 7);
+    const endMonth = isoDate(weekEndDate).slice(0, 7);
+    const crossMonth = endMonth !== startMonth;
 
     if (!monthMap[startMonth]) monthMap[startMonth] = [];
-    monthMap[startMonth].push({ week, displayMonth: startMonth, isPartial: false });
+    const endMonthShort = crossMonth
+      ? new Date(endMonth + '-01T00:00:00').toLocaleString("en-US", { month: "short" })
+      : null;
+    monthMap[startMonth].push({ week, displayMonth: startMonth, isPartial: crossMonth, badge: crossMonth ? `↓ into ${endMonthShort}` : null });
 
-    if (endMonth !== startMonth) {
+    if (crossMonth) {
+      const startMonthShort = new Date(week.weekStart + "T00:00:00").toLocaleString("en-US", { month: "short" });
       if (!monthMap[endMonth]) monthMap[endMonth] = [];
-      monthMap[endMonth].push({ week, displayMonth: endMonth, isPartial: true });
+      monthMap[endMonth].push({ week, displayMonth: endMonth, isPartial: true, badge: `↑ from ${startMonthShort}` });
     }
   });
 
@@ -1397,7 +1420,7 @@ async function renderHistory() {
     // Render weeks inside month
     const weeksContainer = monthBlock.querySelector('.month-weeks');
     monthWeeks.sort((a, b) => b.week.weekStart.localeCompare(a.week.weekStart));
-    monthWeeks.forEach(({ week: wk, displayMonth, isPartial }) => {
+    monthWeeks.forEach(({ week: wk, displayMonth, isPartial, badge }) => {
       const days = wk.days || {};
       // For partial (bleed-month) entries, only show days that fall in this calendar month
       const dayDates = Object.keys(days)
@@ -1411,18 +1434,15 @@ async function renderHistory() {
       const weekEnd = (() => {
         const d = new Date(wk.weekStart + "T00:00:00");
         d.setDate(d.getDate() + 6);
-        return d.toLocaleDateString("en-CA");
+        return isoDate(d);
       })();
-      const prevMonthLabel = isPartial
-        ? new Date(wk.weekStart + "T00:00:00").toLocaleString("en-US", { month: "short" })
-        : null;
       const block = document.createElement("div");
       block.className = "week-block";
       const isCurrentWeek = wk.weekStart === items.weekStartFor(items.todayStr());
       block.innerHTML = `
         <div class="week-header" onclick="toggleWeek(this)">
         <div class="week-header-left">
-            <div class="week-label">${formatDateShort(wk.weekStart)} – ${formatDateShort(weekEnd)} ${isPartial ? `<span class="partial-week-badge">↑ from ${prevMonthLabel}</span>` : ""}${isCurrentWeek ? "<div style=\"font-size:10px;\"><span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono', sans-serif;\">current</span></div>" : ""}</div>
+            <div class="week-label">${formatDateShort(wk.weekStart)} – ${formatDateShort(weekEnd)} ${badge ? `<span class="partial-week-badge">${badge}</span>` : ""}${isCurrentWeek ? "<div style=\"font-size:10px;\"><span style=\"color:var(--accent);font-size:10px;font-family:'DM Mono', sans-serif;\">current</span></div>" : ""}</div>
             <div class="week-days-logged">${dayDates.length} day(s) logged${isPartial ? " this month" : ""}</div>
         </div>
         <div class="week-header-right">
@@ -1568,19 +1588,15 @@ async function handleAddCustomItem() {
     document.getElementById("cf-name").focus();
     return;
   }
-  const servingsEaten =
-    parseFloat(document.getElementById("cf-servings-eaten").value) || 1;
-  const costPerSrv =
-    parseFloat(document.getElementById("cf-cost-per-srv").value) || 0;
-  const bulkPrice =
-    parseFloat(document.getElementById("cf-bulk-price").value) || 0;
-  const bulkServings =
-    parseFloat(document.getElementById("cf-bulk-servings").value) || 0;
+  const servingsEaten = Math.max(1, parseFloat(document.getElementById("cf-servings-eaten").value) || 1);
+  const costPerSrv = Math.max(0, parseFloat(document.getElementById("cf-cost-per-srv").value) || 0);
+  const bulkPrice = Math.max(0, parseFloat(document.getElementById("cf-bulk-price").value) || 0);
+  const bulkServings = Math.max(0, parseFloat(document.getElementById("cf-bulk-servings").value) || 0);
   const todayCost = costPerSrv * servingsEaten;
-  const calPerSrv = parseFloat(document.getElementById("cf-cal").value) || 0;
-  const pPerSrv = parseFloat(document.getElementById("cf-p").value) || 0;
-  const cPerSrv = parseFloat(document.getElementById("cf-c").value) || 0;
-  const fPerSrv = parseFloat(document.getElementById("cf-f").value) || 0;
+  const calPerSrv = Math.max(0, parseFloat(document.getElementById("cf-cal").value) || 0);
+  const pPerSrv = Math.max(0, parseFloat(document.getElementById("cf-p").value) || 0);
+  const cPerSrv = Math.max(0, parseFloat(document.getElementById("cf-c").value) || 0);
+  const fPerSrv = Math.max(0, parseFloat(document.getElementById("cf-f").value) || 0);
   if (!await showConfirm(`Add "${name}" to today's log?`, 'Add')) return;
   items.addCustomItem({
     name,
@@ -1706,12 +1722,12 @@ window.saveCustomItemEdit = async (idx) => {
   const name = document.getElementById('cfe-name').value.trim();
   if (!name) { document.getElementById('cfe-name').focus(); return; }
   if (!await showConfirm(`Save changes to "${name}"?`, 'Save')) return;
-  const servingsEaten = parseFloat(document.getElementById('cfe-servings-eaten').value) || 1;
-  const calPerSrv = parseFloat(document.getElementById('cfe-cal').value) || 0;
-  const pPerSrv = parseFloat(document.getElementById('cfe-p').value) || 0;
-  const cPerSrv = parseFloat(document.getElementById('cfe-c').value) || 0;
-  const fPerSrv = parseFloat(document.getElementById('cfe-f').value) || 0;
-  const costPerSrv = parseFloat(document.getElementById('cfe-cost-per-srv').value) || 0;
+  const servingsEaten = Math.max(1, parseFloat(document.getElementById('cfe-servings-eaten').value) || 1);
+  const calPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-cal').value) || 0);
+  const pPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-p').value) || 0);
+  const cPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-c').value) || 0);
+  const fPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-f').value) || 0);
+  const costPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-cost-per-srv').value) || 0);
   const bulkPrice = parseFloat(document.getElementById('cfe-bulk-price').value) || null;
   const bulkServings = parseFloat(document.getElementById('cfe-bulk-servings').value) || null;
   const item = items.customItems[idx];
@@ -1869,7 +1885,7 @@ async function exportHistory(format) {
   }
   allDays.sort((a, b) => a.date.localeCompare(b.date));
 
-  const timestamp = new Date().toLocaleDateString("en-CA");
+  const timestamp = isoDate(new Date());
   let content, mime, filename;
 
   if (format === "json") {
@@ -1946,7 +1962,7 @@ window.saveCalRangeFromSettings = saveCalRangeFromSettings;
 async function exportFullBackup() {
   if (!await showConfirm("Export all data as a backup JSON file?", "Export")) return;
 
-  const timestamp = new Date().toLocaleDateString("en-CA");
+  const timestamp = isoDate(new Date());
   const storeNames = ["days", "weeks", "coreitems", "settings", "programs", "exercises"];
   const stores = {};
 
@@ -2016,7 +2032,7 @@ async function cleanupOldRecords() {
   // Retain up to 9 months of data (was 6). This is backwards compatible and will not wipe existing history.
   const cutoff = new Date();
   cutoff.setMonth(cutoff.getMonth() - 9);
-  const cutoffStr = cutoff.toLocaleDateString("en-CA");
+  const cutoffStr = isoDate(cutoff);
 
   try {
     const allDays = await db.dbGetAll("days");
