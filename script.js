@@ -1,12 +1,218 @@
 import * as db from "./db.js";
 import * as items from "./items.js";
 import * as programs from "./programs.js";
+import * as weight from "./weight.js";
 
 let calRange = { low: 1250, high: 1750 };
+let calChartMode = "daily"; // 'daily' | 'weekly' — History tab's Calories per Day chart
+let costChartMode = "weekly"; // 'weekly' | 'monthly' — History tab's Weekly Cost chart
+let _historyWeeksCache = null; // last-fetched "weeks" data, reused so the daily/weekly toggle can redraw without a full re-render (avoids scroll jump)
+
+function fmtChartDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  const mo  = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const yr  = String(d.getFullYear()).slice(2);
+  return `${mo}/${day}/${yr}`;
+}
+
+// Extracts the calorie-chart-specific arrays out of "weeks" data (shared by the full history render and the lightweight toggle redraw)
+function computeCalorieChartData(weeks) {
+  let allDays = [];
+  weeks.forEach(week => {
+    const days = week.days || {};
+    Object.keys(days).forEach(date => {
+      const d = days[date];
+      if (d.cal > 0 || d.cost > 0) allDays.push({ date, ...d });
+    });
+  });
+  allDays.sort((a, b) => a.date.localeCompare(b.date));
+  const calLabels = allDays.map(d => d.date);
+  const calData = allDays.map(d => d.cal);
+
+  const sortedWeeks = [...weeks].sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  let calWeekLabels = [], calWeekAvgData = [];
+  sortedWeeks.forEach(w => {
+    const days = w.days || {};
+    const calVals = Object.values(days).map(d => d.cal || 0).filter(c => c > 0);
+    if (!calVals.length) return;
+    calWeekLabels.push(w.weekStart);
+    calWeekAvgData.push(Math.round(calVals.reduce((s, c) => s + c, 0) / calVals.length));
+  });
+
+  return { calLabels, calData, calWeekLabels, calWeekAvgData };
+}
+
+// Redraws the calories chart in place via setOption — no dispose/init, no container wipe, so scroll position is preserved
+function applyCaloriesChartOption({ calLabels, calData, calWeekLabels, calWeekAvgData }) {
+  if (!window._echartCalories) return;
+  const isCalWeekly = calChartMode === 'weekly';
+  const calChartLabels = isCalWeekly ? calWeekLabels : calLabels;
+  const calChartData = isCalWeekly ? calWeekAvgData : calData;
+  const calChartTargetLow = calChartLabels.map(() => calRange.low);
+  const calChartTargetHigh = calChartLabels.map(() => calRange.high);
+  const calSeriesName = isCalWeekly ? 'Avg Calories' : 'Calories';
+  window._echartCalories.setOption({
+    tooltip: {
+      trigger: 'axis',
+      formatter: params => {
+        const p = params[0];
+        const label = isCalWeekly ? `Week of ${fmtChartDate(p.axisValue)}` : fmtChartDate(p.axisValue);
+        return `${label}<br/>${calSeriesName}: ${p.value || 0} kcal`;
+      }
+    },
+    grid: { left: 40, right: 20, top: 20, bottom: 55 },
+    xAxis: {
+      type: 'category',
+      data: calChartLabels,
+      axisLabel: {
+        show: true,
+        interval: 'auto',
+        rotate: 35,
+        fontSize: 10,
+        color: '#7a7f96',
+        formatter: fmtChartDate,
+      },
+      axisTick: { alignWithLabel: true },
+    },
+    yAxis: {
+      type: 'value',
+      min: 0,
+      max: calChartData.length ? Math.ceil(Math.max(...calChartData, calRange.high) * 1.15 / 250) * 250 : 2000,
+      splitLine: { show: false }
+    },
+    series: [
+      {
+        name: calSeriesName,
+        type: 'line',
+        data: calChartData,
+        smooth: true,
+        symbolSize: 6,
+        lineStyle: { color: '#60c8f0', width: 3 },
+        areaStyle: { color: 'rgba(96,200,240,0.12)' },
+      },
+      {
+        name: `Target Low (${calRange.low})`,
+        type: 'line',
+        data: calChartTargetLow,
+        smooth: true,
+        symbol: 'none',
+        tooltip: { show: false },
+        lineStyle: { color: '#60f0a0', type: 'dashed', width: 2 },
+      },
+      {
+        name: `Target High (${calRange.high})`,
+        type: 'line',
+        data: calChartTargetHigh,
+        smooth: true,
+        symbol: 'none',
+        tooltip: { show: false },
+        lineStyle: { color: '#f0a060', type: 'dashed', width: 2 },
+      },
+    ],
+    legend: { show: false },
+  });
+}
+
+function fmtMonthLabel(monthStr) { // "YYYY-MM"
+  const [y, m] = monthStr.split('-').map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+}
+
+// Extracts the cost-chart-specific arrays out of "weeks" data (shared by the full history render and the lightweight toggle redraw)
+function computeCostChartData(weeks) {
+  const sortedWeeks = [...weeks].sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  const weekLabels = sortedWeeks.map(w => w.weekStart);
+  const weekCostData = sortedWeeks.map(w => {
+    const days = w.days || {};
+    return Object.values(days).reduce((s, d) => s + (d.cost || 0), 0);
+  });
+
+  const monthTotals = {}; // "YYYY-MM" -> cost
+  weeks.forEach(w => {
+    const days = w.days || {};
+    Object.keys(days).forEach(date => {
+      const cost = days[date].cost || 0;
+      if (!cost) return;
+      const month = date.slice(0, 7);
+      monthTotals[month] = (monthTotals[month] || 0) + cost;
+    });
+  });
+  const monthLabels = Object.keys(monthTotals).sort();
+  const monthCostData = monthLabels.map(m => Math.round(monthTotals[m] * 100) / 100);
+
+  return { weekLabels, weekCostData, monthLabels, monthCostData };
+}
+
+// Redraws the weekly cost chart in place via setOption — no dispose/init, no container wipe, so scroll position is preserved
+function applyWeeklyCostChartOption({ weekLabels, weekCostData, monthLabels, monthCostData }) {
+  if (!window._echartWeeklyCost) return;
+  const isMonthly = costChartMode === 'monthly';
+  const costChartLabels = isMonthly ? monthLabels : weekLabels;
+  const costChartData = isMonthly ? monthCostData : weekCostData;
+  const costLabelFmt = isMonthly ? fmtMonthLabel : fmtChartDate;
+  window._echartWeeklyCost.setOption({
+    tooltip: {
+      trigger: 'axis',
+      formatter: params => {
+        const p = params[0];
+        if (isMonthly) {
+          return `${fmtMonthLabel(p.axisValue)}<br/>Cost: $${(p.value || 0).toFixed(2)}`;
+        }
+        const start = new Date(p.axisValue + 'T00:00:00');
+        const end = new Date(p.axisValue + 'T00:00:00');
+        end.setDate(end.getDate() + 6);
+        const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return `${fmt(start)} – ${fmt(end)}<br/>Cost: $${(p.value || 0).toFixed(2)}`;
+      }
+    },
+    grid: { left: 40, right: 20, top: 20, bottom: 55 },
+    xAxis: {
+      type: 'category',
+      data: costChartLabels,
+      axisLabel: {
+        show: true,
+        interval: 'auto',
+        rotate: 35,
+        fontSize: 10,
+        color: '#7a7f96',
+        formatter: costLabelFmt,
+      },
+      axisTick: { alignWithLabel: true },
+    },
+    yAxis: {
+      type: 'value',
+      min: 0,
+      splitLine: { show: false }
+    },
+    series: [
+      {
+        name: 'Cost',
+        type: 'bar',
+        data: costChartData,
+        itemStyle: {
+          color: '#FF6B6B',
+          borderRadius: [6, 6, 0, 0],
+        },
+        emphasis: {
+          itemStyle: {
+            color: '#c8f060'
+          }
+        },
+        barWidth: '98%',
+      },
+    ],
+    legend: { show: false },
+  });
+}
 
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function fmtServing(n) {
+  return Number.isInteger(n) ? String(n) : n.toFixed(1);
 }
 
 function isoDate(d) {
@@ -51,6 +257,8 @@ window.updateFreqPreview = updateFreqPreview;
 // CORE ITEMS MANAGEMENT TAB
 // ═══════════════════════════════════════════════════════════════════
 let editingCoreItemIdx = null;
+// Global UI toggle: when true, every food's +/- buttons step by 0.5 instead of 1. Session-only, not persisted.
+let halfStepMode = false;
 
 function ensureFoodModal() {
   if (!document.getElementById('food-form-modal')) {
@@ -112,7 +320,7 @@ function openFoodModal(isEdit) {
           </div>
           <div class="field-group">
             <span class="field-label">Target/Day</span>
-            <input type="number" id="ci-target" placeholder="2" min="1" oninput="window.updateFreqPreview()" />
+            <input type="number" id="ci-target" placeholder="2" min="0.5" step="0.5" oninput="window.updateFreqPreview()" />
           </div>
           <div class="field-group">
             <span class="field-label">Freq Details</span>
@@ -427,8 +635,12 @@ async function handleBarcodeDetected(barcode) {
       } else {
         fillCustomFoodFormFromScan(foodData);
       }
-    } catch (_) {
-      showScannerAlert('No Data Found', 'No nutrition info available for this product.');
+    } catch (err) {
+      if (err && err.isRateLimit) {
+        showScannerAlert('Slow Down', err.message);
+      } else {
+        showScannerAlert('No Data Found', 'No nutrition info available for this product.');
+      }
     }
     return;
   }
@@ -445,10 +657,72 @@ async function handleBarcodeDetected(barcode) {
     } else {
       fillFoodFormFromScan(foodData);
     }
-  } catch (_) {}
+  } catch (err) {
+    if (err && err.isRateLimit) showScannerAlert('Slow Down', err.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// BARCODE LOOKUP RATE LIMITING
+// OpenFoodFacts caps requests at 10/min/user. If 8 requests land within any
+// rolling 60s window, we lock out scanning for 5 minutes before granting
+// another batch of 8. Requests spread out slower than that never trigger it.
+// Persisted to localStorage so a page refresh can't be used to dodge the lockout.
+// ═══════════════════════════════════════════════════════════════════
+const BARCODE_RATE_LIMIT = 8;
+const BARCODE_RATE_WINDOW_MS = 60 * 1000;
+const BARCODE_LOCKOUT_MS = 5 * 60 * 1000;
+const BARCODE_RATE_LS_KEY = 'mp_barcode_ratelimit_v1';
+
+let _barcodeRequestTimes = [];
+let _barcodeLockoutUntil = 0;
+
+(function loadBarcodeRateLimitState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(BARCODE_RATE_LS_KEY));
+    if (saved) {
+      _barcodeRequestTimes = Array.isArray(saved.requestTimes) ? saved.requestTimes : [];
+      _barcodeLockoutUntil = saved.lockoutUntil || 0;
+    }
+  } catch (e) {}
+})();
+
+function saveBarcodeRateLimitState() {
+  try {
+    localStorage.setItem(BARCODE_RATE_LS_KEY, JSON.stringify({
+      requestTimes: _barcodeRequestTimes,
+      lockoutUntil: _barcodeLockoutUntil,
+    }));
+  } catch (e) {}
+}
+
+function barcodeRateLimitWaitMs() {
+  const now = Date.now();
+  if (_barcodeLockoutUntil && now >= _barcodeLockoutUntil) {
+    // Lockout has expired — reset for a fresh batch of requests.
+    _barcodeLockoutUntil = 0;
+    _barcodeRequestTimes = [];
+    saveBarcodeRateLimitState();
+  }
+  if (_barcodeLockoutUntil) return _barcodeLockoutUntil - now;
+  return 0;
 }
 
 async function lookupBarcodeOpenFoodFacts(barcode) {
+  const waitMs = barcodeRateLimitWaitMs();
+  if (waitMs > 0) {
+    const waitMin = Math.ceil(waitMs / 60000);
+    const err = new Error(`You must wait about ${waitMin} minute${waitMin === 1 ? '' : 's'} before scanning again.`);
+    err.isRateLimit = true;
+    throw err;
+  }
+  const now = Date.now();
+  _barcodeRequestTimes.push(now);
+  _barcodeRequestTimes = _barcodeRequestTimes.filter((t) => now - t < BARCODE_RATE_WINDOW_MS);
+  if (_barcodeRequestTimes.length >= BARCODE_RATE_LIMIT) {
+    _barcodeLockoutUntil = now + BARCODE_LOCKOUT_MS;
+  }
+  saveBarcodeRateLimitState();
   const resp = await fetch(
     `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_en,serving_size,nutriments`
   );
@@ -682,6 +956,8 @@ async function persistState() {
     c: tot.c,
     f: tot.f,
     cost: tot.cost,
+    calLow: calRange.low,
+    calHigh: calRange.high,
   };
   try {
     await db.dbPut("days", snapshot);
@@ -721,6 +997,8 @@ async function updateWeekRecord() {
     c: tot.c,
     f: tot.f,
     cost: tot.cost,
+    calLow: calRange.low,
+    calHigh: calRange.high,
   };
   try {
     await db.dbPut("weeks", week);
@@ -757,6 +1035,7 @@ function renderCoreItems() {
       "<div style=\"font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;\">No saved foods available.</div>";
     return;
   }
+  const step = halfStepMode ? 0.5 : 1;
   items.CORE_ITEMS.forEach((item) => {
     if (item.inactive) return;
     const srv = items.servings[item.id] || 0;
@@ -770,12 +1049,12 @@ function renderCoreItems() {
       "item-card" + (met ? " done" : "");
     card.innerHTML = `
     <div class="serving-ctrl">
-    <button class="srv-btn" onclick="window.adjustServing('${item.id}',1)">+</button>
+    <button class="srv-btn" onclick="window.adjustServing('${item.id}',${step})">+</button>
     <div class="srv-count">
-        <div class="current ${countClass}">${srv}</div>
-        <div class="target">/ ${item.target}</div>
+        <div class="current ${countClass}">${fmtServing(srv)}</div>
+        <div class="target">/ ${fmtServing(item.target)}</div>
     </div>
-    <button class="srv-btn" onclick="window.adjustServing('${item.id}',-1)">−</button>
+    <button class="srv-btn" onclick="window.adjustServing('${item.id}',${-step})">−</button>
     </div>
     <div class="item-info">
     <div class="item-name">${esc(item.name)}</div>
@@ -1043,40 +1322,24 @@ async function renderHistory() {
   }
 
   // ====== CHART DATA EXTRACTION ======
-  // Calories per day
-  let calLabels = [], calData = [], calTargetLow = [], calTargetHigh = [];
-  // Weekly cost
-  let weekLabels = [], weekCostData = [];
   // Macro split
   let macroTotals = { p: 0, c: 0, f: 0 };
 
-  // Collect all days (flat)
-  let allDays = [];
   weeks.forEach(week => {
     const days = week.days || {};
-    Object.keys(days).forEach(date => {
-      const d = days[date];
+    Object.values(days).forEach(d => {
       if (d.cal > 0 || d.cost > 0) {
-        allDays.push({ date, ...d });
         macroTotals.p += d.p || 0;
         macroTotals.c += d.c || 0;
         macroTotals.f += d.f || 0;
       }
     });
   });
-  allDays.sort((a, b) => a.date.localeCompare(b.date));
-  calLabels = allDays.map(d => d.date);
-  calData = allDays.map(d => d.cal);
-  calTargetLow = allDays.map(() => calRange.low);
-  calTargetHigh = allDays.map(() => calRange.high);
 
-  // Weekly cost
-  weeks.sort((a, b) => a.weekStart.localeCompare(b.weekStart));
-  weekLabels = weeks.map(w => w.weekStart);
-  weekCostData = weeks.map(w => {
-    const days = w.days || {};
-    return Object.values(days).reduce((s, d) => s + (d.cost || 0), 0);
-  });
+  // Cache "weeks" so the chart toggles can redraw in place later without a full re-render
+  _historyWeeksCache = weeks;
+  const calorieChartData = computeCalorieChartData(weeks);
+  const costChartData = computeCostChartData(weeks);
 
   // ====== RENDER CHARTS WITH ECHARTS ======
   if (chartBlock) {
@@ -1098,137 +1361,16 @@ async function renderHistory() {
       return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
 
-    // Calories per day line chart
+    // Calories per day line chart (daily or weekly-average, per calChartMode)
     const caloriesDom = document.getElementById("chart-calories");
     window._echartCalories = echarts.init(caloriesDom);
-    const fmtCalDate = iso => {
-      const d = new Date(iso + 'T00:00:00');
-      const mo  = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      const yr  = String(d.getFullYear()).slice(2);
-      return `${mo}/${day}/${yr}`;
-    };
-    window._echartCalories.setOption({
-      tooltip: { 
-        trigger: 'axis',
-        formatter: params => {
-          const p = params[0];
-          return `${fmtCalDate(p.axisValue)}<br/>Calories: ${p.value || 0} kcal`;
-        }
-      },
-      grid: { left: 40, right: 20, top: 20, bottom: 55 },
-      xAxis: {
-        type: 'category',
-        data: calLabels,
-        axisLabel: {
-          show: true,
-          interval: 'auto',
-          rotate: 35,
-          fontSize: 10,
-          color: '#7a7f96',
-          formatter: fmtCalDate,
-        },
-        axisTick: { alignWithLabel: true },
-      },
-      yAxis: {
-        type: 'value',
-        min: 0,
-        max: calData.length ? Math.ceil(Math.max(...calData, calRange.high) * 1.15 / 250) * 250 : 2000,
-        splitLine: { show: false }
-      },
-      series: [
-        {
-          name: 'Calories',
-          type: 'line',
-          data: calData,
-          smooth: true,
-          symbolSize: 6,
-          lineStyle: { color: '#60c8f0', width: 3 },
-          areaStyle: { color: 'rgba(96,200,240,0.12)' },
-        },
-        {
-          name: `Target Low (${calRange.low})`,
-          type: 'line',
-          data: calTargetLow,
-          smooth: true,
-          symbol: 'none',
-          tooltip: { show: false },
-          lineStyle: { color: '#60f0a0', type: 'dashed', width: 2 },
-        },
-        {
-          name: `Target High (${calRange.high})`,
-          type: 'line',
-          data: calTargetHigh,
-          smooth: true,
-          symbol: 'none',
-          tooltip: { show: false },
-          lineStyle: { color: '#f0a060', type: 'dashed', width: 2 },
-        },
-      ],
-      legend: { show: false },
-    });
+    applyCaloriesChartOption(calorieChartData);
     resizeECharts(window._echartCalories, caloriesDom);
 
-    // Weekly cost bar chart
-    const fmtWeekDate = iso => {
-      const d = new Date(iso + 'T00:00:00');
-      const mo  = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      const yr  = String(d.getFullYear()).slice(2);
-      return `${mo}/${day}/${yr}`;
-    };
+    // Weekly/monthly cost bar chart (per costChartMode)
     const weekDom = document.getElementById("chart-weekly-cost");
     window._echartWeeklyCost = echarts.init(weekDom);
-    window._echartWeeklyCost.setOption({
-      tooltip: {
-        trigger: 'axis',
-        formatter: params => {
-          const p = params[0];
-          const start = new Date(p.axisValue + 'T00:00:00');
-          const end = new Date(p.axisValue + 'T00:00:00');
-          end.setDate(end.getDate() + 6);
-          const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          return `${fmt(start)} – ${fmt(end)}<br/>Cost: $${(p.value || 0).toFixed(2)}`;
-        }
-      },
-      grid: { left: 40, right: 20, top: 20, bottom: 55 },
-      xAxis: {
-        type: 'category',
-        data: weekLabels,
-        axisLabel: {
-          show: true,
-          interval: 'auto',
-          rotate: 35,
-          fontSize: 10,
-          color: '#7a7f96',
-          formatter: fmtWeekDate,
-        },
-        axisTick: { alignWithLabel: true },
-      },
-      yAxis: {
-        type: 'value',
-        min: 0,
-        splitLine: { show: false }
-      },
-      series: [
-        {
-          name: 'Cost',
-          type: 'bar',
-          data: weekCostData,
-          itemStyle: {
-            color: '#FF6B6B',
-            borderRadius: [6, 6, 0, 0],
-          },
-          emphasis: {
-            itemStyle: {
-              color: '#c8f060'
-            }
-          },
-          barWidth: '98%',
-        },
-      ],
-      legend: { show: false },
-    });
+    applyWeeklyCostChartOption(costChartData);
     resizeECharts(window._echartWeeklyCost, weekDom);
 
     // Macro split doughnut chart
@@ -1347,7 +1489,10 @@ async function renderHistory() {
           mStats.totalProtein += day.p || 0;
           mStats.totalCarb += day.c || 0;
           mStats.totalFat += day.f || 0;
-          if (day.cal >= calRange.low && day.cal <= calRange.high) mStats.inRangeDays++;
+          // Use the range that was actually active on this day (stored per-day since the fix), not today's current range
+          const dayCalLow = day.calLow ?? calRange.low;
+          const dayCalHigh = day.calHigh ?? calRange.high;
+          if (day.cal >= dayCalLow && day.cal <= dayCalHigh) mStats.inRangeDays++;
         }
       });
     });
@@ -1462,7 +1607,10 @@ async function renderHistory() {
         ${dayDates
           .map((d) => {
             const day = days[d];
-            const inRange = day.cal >= calRange.low && day.cal <= calRange.high;
+            // Use the range that was actually active on this day (stored per-day since the fix), not today's current range
+            const dayCalLow = day.calLow ?? calRange.low;
+            const dayCalHigh = day.calHigh ?? calRange.high;
+            const inRange = day.cal >= dayCalLow && day.cal <= dayCalHigh;
             const rangeLabel =
               day.cal === 0
                 ? ""
@@ -1545,6 +1693,13 @@ function handleAdjustServing(id, delta) {
   persistState();
   render();
 }
+
+function toggleHalfStepMode() {
+  halfStepMode = !halfStepMode;
+  document.getElementById("half-step-toggle-btn")?.classList.toggle("active", halfStepMode);
+  renderCoreItems();
+}
+
 
 // Custom item cost calculator
 function calcCostPerServing() {
@@ -1808,6 +1963,7 @@ function switchTab(name) {
   if (name === "history") renderHistory();
   if (name === "coreitems") renderCoreItemsMgmt();
   if (name === "programs") programs.renderProgramsTab();
+  if (name === "weight") weight.renderWeightTab();
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1847,6 +2003,7 @@ window.addCustomItem = handleAddCustomItem;
 window.clearBulkIfManual = clearBulkIfManual;
 window.calcCostPerServing = calcCostPerServing;
 window.adjustServing = handleAdjustServing;
+window.toggleHalfStepMode = toggleHalfStepMode;
 window.removeCustomItem = handleRemoveCustomItem;
 window.switchTab = switchTab;
 window.toggleWeek = toggleWeek;
@@ -1863,6 +2020,35 @@ window.toggleStatsAccordion = function() {
 };
 window.confirmResetDay = confirmResetDay;
 window.resetWeeklyCost = resetWeeklyCost;
+window.histSetCalChartMode = function (mode) {
+  if (mode !== "daily" && mode !== "weekly") return;
+  calChartMode = mode;
+  document.getElementById("hist-cal-toggle-daily")?.classList.toggle("active", mode === "daily");
+  document.getElementById("hist-cal-toggle-weekly")?.classList.toggle("active", mode === "weekly");
+  const titleEl = document.getElementById("hist-cal-title");
+  if (titleEl) titleEl.textContent = mode === "weekly" ? "Calories per Week" : "Calories per Day";
+  // Redraw just the calories chart from cached data — avoids the full re-render's container wipe, which was causing the page to jump to the top.
+  if (window._echartCalories && _historyWeeksCache) {
+    applyCaloriesChartOption(computeCalorieChartData(_historyWeeksCache));
+  } else {
+    renderHistory();
+  }
+};
+
+window.histSetCostChartMode = function (mode) {
+  if (mode !== "weekly" && mode !== "monthly") return;
+  costChartMode = mode;
+  document.getElementById("hist-cost-toggle-weekly")?.classList.toggle("active", mode === "weekly");
+  document.getElementById("hist-cost-toggle-monthly")?.classList.toggle("active", mode === "monthly");
+  const titleEl = document.getElementById("hist-cost-title");
+  if (titleEl) titleEl.textContent = mode === "monthly" ? "Monthly Cost" : "Weekly Cost";
+  // Redraw just the cost chart from cached data — avoids the full re-render's container wipe, which was causing the page to jump to the top.
+  if (window._echartWeeklyCost && _historyWeeksCache) {
+    applyWeeklyCostChartOption(computeCostChartData(_historyWeeksCache));
+  } else {
+    renderHistory();
+  }
+};
 
 // ═══════════════════════════════════════════════════════════════════
 // EXPORT
@@ -1934,6 +2120,7 @@ function openSettings() {
   document.querySelector(".footer-settings-btn").classList.add("active");
   document.getElementById("settings-cal-low").value = calRange.low;
   document.getElementById("settings-cal-high").value = calRange.high;
+  weight.renderSettingsUnitToggle();
 }
 window.openSettings = openSettings;
 
@@ -1963,7 +2150,7 @@ async function exportFullBackup() {
   if (!await showConfirm("Export all data as a backup JSON file?", "Export")) return;
 
   const timestamp = isoDate(new Date());
-  const storeNames = ["days", "weeks", "coreitems", "settings", "programs", "exercises"];
+  const storeNames = ["days", "weeks", "coreitems", "settings", "programs", "exercises", "weights"];
   const stores = {};
 
   for (const name of storeNames) {
@@ -2006,7 +2193,7 @@ async function handleImportFile(e) {
     "Restore"
   )) return;
 
-  const storeNames = ["days", "weeks", "coreitems", "settings", "programs", "exercises"];
+  const storeNames = ["days", "weeks", "coreitems", "settings", "programs", "exercises", "weights"];
   try {
     for (const name of storeNames) {
       await db.dbClear(name);
@@ -2028,25 +2215,6 @@ window.handleImportFile = handleImportFile;
 // ═══════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════
-async function cleanupOldRecords() {
-  // Retain up to 9 months of data (was 6). This is backwards compatible and will not wipe existing history.
-  const cutoff = new Date();
-  cutoff.setMonth(cutoff.getMonth() - 9);
-  const cutoffStr = isoDate(cutoff);
-
-  try {
-    const allDays = await db.dbGetAll("days");
-    for (const day of allDays) {
-      if (day.date < cutoffStr) await db.dbDelete("days", day.date);
-    }
-    const allWeeks = await db.dbGetAll("weeks");
-    for (const week of allWeeks) {
-      if (week.weekStart < cutoffStr) await db.dbDelete("weeks", week.weekStart);
-    }
-  } catch (e) {
-    console.warn("Cleanup failed", e);
-  }
-}
 
 async function maybeShowWelcome() {
   try {
@@ -2088,6 +2256,8 @@ async function init() {
   } catch (e) {}
   await items.loadCoreItems();
   await programs.loadAll();
+  await weight.loadAll();
+  weight.renderSettingsUnitToggle();
   const saved = db.loadTodayLS(items.todayStr());
   if (saved) {
     Object.assign(items.servings, saved.servings || {});

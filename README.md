@@ -3,6 +3,7 @@
 ## What it does
 - daily food & cost tracking
 - manage your foods
+- daily weight logging and history
 - create and manage workout programs
 - view your history and stats 
 

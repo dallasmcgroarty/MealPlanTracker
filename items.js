@@ -80,9 +80,10 @@ export function targetCostPerDay() {
 	);
 }
 
-// Adjust serving for a core item
+// Adjust serving for a core item (delta may be whole or half, e.g. 1, -1, 0.5, -0.5)
 export function adjustServing(id, delta) {
-	servings[id] = Math.max(0, (servings[id] || 0) + delta);
+	const next = Math.max(0, (servings[id] || 0) + delta);
+	servings[id] = Math.round(next * 2) / 2; // guard against float drift, servings are always multiples of 0.5
 }
 
 // Add a custom item

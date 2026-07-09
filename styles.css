@@ -432,6 +432,7 @@ h1 {
   min-width: unset;
   align-items: center;
 }
+
 .serving-ctrl {
   display: flex;
   flex-direction: column;
@@ -461,6 +462,32 @@ h1 {
 }
 .srv-btn:active {
   transform: scale(0.9);
+}
+
+/* GLOBAL HALF-SERVING TOGGLE */
+.half-step-toggle-wrap {
+  margin-bottom: 12px;
+}
+.half-step-toggle {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--accent2);
+  font-family: "Syne", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.half-step-toggle:hover {
+  border-color: var(--accent2);
+}
+.half-step-toggle.active {
+  background: var(--accent2);
+  color: #0e0f13;
+  border-color: var(--accent2);
+  box-shadow: 0 0 12px rgba(96, 200, 240, 0.45);
 }
 .srv-count {
   font-family: "DM Mono", monospace;
@@ -1978,6 +2005,36 @@ input[readonly] {
   color: var(--muted);
   font-family: "DM Mono", monospace;
   margin-left: 4px;
+}
+
+/* WEIGHT — segmented toggle (unit lb/kg, chart daily/weekly) */
+.wt-toggle {
+  display: inline-flex;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+.wt-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.wt-toggle-btn:hover {
+  color: var(--text);
+}
+.wt-toggle-btn.active {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--border);
 }
 
 /* SETTINGS PAGE */

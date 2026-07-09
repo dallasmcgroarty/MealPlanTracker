@@ -31,6 +31,9 @@
         <button class="nav-tab" onclick="window.switchTab('coreitems')">
           Foods
         </button>
+        <button class="nav-tab" onclick="window.switchTab('weight')">
+          Weight
+        </button>
         <button class="nav-tab" onclick="window.switchTab('programs')">
           Programs
         </button>
@@ -212,8 +215,11 @@
                 font-size: 10px;
                 color: var(--muted);
               "
-              >+/− to log servings · cost tracks actual consumed</span
+              >+/− to log servings · toggle <span style="font-size:9px">1/2 </span> button to enable half servings</span
             >
+          </div>
+          <div class="half-step-toggle-wrap">
+            <button class="half-step-toggle" id="half-step-toggle-btn" onclick="window.toggleHalfStepMode()">½</button>
           </div>
           <div id="core-items-list"></div>
         </div>
@@ -413,7 +419,7 @@
             <p class="subtitle">View your past logs · See trends over time</p>
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
-            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">stored locally · up to 9 months</span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">stored locally</span>
             <div class="export-dropdown">
               <button class="ghost-btn export-dropdown-trigger" style="font-size:11px;padding:6px 12px;" onclick="window.toggleExportDropdown(event)">Export ▾</button>
               <div class="export-dropdown-menu">
@@ -432,11 +438,23 @@
           <div class="stats-accordion-body" id="stats-accordion-body">
           <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
             <div style="min-width:320px;max-width:420px;width:100%;">
-              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Calories per Day</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
+                <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);" id="hist-cal-title">Calories per Day</div>
+                <div class="wt-toggle" id="hist-cal-toggle">
+                  <button class="wt-toggle-btn active" id="hist-cal-toggle-daily" onclick="window.histSetCalChartMode('daily')">Daily</button>
+                  <button class="wt-toggle-btn" id="hist-cal-toggle-weekly" onclick="window.histSetCalChartMode('weekly')">Weekly</button>
+                </div>
+              </div>
               <div id="chart-calories" class="echart-container"></div>
             </div>
             <div style="min-width:320px;max-width:420px;width:100%;">
-              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Weekly Cost</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
+                <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);" id="hist-cost-title">Weekly Cost</div>
+                <div class="wt-toggle" id="hist-cost-toggle">
+                  <button class="wt-toggle-btn active" id="hist-cost-toggle-weekly" onclick="window.histSetCostChartMode('weekly')">Weekly</button>
+                  <button class="wt-toggle-btn" id="hist-cost-toggle-monthly" onclick="window.histSetCostChartMode('monthly')">Monthly</button>
+                </div>
+              </div>
               <div id="chart-weekly-cost" class="echart-container"></div>
             </div>
             <div style="min-width:220px;max-width:320px;width:100%;">
@@ -485,6 +503,9 @@
       <!-- ══════════════ PROGRAMS TAB ══════════════ -->
       <div class="tab-view" id="tab-programs"></div>
 
+      <!-- ══════════════ WEIGHT TAB ══════════════ -->
+      <div class="tab-view" id="tab-weight"></div>
+
       <!-- ══════════════ SETTINGS TAB ══════════════ -->
       <div class="tab-view" id="tab-settings">
         <header>
@@ -494,6 +515,19 @@
           </div>
           <button class="ghost-btn" style="font-size:11px;padding:6px 12px;" onclick="window.closeSettings()">← Back</button>
         </header>
+
+        <!-- Where Your Data Lives -->
+        <div class="settings-section">
+          <div class="settings-section-title">Where Your Data Is Stored</div>
+          <div class="settings-section-body">
+            <p class="settings-desc">
+              Foop keeps everything — foods, logs, weight, programs, exercises, settings — locally in this browser, not on a server. Nothing leaves your device, but that also means
+              <strong style="color:var(--warn);font-size:12px">clearing your browser's site data/cookies for this page, using private
+              browsing, or uninstalling the browser can permanently erase your data.</strong>
+              Export a backup below every so often to stay safe.
+            </p>
+          </div>
+        </div>
 
         <!-- Calorie Range -->
         <div class="settings-section">
@@ -513,11 +547,20 @@
           </div>
         </div>
 
+        <!-- Weight Unit -->
+        <div class="settings-section">
+          <div class="settings-section-title">Weight Unit</div>
+          <div class="settings-section-body">
+            <p class="settings-desc">Choose the unit used for weight tracking. Applies everywhere weight is shown.</p>
+            <div class="wt-toggle" id="settings-wt-unit-toggle"></div>
+          </div>
+        </div>
+
         <!-- Backup -->
         <div class="settings-section">
           <div class="settings-section-title">Data Backup</div>
           <div class="settings-section-body">
-            <p class="settings-desc">Export all your data — foods, programs, exercises, history, and settings — as a single JSON file. Use this to transfer everything to a new device.</p>
+            <p class="settings-desc">Export all your data — foods, weight, programs, exercises, history, and settings — as a single JSON file. Use this to transfer everything to a new device.</p>
             <button class="ghost-btn" onclick="window.exportFullBackup()">↓ Export Full Backup (JSON)</button>
           </div>
         </div>
@@ -526,7 +569,7 @@
         <div class="settings-section">
           <div class="settings-section-title">Data Restore</div>
           <div class="settings-section-body">
-            <p class="settings-desc">Import a Foop backup file to restore your data. <strong style="color:var(--warn);">This will overwrite all existing data and cannot be undone.</strong></p>
+            <p class="settings-desc">Import a Foop backup file to restore your data. <strong style="color:var(--warn);font-size:12px;">This will overwrite all existing data and cannot be undone.</strong></p>
             <input type="file" id="settings-import-file" accept=".json" style="display:none" onchange="window.handleImportFile(event)" />
             <button class="ghost-btn" onclick="document.getElementById('settings-import-file').click()">↑ Import Backup (JSON)</button>
           </div>
