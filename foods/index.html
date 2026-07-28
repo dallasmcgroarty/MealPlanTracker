@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Saved Foods — Nawtch</title>
+    <meta name="description" content="Add, edit, hide, or barcode-scan your saved foods in Nawtch. Set nutrition info, cost per serving, and daily targets for every food you track." />
+    <link rel="canonical" href="https://nawtch.app/foods/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Manage Saved Foods — Nawtch" />
+    <meta property="og:description" content="Add, edit, hide, or barcode-scan your saved foods in Nawtch. Set nutrition info, cost per serving, and daily targets for every food you track." />
+    <meta property="og:url" content="https://nawtch.app/foods/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Manage Saved Foods — Nawtch" />
+    <meta name="twitter:description" content="Add, edit, hide, or barcode-scan your saved foods in Nawtch. Set nutrition info, cost per serving, and daily targets for every food you track." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/svg+xml" href="../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" href="../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="/" data-page="today">Today</a>
+        <a class="nav-tab" href="../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Foods</h1>
+          <p class="subtitle">
+            View, edit, hide/show, delete, or add foods
+          </p>
+        </div>
+        <div style="display: flex;">
+          <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Food</button>
+        </div>
+      </header>
+      <div id="core-items-mgmt-list"></div>
+      <div class="info-banners">
+        <div class="info-banner" onclick="this.classList.toggle('open')">
+          <div class="info-banner-header">
+            <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
+            <span class="info-banner-label info-label-warn">Target/Day controls what counts toward your daily goals</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            <strong>Target/Day</strong> must be greater than <strong>0</strong> for a food to count toward
+            daily target calories, daily target cost, and weekly cost projections.
+            A target of <strong>0</strong> means the food is still loggable but excluded from all targets.
+          </div>
+        </div>
+        <div class="info-banner" onclick="this.classList.toggle('open')">
+          <div class="info-banner-header">
+            <div class="info-dot" style="background:var(--muted);box-shadow: 0 0 6px var(--muted);"></div>
+            <span class="info-banner-label info-label-info">Hiding a food removes it from tracking but keeps it saved</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            <strong>Hide</strong> removes a food from the daily tracker, daily cost target, and expected
+            weekly cost. The food stays in storage and can be restored any time with <strong>Show</strong>.
+          </div>
+        </div>
+        <div class="info-banner" onclick="this.classList.toggle('open')">
+          <div class="info-banner-header">
+            <div class="info-dot" style="background:var(--carbs);box-shadow: 0 0 6px var(--carbs);"></div>
+            <span class="info-banner-label info-label-warn-2">Barcode scanning a food/product is <strong>not</strong> always accurate</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            The barcode scanner uses a community driven food library and may not always provide accurate nutritional information.
+            Always double-check the details before logging a food item.
+          </div>
+        </div>
+      </div>
+      </main>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../settings/" data-page="settings" title="Settings">⚙</a>
+    </footer>
+
+    <!-- Barcode scanner -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+    <script src="foods.js" type="module"></script>
+  </body>
+</html>

@@ -3,13 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Foop</title>
-    <link rel="icon" type="image/png" href="media/logo.png" />
+    <title>Nawtch: Track Food, Weight & Workouts. Free.</title>
+    <meta name="description" content="Nawtch is a free, fast fitness tracker with no account required. Log food, macros, and cost, track weight, manage workout programs and exercises, and view your full history — all stored privately on your device." />
+    <link rel="canonical" href="https://nawtch.app/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Nawtch — Track food, weight & workouts. Free, no account needed." />
+    <meta property="og:description" content="Nawtch is a free, fast fitness tracker with no account required. Log food, macros, and cost, track weight, manage workout programs and exercises, and view your full history — all stored privately on your device." />
+    <meta property="og:url" content="https://nawtch.app/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Nawtch — Track food, weight & workouts. Free, no account needed." />
+    <meta name="twitter:description" content="Nawtch is a free, fast fitness tracker with no account required. Log food, macros, and cost, track weight, manage workout programs and exercises, and view your full history — all stored privately on your device." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/svg+xml" href="media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" href="media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Nawtch",
+      "url": "https://nawtch.app/",
+      "description": "Free, privacy-first fitness tracker for calories, macros, food cost, weight, and workout programs. All data stored locally in your browser — no account required.",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Any (runs in a web browser)",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": [
+        "Calorie and macro tracking",
+        "Barcode scanning for foods",
+        "Custom food logging with cost tracking",
+        "Workout program and exercise builder",
+        "Weight tracking with trend charts",
+        "Full nutrition and spending history export"
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="confirm-modal" role="dialog" aria-modal="true">
@@ -22,569 +63,337 @@
       </div>
     </div>
     <div class="page">
-      <!-- NAV -->
-
       <nav class="nav-tabs">
-        <button class="nav-tab active" onclick="window.switchTab('today')">
-          Today
-        </button>
-        <button class="nav-tab" onclick="window.switchTab('coreitems')">
-          Foods
-        </button>
-        <button class="nav-tab" onclick="window.switchTab('weight')">
-          Weight
-        </button>
-        <button class="nav-tab" onclick="window.switchTab('programs')">
-          Programs
-        </button>
-        <button class="nav-tab" onclick="window.switchTab('history')">
-          History
-        </button>
+        <a class="nav-tab" href="/" data-page="today">Today</a>
+        <a class="nav-tab" href="foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="history/" data-page="history">History</a>
       </nav>
 
-      <!-- ══════════════ TODAY TAB ══════════════ -->
-      <!-- ══════════════ CORE ITEMS MANAGEMENT TAB ══════════════ -->
-      <div class="tab-view" id="tab-coreitems">
-        <header>
-          <div class="header-left">
-            <h1>Foods</h1>
-            <p class="subtitle">
-              View, edit, hide/show, delete, or add foods
-            </p>
-          </div>
-          <div style="display: flex;">
-            <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Food</button>
-          </div>
-        </header>
-        <div id="core-items-mgmt-list"></div>
-        <div class="info-banners">
-          <div class="info-banner" onclick="this.classList.toggle('open')">
-            <div class="info-banner-header">
-              <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
-              <span class="info-banner-label info-label-warn">Target/Day controls what counts toward your daily goals</span>
-              <span class="info-banner-chevron">▼</span>
-            </div>
-            <div class="info-banner-body">
-              <strong>Target/Day</strong> must be greater than <strong>0</strong> for a food to count toward
-              daily target calories, daily target cost, and weekly cost projections.
-              A target of <strong>0</strong> means the food is still loggable but excluded from all targets.
-            </div>
-          </div>
-          <div class="info-banner" onclick="this.classList.toggle('open')">
-            <div class="info-banner-header">
-              <div class="info-dot" style="background:var(--muted);box-shadow: 0 0 6px var(--muted);"></div>
-              <span class="info-banner-label info-label-info">Hiding a food removes it from tracking but keeps it saved</span>
-              <span class="info-banner-chevron">▼</span>
-            </div>
-            <div class="info-banner-body">
-              <strong>Hide</strong> removes a food from the daily tracker, daily cost target, and expected
-              weekly cost. The food stays in storage and can be restored any time with <strong>Show</strong>.
-            </div>
-          </div>
-          <div class="info-banner" onclick="this.classList.toggle('open')">
-            <div class="info-banner-header">
-              <div class="info-dot" style="background:var(--carbs);box-shadow: 0 0 6px var(--carbs);"></div>
-              <span class="info-banner-label info-label-warn-2">Barcode scanning a food/product is <strong>not</strong> always accurate</span>
-              <span class="info-banner-chevron">▼</span>
-            </div>
-            <div class="info-banner-body">
-              The barcode scanner uses a community driven food library and may not always provide accurate nutritional information. 
-              Always double-check the details before logging a food item.
-            </div>
-          </div>
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Daily Tracker</h1>
+          <p class="subtitle">
+            Log servings · Track calories & cost · Add custom foods
+          </p>
+        </div>
+        <div class="date-badge">
+          <div class="date-day" id="hdr-date">—</div>
+          <div class="date-reset">Resets at midnight</div>
+        </div>
+      </header>
+
+      <!-- STATUS -->
+      <div class="status-banner" id="status-banner">
+        <div class="status-dot" id="status-dot"></div>
+        <div class="status-text" id="status-text">Loading...</div>
+      </div>
+
+      <!-- TOTALS: cal / protein / carbs / fat / spent today / target today -->
+      <div class="totals-grid">
+        <div class="total-card tc-cal">
+          <div class="val" id="tot-cal">0</div>
+          <div class="lbl">Logged kcal</div>
+          <div class="sub" id="tot-cal-sub">/ 1,250 target</div>
+        </div>
+        <div class="total-card tc-p">
+          <div class="val" id="tot-p">0g</div>
+          <div class="lbl">Protein</div>
+        </div>
+        <div class="total-card tc-c">
+          <div class="val" id="tot-c">0g</div>
+          <div class="lbl">Carbs</div>
+        </div>
+        <div class="total-card tc-f">
+          <div class="val" id="tot-f">0g</div>
+          <div class="lbl">Fat</div>
+        </div>
+        <div class="total-card tc-spent">
+          <div class="val" id="tot-spent">$0.00</div>
+          <div class="lbl">Spent Today</div>
+          <div class="sub" id="tot-spent-sub">actual</div>
+        </div>
+        <div class="total-card tc-target">
+          <div class="val" id="tot-target-cost">$0.00</div>
+          <div class="lbl">Target/Day</div>
+          <div class="sub">if all logged</div>
         </div>
       </div>
-      <div class="tab-view active" id="tab-today">
-        <header>
-          <div class="header-left">
-            <h1>Daily Tracker</h1>
-            <p class="subtitle">
-              Log servings · Track calories & cost · Add custom foods
-            </p>
-          </div>
-          <div class="date-badge">
-            <div class="date-day" id="hdr-date">—</div>
-            <div class="date-reset">Resets at midnight</div>
-          </div>
-        </header>
 
-        <!-- STATUS -->
-        <div class="status-banner" id="status-banner">
-          <div class="status-dot" id="status-dot"></div>
-          <div class="status-text" id="status-text">Loading...</div>
-        </div>
-
-        <!-- TOTALS: cal / protein / carbs / fat / spent today / target today -->
-        <div class="totals-grid">
-          <div class="total-card tc-cal">
-            <div class="val" id="tot-cal">0</div>
-            <div class="lbl">Logged kcal</div>
-            <div class="sub" id="tot-cal-sub">/ 1,250 target</div>
-          </div>
-          <div class="total-card tc-p">
-            <div class="val" id="tot-p">0g</div>
-            <div class="lbl">Protein</div>
-          </div>
-          <div class="total-card tc-c">
-            <div class="val" id="tot-c">0g</div>
-            <div class="lbl">Carbs</div>
-          </div>
-          <div class="total-card tc-f">
-            <div class="val" id="tot-f">0g</div>
-            <div class="lbl">Fat</div>
-          </div>
-          <div class="total-card tc-spent">
-            <div class="val" id="tot-spent">$0.00</div>
-            <div class="lbl">Spent Today</div>
-            <div class="sub" id="tot-spent-sub">actual</div>
-          </div>
-          <div class="total-card tc-target">
-            <div class="val" id="tot-target-cost">$0.00</div>
-            <div class="lbl">Target/Day</div>
-            <div class="sub">if all logged</div>
-          </div>
-        </div>
-
-        <!-- CALORIE METER + MACROS -->
-        <div class="meter-section">
-          <div style="display: flex; flex-direction: column; gap: 20px">
-            <div>
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                <div class="section-title" style="margin-bottom:0;">Calories Logged Today</div>
-                <button class="ghost-btn" style="padding:3px 8px;font-size:10px;" onclick="window.showCalRangeEditor()">Edit Range</button>
-              </div>
-              <div id="cal-range-editor" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px;">
-                <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-                  <div class="field-group" style="flex:1;min-width:80px;">
-                    <span class="field-label">Floor (kcal)</span>
-                    <input id="cal-range-low-input" type="number" min="0" step="50" />
-                  </div>
-                  <div class="field-group" style="flex:1;min-width:80px;">
-                    <span class="field-label">Ceiling (kcal)</span>
-                    <input id="cal-range-high-input" type="number" min="0" step="50" />
-                  </div>
-                  <div style="display:flex;gap:6px;">
-                    <button class="add-btn" style="padding:6px 14px;font-size:12px;" onclick="window.saveCalRange()">Save</button>
-                    <button class="ghost-btn" style="padding:6px 12px;font-size:12px;" onclick="window.cancelCalRange()">Cancel</button>
-                  </div>
-                </div>
-              </div>
-              <div class="cal-meter">
-                <div class="cal-fill" id="cal-fill" style="width: 0%"></div>
-                <div class="target-zone">
-                  <span class="zone-label-low">1,250</span>
-                  <span class="zone-label-high">1,750</span>
-                </div>
-              </div>
-              <div class="cal-scale" id="cal-scale"></div>
-            </div>
-            <div>
-              <div class="section-title">Macro Split (logged)</div>
-              <div class="macro-bar-wrap">
-                <div class="macro-seg ms-p" id="bar-p" style="width: 34%"></div>
-                <div class="macro-seg ms-c" id="bar-c" style="width: 33%"></div>
-                <div class="macro-seg ms-f" id="bar-f" style="width: 33%"></div>
-              </div>
-              <div class="macro-legend">
-                <div class="ml-item">
-                  <div class="ml-dot" style="background: var(--protein)"></div>
-                  Protein <span class="ml-val" id="leg-p">—</span>
-                </div>
-                <div class="ml-item">
-                  <div class="ml-dot" style="background: var(--carbs)"></div>
-                  Carbs <span class="ml-val" id="leg-c">—</span>
-                </div>
-                <div class="ml-item">
-                  <div class="ml-dot" style="background: var(--fat)"></div>
-                  Fat <span class="ml-val" id="leg-f">—</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CORE FOOD ITEMS -->
-        <div class="items-section">
-          <div class="section-header">
-            <div class="section-title" style="margin-bottom: 0">
-              Saved Foods
-            </div>
-            <span
-              style="
-                font-family: &quot;DM Mono&quot;, monospace;
-                font-size: 10px;
-                color: var(--muted);
-              "
-              >+/− to log servings · toggle <span style="font-size:9px">1/2 </span> button to enable half servings</span
-            >
-          </div>
-          <div class="half-step-toggle-wrap">
-            <button class="half-step-toggle" id="half-step-toggle-btn" onclick="window.toggleHalfStepMode()">½</button>
-          </div>
-          <div id="core-items-list"></div>
-        </div>
-
-        <!-- CUSTOM ITEMS -->
-        <div class="items-section">
-          <div class="section-header">
-            <div class="section-title" style="margin-bottom: 0">
-              Today's Custom Foods
-            </div>
-            <span
-              style="
-                font-family: &quot;DM Mono&quot;, monospace;
-                font-size: 10px;
-                color: var(--muted);
-              "
-              >resets daily · included in weekly cost</span
-            >
-          </div>
-          <div id="custom-items-list"></div>
-
-          <div class="add-section" id="custom-food-accordion">
-            <div class="cf-accordion-header" onclick="this.closest('.add-section').classList.toggle('open')">
-              <div class="section-title" style="margin-bottom:0;">+ Add Custom Food</div>
-              <span class="cf-accordion-chevron">▼</span>
-            </div>
-            <div class="cf-accordion-body">
-            <!-- Row 1: name + macros -->
-            <div class="add-row add-row-1">
-              <div class="field-group">
-                <span class="field-label">Name</span>
-                <input type="text" id="cf-name" placeholder="e.g. Banana" />
-              </div>
-              <div class="field-group">
-                <span class="field-label">Calories</span>
-                <input type="number" id="cf-cal" placeholder="105" min="0" />
-              </div>
-              <div class="field-group">
-                <span class="field-label">Protein (g)</span>
-                <input type="number" id="cf-p" placeholder="1" min="0" />
-              </div>
-              <div class="field-group">
-                <span class="field-label">Carbs (g)</span>
-                <input type="number" id="cf-c" placeholder="27" min="0" />
-              </div>
-              <div class="field-group">
-                <span class="field-label">Fat (g)</span>
-                <input type="number" id="cf-f" placeholder="0" min="0" />
-              </div>
-            </div>
-            <!-- Row 2: cost fields -->
-            <div class="add-row add-row-2">
-              <div class="field-group">
-                <span class="field-label">Bulk Total Price ($)</span>
-                <input
-                  type="number"
-                  id="cf-bulk-price"
-                  placeholder="15.00"
-                  min="0"
-                  step="0.01"
-                  oninput="calcCostPerServing()"
-                />
-                <span class="field-hint">total you paid</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Servings in Package</span>
-                <input
-                  type="number"
-                  id="cf-bulk-servings"
-                  placeholder="30"
-                  min="1"
-                  oninput="calcCostPerServing()"
-                />
-                <span class="field-hint">total servings</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Cost / Serving ($)</span>
-                <input
-                  type="number"
-                  id="cf-cost-per-srv"
-                  placeholder="0.50"
-                  min="0"
-                  step="0.01"
-                  oninput="clearBulkIfManual()"
-                />
-                <span class="field-hint" id="cf-cost-hint"
-                  >or enter manually</span
-                >
-              </div>
-              <div class="field-group">
-                <span class="field-label">Servings Eaten Today</span>
-                <input
-                  type="number"
-                  id="cf-servings-eaten"
-                  placeholder="1"
-                  min="1"
-                  value="1"
-                  oninput="calcCostPerServing()"
-                />
-                <span class="field-hint" id="cf-today-cost-hint"
-                  >today's cost: $0.00</span
-                >
-              </div>
-            </div>
-            <!-- Row 3: add button -->
-            <div class="add-row add-row-3">
-              <div></div>
-              <div></div>
-              <button class="add-btn" onclick="window.addCustomItem()">+ Add to Today</button>
-              <button class="ghost-btn scan-cf-btn" onclick="window.startBarcodeFlowForCustomFood()">Scan Barcode</button>
-            </div>
-            </div><!-- end cf-accordion-body -->
-          </div>
-        </div>
-
-        <!-- WEEKLY COST -->
-        <div class="weekly-section">
-          <div class="section-header" style="margin-bottom: 14px">
-            <div class="section-title" style="margin-bottom: 0">
-              Weekly Cost
-            </div>
-            <span
-              style="
-                font-family: &quot;DM Mono&quot;, monospace;
-                font-size: 10px;
-                color: var(--muted);
-              "
-              >week started <span id="week-start-label">—</span></span
-            >
-          </div>
-          <div class="weekly-cols">
-            <!-- TARGET/EXPECTED -->
-            <div>
-              <div class="weekly-col-title">
-                Expected
-                <span class="badge badge-target"
-                  >per week at target servings</span
-                >
-              </div>
-              <div id="weekly-target-rows"></div>
-              <div class="cost-total-row">
-                <span>Weekly Target</span>
-                <span class="amt target-amt" id="weekly-target-total"
-                  >$0.00</span
-                >
-              </div>
-            </div>
-            <!-- ACTUAL SPENT -->
-            <div>
-              <div class="weekly-col-title">
-                Actual Spent
-                <span class="badge badge-actual"
-                  >starts at $0 · grows as you log</span
-                >
-              </div>
-              <div id="weekly-actual-rows"></div>
-              <div class="cost-total-row">
-                <span>Total Spent</span>
-                <span class="amt actual-amt" id="weekly-actual-total"
-                  >$0.00</span
-                >
-              </div>
-            </div>
-          </div>
-          <div class="cost-note">
-            Actual cost reflects servings logged each day ·
-            <button
-              onclick="window.resetWeeklyCost()"
-              style="
-                background: none;
-                border: none;
-                color: var(--muted);
-                font-family: &quot;DM Mono&quot;, monospace;
-                font-size: 10px;
-                cursor: pointer;
-                text-decoration: underline;
-              "
-            >
-              reset week
-            </button>
-          </div>
-        </div>
-
-        <div class="reset-row">
-          <button class="ghost-btn" onclick="window.confirmResetDay()">
-            ↺ Reset Today's Log
-          </button>
-        </div>
-      </div>
-      <!-- /tab-today -->
-
-      <!-- ══════════════ HISTORY TAB ══════════════ -->
-      <div class="tab-view" id="tab-history">
-        <div class="history-header header-left">
+      <!-- CALORIE METER + MACROS -->
+      <div class="meter-section">
+        <div style="display: flex; flex-direction: column; gap: 20px">
           <div>
-            <h1>History</h1>
-            <p class="subtitle">View your past logs · See trends over time</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <div class="section-title" style="margin-bottom:0;">Calories Logged Today</div>
+              <button class="ghost-btn" style="padding:3px 8px;font-size:10px;" onclick="window.showCalRangeEditor()">Edit Range</button>
+            </div>
+            <div id="cal-range-editor" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px;">
+              <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+                <div class="field-group" style="flex:1;min-width:80px;">
+                  <span class="field-label">Floor (kcal)</span>
+                  <input id="cal-range-low-input" type="number" min="0" step="50" />
+                </div>
+                <div class="field-group" style="flex:1;min-width:80px;">
+                  <span class="field-label">Ceiling (kcal)</span>
+                  <input id="cal-range-high-input" type="number" min="0" step="50" />
+                </div>
+                <div style="display:flex;gap:6px;">
+                  <button class="add-btn" style="padding:6px 14px;font-size:12px;" onclick="window.saveCalRange()">Save</button>
+                  <button class="ghost-btn" style="padding:6px 12px;font-size:12px;" onclick="window.cancelCalRange()">Cancel</button>
+                </div>
+              </div>
+            </div>
+            <div class="cal-meter">
+              <div class="cal-fill" id="cal-fill" style="width: 0%"></div>
+              <div class="target-zone">
+                <span class="zone-label-low">1,250</span>
+                <span class="zone-label-high">1,750</span>
+              </div>
+            </div>
+            <div class="cal-scale" id="cal-scale"></div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
-            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">stored locally</span>
-            <div class="export-dropdown">
-              <button class="ghost-btn export-dropdown-trigger" style="font-size:11px;padding:6px 12px;" onclick="window.toggleExportDropdown(event)">Export ▾</button>
-              <div class="export-dropdown-menu">
-                <button onclick="window.exportHistory('csv')">↓ CSV</button>
-                <button onclick="window.exportHistory('json')">↓ JSON</button>
+          <div>
+            <div class="section-title">Macro Split (logged)</div>
+            <div class="macro-bar-wrap">
+              <div class="macro-seg ms-p" id="bar-p" style="width: 34%"></div>
+              <div class="macro-seg ms-c" id="bar-c" style="width: 33%"></div>
+              <div class="macro-seg ms-f" id="bar-f" style="width: 33%"></div>
+            </div>
+            <div class="macro-legend">
+              <div class="ml-item">
+                <div class="ml-dot" style="background: var(--protein)"></div>
+                Protein <span class="ml-val" id="leg-p">—</span>
+              </div>
+              <div class="ml-item">
+                <div class="ml-dot" style="background: var(--carbs)"></div>
+                Carbs <span class="ml-val" id="leg-c">—</span>
+              </div>
+              <div class="ml-item">
+                <div class="ml-dot" style="background: var(--fat)"></div>
+                Fat <span class="ml-val" id="leg-f">—</span>
               </div>
             </div>
           </div>
         </div>
-        <!-- Overall charts accordion -->
-        <div id="history-charts-overall" class="stats-accordion-wrap" style="display:none;">
-          <button class="stats-accordion-toggle" onclick="window.toggleStatsAccordion()">
-            <span>Your Stats</span>
-            <span class="stats-accordion-chevron">&#9660;</span>
+      </div>
+
+      <!-- CORE FOOD ITEMS -->
+      <div class="items-section">
+        <div class="section-header">
+          <div class="section-title" style="margin-bottom: 0">
+            Saved Foods
+          </div>
+          <span
+            style="
+              font-family: &quot;DM Mono&quot;, monospace;
+              font-size: 10px;
+              color: var(--muted);
+            "
+            >+/− to log servings · toggle <span style="font-size:9px">1/2 </span> button to enable half servings</span
+          >
+        </div>
+        <div class="half-step-toggle-wrap">
+          <button class="half-step-toggle" id="half-step-toggle-btn" onclick="window.toggleHalfStepMode()">½</button>
+        </div>
+        <div id="core-items-list"></div>
+      </div>
+
+      <!-- CUSTOM ITEMS -->
+      <div class="items-section">
+        <div class="section-header">
+          <div class="section-title" style="margin-bottom: 0">
+            Today's Custom Foods
+          </div>
+          <span
+            style="
+              font-family: &quot;DM Mono&quot;, monospace;
+              font-size: 10px;
+              color: var(--muted);
+            "
+            >resets daily · included in weekly cost</span
+          >
+        </div>
+        <div id="custom-items-list"></div>
+
+        <div class="add-section" id="custom-food-accordion">
+          <div class="cf-accordion-header" onclick="this.closest('.add-section').classList.toggle('open')">
+            <div class="section-title" style="margin-bottom:0;">+ Add Custom Food</div>
+            <span class="cf-accordion-chevron">▼</span>
+          </div>
+          <div class="cf-accordion-body">
+          <!-- Row 1: name + macros -->
+          <div class="add-row add-row-1">
+            <div class="field-group">
+              <span class="field-label">Name</span>
+              <input type="text" id="cf-name" placeholder="e.g. Banana" />
+            </div>
+            <div class="field-group">
+              <span class="field-label">Calories</span>
+              <input type="number" id="cf-cal" placeholder="105" min="0" />
+            </div>
+            <div class="field-group">
+              <span class="field-label">Protein (g)</span>
+              <input type="number" id="cf-p" placeholder="1" min="0" />
+            </div>
+            <div class="field-group">
+              <span class="field-label">Carbs (g)</span>
+              <input type="number" id="cf-c" placeholder="27" min="0" />
+            </div>
+            <div class="field-group">
+              <span class="field-label">Fat (g)</span>
+              <input type="number" id="cf-f" placeholder="0" min="0" />
+            </div>
+          </div>
+          <!-- Row 2: cost fields -->
+          <div class="add-row add-row-2">
+            <div class="field-group">
+              <span class="field-label">Bulk Total Price ($)</span>
+              <input
+                type="number"
+                id="cf-bulk-price"
+                placeholder="15.00"
+                min="0"
+                step="0.01"
+                oninput="calcCostPerServing()"
+              />
+              <span class="field-hint">total you paid</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Servings in Package</span>
+              <input
+                type="number"
+                id="cf-bulk-servings"
+                placeholder="30"
+                min="1"
+                oninput="calcCostPerServing()"
+              />
+              <span class="field-hint">total servings</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Cost / Serving ($)</span>
+              <input
+                type="number"
+                id="cf-cost-per-srv"
+                placeholder="0.50"
+                min="0"
+                step="0.01"
+                oninput="clearBulkIfManual()"
+              />
+              <span class="field-hint" id="cf-cost-hint"
+                >or enter manually</span
+              >
+            </div>
+            <div class="field-group">
+              <span class="field-label">Servings Eaten Today</span>
+              <input
+                type="number"
+                id="cf-servings-eaten"
+                placeholder="1"
+                min="1"
+                value="1"
+                oninput="calcCostPerServing()"
+              />
+              <span class="field-hint" id="cf-today-cost-hint"
+                >today's cost: $0.00</span
+              >
+            </div>
+          </div>
+          <!-- Row 3: add button -->
+          <div class="add-row add-row-3">
+            <div></div>
+            <div></div>
+            <button class="add-btn" onclick="window.addCustomItem()">+ Add to Today</button>
+            <button class="ghost-btn scan-cf-btn" onclick="window.startBarcodeFlowForCustomFood()">Scan Barcode</button>
+          </div>
+          </div><!-- end cf-accordion-body -->
+        </div>
+      </div>
+
+      <!-- WEEKLY COST -->
+      <div class="weekly-section">
+        <div class="section-header" style="margin-bottom: 14px">
+          <div class="section-title" style="margin-bottom: 0">
+            Weekly Cost
+          </div>
+          <span
+            style="
+              font-family: &quot;DM Mono&quot;, monospace;
+              font-size: 10px;
+              color: var(--muted);
+            "
+            >week started <span id="week-start-label">—</span></span
+          >
+        </div>
+        <div class="weekly-cols">
+          <!-- TARGET/EXPECTED -->
+          <div>
+            <div class="weekly-col-title">
+              Expected
+              <span class="badge badge-target"
+                >per week at target servings</span
+              >
+            </div>
+            <div id="weekly-target-rows"></div>
+            <div class="cost-total-row">
+              <span>Weekly Target</span>
+              <span class="amt target-amt" id="weekly-target-total"
+                >$0.00</span
+              >
+            </div>
+          </div>
+          <!-- ACTUAL SPENT -->
+          <div>
+            <div class="weekly-col-title">
+              Actual Spent
+              <span class="badge badge-actual"
+                >starts at $0 · grows as you log</span
+              >
+            </div>
+            <div id="weekly-actual-rows"></div>
+            <div class="cost-total-row">
+              <span>Total Spent</span>
+              <span class="amt actual-amt" id="weekly-actual-total"
+                >$0.00</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="cost-note">
+          Actual cost reflects servings logged each day ·
+          <button
+            onclick="window.resetWeeklyCost()"
+            style="
+              background: none;
+              border: none;
+              color: var(--muted);
+              font-family: &quot;DM Mono&quot;, monospace;
+              font-size: 10px;
+              cursor: pointer;
+              text-decoration: underline;
+            "
+          >
+            reset week
           </button>
-          <div class="stats-accordion-body" id="stats-accordion-body">
-          <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
-            <div style="min-width:320px;max-width:420px;width:100%;">
-              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
-                <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);" id="hist-cal-title">Calories per Day</div>
-                <div class="wt-toggle" id="hist-cal-toggle">
-                  <button class="wt-toggle-btn active" id="hist-cal-toggle-daily" onclick="window.histSetCalChartMode('daily')">Daily</button>
-                  <button class="wt-toggle-btn" id="hist-cal-toggle-weekly" onclick="window.histSetCalChartMode('weekly')">Weekly</button>
-                </div>
-              </div>
-              <div id="chart-calories" class="echart-container"></div>
-            </div>
-            <div style="min-width:320px;max-width:420px;width:100%;">
-              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
-                <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);" id="hist-cost-title">Weekly Cost</div>
-                <div class="wt-toggle" id="hist-cost-toggle">
-                  <button class="wt-toggle-btn active" id="hist-cost-toggle-weekly" onclick="window.histSetCostChartMode('weekly')">Weekly</button>
-                  <button class="wt-toggle-btn" id="hist-cost-toggle-monthly" onclick="window.histSetCostChartMode('monthly')">Monthly</button>
-                </div>
-              </div>
-              <div id="chart-weekly-cost" class="echart-container"></div>
-            </div>
-            <div style="min-width:220px;max-width:320px;width:100%;">
-              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Macro Split</div>
-              <div id="chart-macros" class="echart-container echart-macros"></div>
-                    <style>
-                      .echart-macros {
-                        min-width: 260px;
-                        max-width: 340px;
-                        height: 240px;
-                      }
-                      @media (max-width: 600px) {
-                        .echart-macros {
-                          min-width: 0;
-                          max-width: 100vw;
-                          height: 260px;
-                        }
-                      }
-                    </style>
-                <style>
-                  /* ECharts container for responsive sizing */
-                  .echart-container {
-                    width: 100%;
-                    min-width: 0;
-                    height: 180px;
-                    max-width: 420px;
-                    margin: 0 auto 12px auto;
-                    background: none;
-                    overflow: visible;
-                    display: block;
-                  }
-                  @media (max-width: 600px) {
-                    .echart-container {
-                      height: 220px;
-                      max-width: 100vw;
-                    }
-                  }
-                </style>
-            </div>
-          </div>
-          </div><!-- end stats-accordion-body -->
-        </div>
-        <div id="history-content"></div>
-      </div>
-
-      <!-- ══════════════ PROGRAMS TAB ══════════════ -->
-      <div class="tab-view" id="tab-programs"></div>
-
-      <!-- ══════════════ WEIGHT TAB ══════════════ -->
-      <div class="tab-view" id="tab-weight"></div>
-
-      <!-- ══════════════ SETTINGS TAB ══════════════ -->
-      <div class="tab-view" id="tab-settings">
-        <header>
-          <div class="header-left">
-            <h1>Settings</h1>
-            <p class="subtitle">Preferences · Backup &amp; restore</p>
-          </div>
-          <button class="ghost-btn" style="font-size:11px;padding:6px 12px;" onclick="window.closeSettings()">← Back</button>
-        </header>
-
-        <!-- Where Your Data Lives -->
-        <div class="settings-section">
-          <div class="settings-section-title">Where Your Data Is Stored</div>
-          <div class="settings-section-body">
-            <p class="settings-desc">
-              Foop keeps everything — foods, logs, weight, programs, exercises, settings — locally in this browser, not on a server. Nothing leaves your device, but that also means
-              <strong style="color:var(--warn);font-size:12px">clearing your browser's site data/cookies for this page, using private
-              browsing, or uninstalling the browser can permanently erase your data.</strong>
-              Export a backup below every so often to stay safe.
-            </p>
-          </div>
-        </div>
-
-        <!-- Calorie Range -->
-        <div class="settings-section">
-          <div class="settings-section-title">Calorie Target Range</div>
-          <div class="settings-section-body">
-            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-              <div class="field-group" style="flex:1;min-width:80px;">
-                <span class="field-label">Floor (kcal)</span>
-                <input id="settings-cal-low" type="number" min="0" step="50" />
-              </div>
-              <div class="field-group" style="flex:1;min-width:80px;">
-                <span class="field-label">Ceiling (kcal)</span>
-                <input id="settings-cal-high" type="number" min="0" step="50" />
-              </div>
-              <button class="add-btn" style="padding:6px 14px;font-size:12px;" onclick="window.saveCalRangeFromSettings()">Save</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Weight Unit -->
-        <div class="settings-section">
-          <div class="settings-section-title">Weight Unit</div>
-          <div class="settings-section-body">
-            <p class="settings-desc">Choose the unit used for weight tracking. Applies everywhere weight is shown.</p>
-            <div class="wt-toggle" id="settings-wt-unit-toggle"></div>
-          </div>
-        </div>
-
-        <!-- Backup -->
-        <div class="settings-section">
-          <div class="settings-section-title">Data Backup</div>
-          <div class="settings-section-body">
-            <p class="settings-desc">Export all your data — foods, weight, programs, exercises, history, and settings — as a single JSON file. Use this to transfer everything to a new device.</p>
-            <button class="ghost-btn" onclick="window.exportFullBackup()">↓ Export Full Backup (JSON)</button>
-          </div>
-        </div>
-
-        <!-- Restore -->
-        <div class="settings-section">
-          <div class="settings-section-title">Data Restore</div>
-          <div class="settings-section-body">
-            <p class="settings-desc">Import a Foop backup file to restore your data. <strong style="color:var(--warn);font-size:12px;">This will overwrite all existing data and cannot be undone.</strong></p>
-            <input type="file" id="settings-import-file" accept=".json" style="display:none" onchange="window.handleImportFile(event)" />
-            <button class="ghost-btn" onclick="document.getElementById('settings-import-file').click()">↑ Import Backup (JSON)</button>
-          </div>
         </div>
       </div>
+
+      <div class="reset-row">
+        <button class="ghost-btn" onclick="window.confirmResetDay()">
+          ↺ Reset Today's Log
+        </button>
+      </div>
+      </main>
     </div>
 
     <footer class="app-footer">
-      <button class="footer-settings-btn" onclick="window.openSettings()" title="open settings page">⚙</button>
+      <a class="footer-settings-btn" href="settings/" data-page="settings" title="Settings">⚙</a>
     </footer>
 
-    <!-- ECharts CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     <!-- Barcode scanner -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="script.js" type="module"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+    <script src="today.js" type="module"></script>
   </body>
 </html>

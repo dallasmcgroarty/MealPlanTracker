@@ -1,4 +1,4 @@
-# Foop - Get fit not fat with foop
+# Nawtch - Get fit not fat with Nawtch
 
 ## What it does
 - daily food & cost tracking

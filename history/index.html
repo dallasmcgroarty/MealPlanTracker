@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nutrition & Cost History — Nawtch</title>
+    <meta name="description" content="See your complete calorie, macro, and spending history with Nawtch. Explore daily and weekly trends with interactive graphs, and export your data anytime." />
+    <link rel="canonical" href="https://nawtch.app/history/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Nutrition & Cost History — Nawtch" />
+    <meta property="og:description" content="See your complete calorie, macro, and spending history with Nawtch. Explore daily and weekly trends with interactive graphs, and export your data anytime." />
+    <meta property="og:url" content="https://nawtch.app/history/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Nutrition & Cost History — Nawtch" />
+    <meta name="twitter:description" content="See your complete calorie, macro, and spending history with Nawtch. Explore daily and weekly trends with interactive graphs, and export your data anytime." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/svg+xml" href="../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" href="../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="/" data-page="today">Today</a>
+        <a class="nav-tab" href="../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header class="history-header header-left">
+        <div>
+          <h1>History</h1>
+          <p class="subtitle">View your past logs · See trends over time</p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">stored locally</span>
+          <div class="export-dropdown">
+            <button class="ghost-btn export-dropdown-trigger" style="font-size:11px;padding:6px 12px;" onclick="window.toggleExportDropdown(event)">Export ▾</button>
+            <div class="export-dropdown-menu">
+              <button onclick="window.exportHistory('csv')">↓ CSV</button>
+              <button onclick="window.exportHistory('json')">↓ JSON</button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- Overall charts accordion -->
+      <div id="history-charts-overall" class="stats-accordion-wrap" style="display:none;">
+        <button class="stats-accordion-toggle" onclick="window.toggleStatsAccordion()">
+          <span>Your Stats</span>
+          <span class="stats-accordion-chevron">&#9660;</span>
+        </button>
+        <div class="stats-accordion-body" id="stats-accordion-body">
+        <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
+          <div style="min-width:320px;max-width:420px;width:100%;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
+              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);" id="hist-cal-title">Calories per Day</div>
+              <div class="wt-toggle" id="hist-cal-toggle">
+                <button class="wt-toggle-btn active" id="hist-cal-toggle-daily" onclick="window.histSetCalChartMode('daily')">Daily</button>
+                <button class="wt-toggle-btn" id="hist-cal-toggle-weekly" onclick="window.histSetCalChartMode('weekly')">Weekly</button>
+              </div>
+            </div>
+            <div id="chart-calories" class="echart-container"></div>
+          </div>
+          <div style="min-width:320px;max-width:420px;width:100%;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
+              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);" id="hist-cost-title">Weekly Cost</div>
+              <div class="wt-toggle" id="hist-cost-toggle">
+                <button class="wt-toggle-btn active" id="hist-cost-toggle-weekly" onclick="window.histSetCostChartMode('weekly')">Weekly</button>
+                <button class="wt-toggle-btn" id="hist-cost-toggle-monthly" onclick="window.histSetCostChartMode('monthly')">Monthly</button>
+              </div>
+            </div>
+            <div id="chart-weekly-cost" class="echart-container"></div>
+          </div>
+          <div style="min-width:220px;max-width:320px;width:100%;">
+            <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Macro Split</div>
+            <div id="chart-macros" class="echart-container echart-macros"></div>
+          </div>
+        </div>
+        </div><!-- end stats-accordion-body -->
+      </div>
+      <div id="history-content"></div>
+      </main>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../settings/" data-page="settings" title="Settings">⚙</a>
+    </footer>
+
+    <!-- ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" defer></script>
+    <script src="history.js" type="module"></script>
+  </body>
+</html>
