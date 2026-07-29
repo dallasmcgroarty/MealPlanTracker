@@ -1,5 +1,9 @@
 # Nawtch - Get fit not fat with Nawtch
 
+# Deployed live at
+https://nawtch.app
+https://nawtch.com
+
 ## What it does
 - daily food & cost tracking
 - manage your foods
