@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Popular Diets — Nawtch</title>
+    <meta name="description" content="An overview of well-studied popular diets — Mediterranean, DASH, intermittent fasting, keto, plant-based, paleo, and MIND — with links to the science and food resources for each." />
+    <link rel="canonical" href="https://nawtch.app/diets/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Popular Diets — Nawtch" />
+    <meta property="og:description" content="An overview of well-studied popular diets — Mediterranean, DASH, intermittent fasting, keto, plant-based, paleo, and MIND — with links to the science and food resources for each." />
+    <meta property="og:url" content="https://nawtch.app/diets/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Popular Diets — Nawtch" />
+    <meta name="twitter:description" content="An overview of well-studied popular diets — Mediterranean, DASH, intermittent fasting, keto, plant-based, paleo, and MIND — with links to the science and food resources for each." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/svg+xml" href="../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" href="../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="diets">
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="/" data-page="today">Today</a>
+        <a class="nav-tab" href="../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Diets</h1>
+          <p class="subtitle">Popular, well-studied eating patterns</p>
+        </div>
+        <a class="ghost-btn" style="font-size:11px;padding:6px 12px;" href="#" onclick="window.history.back(); return false;">← Back</a>
+      </header>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Popular Diets &amp; Their Evidence</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            These summaries are for educational purposes only, not medical advice — talk to a doctor or
+            registered dietitian before starting a new diet, especially if you have any health conditions.
+          </p>
+
+          <div class="info-banners">
+            <div class="info-banner">
+              <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+                <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+                <h2 class="info-banner-label">Mediterranean Diet</h2>
+                <span class="info-banner-chevron">▼</span>
+              </div>
+              <div class="info-banner-body">
+                Emphasizes vegetables, fruits, whole grains, legumes, nuts, and olive oil as the primary fat, with
+                fish and poultry over red meat, and wine in moderation. One of the most rigorously studied diets,
+                linked to reduced cardiovascular disease, stroke, and all-cause mortality.
+                <br /><br />
+                <strong>Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/30285332/" target="_blank" rel="noopener">PREDIMED Trial (NEJM, 2018)</a> —
+                a 7,447-person Spanish trial showing roughly 30% fewer major cardiovascular events.
+                <br /><br />
+                <strong>Food &amp; recipes:</strong>
+                <a href="https://oldwayspt.org/explore-heritage-diets/mediterranean-diet/" target="_blank" rel="noopener">Oldways — Meal Plan, Food Lists &amp; Recipes</a> ·
+                <a href="https://nutritionsource.hsph.harvard.edu/healthy-weight/diet-reviews/mediterranean-diet/" target="_blank" rel="noopener">Harvard Nutrition Source — Diet Review</a>
+              </div>
+            </div>
+
+            <div class="info-banner">
+              <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+                <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+                <h2 class="info-banner-label">DASH Diet</h2>
+                <span class="info-banner-chevron">▼</span>
+              </div>
+              <div class="info-banner-body">
+                Developed by NIH researchers, DASH emphasizes fruits, vegetables, whole grains, and low-fat dairy
+                while limiting sodium, saturated fat, and sweets to lower blood pressure. Consistently ranked among
+                the top diets for cardiovascular health.
+                <br /><br />
+                <strong>Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/9099655/" target="_blank" rel="noopener">Original DASH Trial (NEJM, 1997)</a> —
+                a 459-person trial showing the combination diet significantly lowered blood pressure.
+                <br /><br />
+                <strong>Food &amp; recipes:</strong>
+                <a href="https://www.nhlbi.nih.gov/health/dash-eating-plan" target="_blank" rel="noopener">NHLBI — DASH Eating Plan</a> ·
+                <a href="https://www.nhlbi.nih.gov/resources/week-dash-eating-plan" target="_blank" rel="noopener">NHLBI — A Week With the DASH Eating Plan</a>
+              </div>
+            </div>
+
+            <div class="info-banner">
+              <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+                <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+                <h2 class="info-banner-label">Intermittent Fasting</h2>
+                <span class="info-banner-chevron">▼</span>
+              </div>
+              <div class="info-banner-body">
+                Restricts the timing of food intake (e.g. a daily 16:8 window, 5:2, alternate-day) rather than what's
+                eaten. Associated with weight loss comparable to calorie restriction, plus improvements in insulin
+                sensitivity, blood pressure, and cholesterol — though long-term evidence is still limited.
+                <br /><br />
+                <strong>Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/31881139/" target="_blank" rel="noopener">Effects of Intermittent Fasting on Health, Aging, and Disease (NEJM, 2019)</a>
+                <br /><br />
+                <strong>Food &amp; recipes:</strong>
+                <a href="https://nutritionsource.hsph.harvard.edu/healthy-weight/diet-reviews/intermittent-fasting/" target="_blank" rel="noopener">Harvard Nutrition Source — Diet Review</a> ·
+                <a href="https://health.clevelandclinic.org/intermittent-fasting-4-different-types-explained" target="_blank" rel="noopener">Cleveland Clinic — Types &amp; Schedules</a>
+              </div>
+            </div>
+
+            <div class="info-banner">
+              <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+                <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+                <h2 class="info-banner-label">Ketogenic (Keto) Diet</h2>
+                <span class="info-banner-chevron">▼</span>
+              </div>
+              <div class="info-banner-body">
+                A very-low-carbohydrate, high-fat diet (roughly 70–80% fat) that shifts metabolism toward ketone
+                production. Originally developed for epilepsy, now popular for weight loss; shows short-term
+                benefits similar to other calorie-restricted diets but no clear long-term advantage.
+                <br /><br />
+                <strong>Study:</strong> <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8467306/" target="_blank" rel="noopener">Ketogenic Diet in Obese Patients — Systematic Review &amp; Meta-Analysis (Nutrients, 2021)</a>
+                <br /><br />
+                <strong>Food &amp; recipes:</strong>
+                <a href="https://nutritionsource.hsph.harvard.edu/healthy-weight/diet-reviews/ketogenic-diet/" target="_blank" rel="noopener">Harvard Nutrition Source — Diet Review</a> ·
+                <a href="https://diet.mayoclinic.org/us/meal-plans/healthy-keto-meal-plan/" target="_blank" rel="noopener">Mayo Clinic Diet — Healthy Keto Meal Plan</a>
+              </div>
+            </div>
+
+            <div class="info-banner">
+              <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+                <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+                <h2 class="info-banner-label">Plant-Based / Vegan Diet</h2>
+                <span class="info-banner-chevron">▼</span>
+              </div>
+              <div class="info-banner-body">
+                Centers on fruits, vegetables, legumes, whole grains, nuts, and seeds, excluding or minimizing
+                animal products. Associated with lower BMI, lower rates of type 2 diabetes and heart disease, and
+                lower all-cause mortality in large cohort studies.
+                <br /><br />
+                <strong>Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/23836264/" target="_blank" rel="noopener">Vegetarian Dietary Patterns and Mortality (JAMA Internal Medicine, 2013)</a> —
+                a roughly 73,000-person Adventist Health Study cohort.
+                <br /><br />
+                <strong>Food &amp; recipes:</strong>
+                <a href="https://www.health.harvard.edu/nutrition/becoming-a-vegetarian" target="_blank" rel="noopener">Harvard Health — Becoming a Vegetarian</a> ·
+                <a href="https://www.webmd.com/diet/plant-based-diet" target="_blank" rel="noopener">WebMD — Plant-Based Diet Tips for Beginners</a>
+              </div>
+            </div>
+
+            <div class="info-banner">
+              <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+                <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+                <h2 class="info-banner-label">Paleo Diet</h2>
+                <span class="info-banner-chevron">▼</span>
+              </div>
+              <div class="info-banner-body">
+                Modeled on presumed hunter-gatherer eating: lean meats, fish, fruits, vegetables, nuts, and seeds,
+                excluding grains, legumes, dairy, and processed foods. Small trials show short-term improvements in
+                glucose tolerance, waist circumference, and cardiovascular risk factors.
+                <br /><br />
+                <strong>Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/17583796/" target="_blank" rel="noopener">Paleolithic vs. Mediterranean-like Diet on Glucose Tolerance (Diabetologia, 2007)</a>
+                <br /><br />
+                <strong>Food &amp; recipes:</strong>
+                <a href="https://health.clevelandclinic.org/paleo-diet" target="_blank" rel="noopener">Cleveland Clinic — Paleo Diet 101</a> ·
+                <a href="https://www.webmd.com/diet/paleo-diet" target="_blank" rel="noopener">WebMD — Paleo Diet Guide</a>
+              </div>
+            </div>
+
+            <div class="info-banner">
+              <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+                <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+                <h2 class="info-banner-label">MIND Diet</h2>
+                <span class="info-banner-chevron">▼</span>
+              </div>
+              <div class="info-banner-body">
+                Short for Mediterranean-DASH Intervention for Neurodegenerative Delay, created by Rush University
+                researchers — it hybridizes Mediterranean and DASH with extra emphasis on berries and leafy greens
+                for brain health. Associated with slower cognitive decline and reduced Alzheimer's disease risk.
+                <br /><br />
+                <strong>Study:</strong> <a href="https://pubmed.ncbi.nlm.nih.gov/25681666/" target="_blank" rel="noopener">MIND Diet Associated with Reduced Incidence of Alzheimer's Disease (Alzheimer's &amp; Dementia, 2015)</a> —
+                up to 53% lower risk with strict adherence.
+                <br /><br />
+                <strong>Food &amp; recipes:</strong>
+                <a href="https://www.rush.edu/news/mind-diet-ranked-no-1-brain-health" target="_blank" rel="noopener">Rush University — MIND Diet Overview</a> ·
+                <a href="https://health.clevelandclinic.org/mind-diet-boost-memory" target="_blank" rel="noopener">Cleveland Clinic — The MIND Diet</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </main>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+    </footer>
+
+    <script src="diets.js" type="module"></script>
+  </body>
+</html>

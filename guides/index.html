@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guides & How-To — Nawtch</title>
+    <meta name="description" content="Learn how to manage foods, track calories and weight, explore your history, build workout programs and exercises, calculate your TDEE and macros, browse popular diets, and keep your data safe in Nawtch." />
+    <link rel="canonical" href="https://nawtch.app/guides/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Guides & How-To — Nawtch" />
+    <meta property="og:description" content="Learn how to manage foods, track calories and weight, explore your history, build workout programs and exercises, calculate your TDEE and macros, browse popular diets, and keep your data safe in Nawtch." />
+    <meta property="og:url" content="https://nawtch.app/guides/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Guides & How-To — Nawtch" />
+    <meta name="twitter:description" content="Learn how to manage foods, track calories and weight, explore your history, build workout programs and exercises, calculate your TDEE and macros, browse popular diets, and keep your data safe in Nawtch." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/svg+xml" href="../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" href="../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="guides">
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="/" data-page="today">Today</a>
+        <a class="nav-tab" href="../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Guides</h1>
+          <p class="subtitle">How to use Nawtch</p>
+        </div>
+        <a class="ghost-btn" style="font-size:11px;padding:6px 12px;" href="#" onclick="window.history.back(); return false;">← Back</a>
+      </header>
+
+      <div class="info-banners">
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">How to Keep Your Data Safe</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Nawtch keeps everything — foods, logs, weight, programs, exercises, settings — locally in this browser,
+            not on a server. Nothing leaves your device, but that also means <strong>clearing your browser's site
+            data/cookies for this page, using private browsing, or uninstalling the browser can permanently erase
+            your data.</strong>
+            <br /><br />
+            Avoid logging your data in a <strong>private/incognito window</strong> — many browsers wipe that storage
+            the moment the session ends. If your browser ever asks to <strong>allow persistent storage</strong> for
+            this site, allow it — this helps keep your data from being automatically cleared to free up space.
+            <br /><br />
+            Back up regularly from <a href="../settings/">Settings</a> with <strong>Export Full Backup
+            (JSON)</strong> — it downloads everything as a single file you can keep somewhere safe. If you ever need
+            to restore, <strong>Import Backup (JSON)</strong> from that same file will bring everything back —
+            but note it <strong>overwrites all existing data and cannot be undone.</strong>
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">Managing Foods</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            <strong>Add a food</strong> from the Foods page with the <strong>+ Add Food</strong> button, or scan a
+            barcode to prefill the name and nutrition automatically. The barcode scanner is powered by the
+            <a href="https://world.openfoodfacts.org" target="_blank" rel="noopener">Open Food Facts</a> API, a
+            community driven food database, and may not always provide accurate nutritional information — always
+            double-check the details before saving. Use <strong>Edit</strong> to change a saved food's info, or
+            <strong>Delete</strong> to remove it permanently.
+            <br /><br />
+            Foods you log occasionally without saving to your catalog can be added as a <strong>custom item</strong>
+            straight from the Today page — these are one-off entries that don't stick around after the day resets.
+            <br /><br />
+            Set <strong>Bulk Total Price</strong> and <strong>Servings in Package</strong> to auto-calculate
+            <strong>Cost/Serving</strong>, or enter a cost per serving manually.
+            <br /><br />
+            <strong>Target/Day</strong> must be greater than <strong>0</strong> for a food to count toward daily
+            target calories, daily target cost, and weekly cost projections. A target of <strong>0</strong> means the
+            food is still loggable but excluded from all targets.
+            <br /><br />
+            <strong>Hide</strong> removes a food from the daily tracker, daily cost target, and expected weekly cost
+            without deleting it — the food stays in storage and can be restored any time with <strong>Show</strong>.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">Tracking Calories</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Tap the <strong>+</strong> / <strong>−</strong> buttons on a food in the Today page to log servings.
+            Toggle <strong>half servings</strong> when you need finer-grained logging — it steps by 0.5 instead of 1.
+            <br /><br />
+            Your daily calorie floor and ceiling can be changed any time from <strong>Settings → Calorie Target
+            Range</strong>. This range drives how your daily total is judged as under, on, or over target.
+            <br /><br />
+            The Today page also tracks <strong>cost</strong> — running $ spent today against your $ target/day (based
+            on each food's <strong>Target/Day</strong>), plus a weekly cost total you can reset from Settings if you
+            want to start a new tracking period.
+            <br /><br />
+            Your log <strong>automatically resets at midnight</strong> — servings and custom items clear for the new
+            day. You can also reset the current day manually at any time from the Today page if you want to start
+            over.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">Weight Tracking</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Log your weight from the Weight page — once you've logged today's weight, the same field switches to
+            <strong>Update</strong> so you're always editing a single entry per day rather than stacking up
+            duplicates.
+            <br /><br />
+            Switch between <strong>lb</strong> and <strong>kg</strong> any time — this preference is shared with
+            Settings, and your weight history is stored normalized internally so changing units never changes your
+            actual data, just how it's displayed.
+            <br /><br />
+            The <strong>Weight Over Time</strong> chart (Daily/Weekly toggle) fills in once you've logged at least
+            one entry. For a trend that actually means something, try to log at roughly the <strong>same time of
+            day</strong> each time — weight can swing a few pounds/kilos just from food, water, and time of day.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">Exploring History</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            The History page organizes every day you've logged into <strong>months → weeks → days</strong>. Click a
+            month to expand or collapse its weeks, then click a week to expand or collapse its day-by-day table —
+            calories, protein, carbs, fat, and cost for each day, plus whether that day landed inside your calorie
+            range. The current week starts expanded automatically.
+            <br /><br />
+            A week that crosses from one calendar month into the next is <strong>split across both months</strong>,
+            with a badge like <strong>"↑ from Jan"</strong> or <strong>"↓ into Feb"</strong> marking which days
+            belong to which month, so nothing gets double-counted or lost.
+            <br /><br />
+            The <strong>Your Stats</strong> section at the top charts your <strong>Calories per Day</strong>
+            (Daily/Weekly), <strong>Weekly Cost</strong> (Weekly/Monthly), and overall <strong>Macro Split</strong>.
+            Use the <strong>Export</strong> button in the header to download your full history as CSV or JSON.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">Creating Programs &amp; Exercises</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Start a program from the Programs page — give it a name, then build it out day by day. Each program can
+            have <strong>up to 7 days</strong>, and every day needs at least one exercise before the program can be
+            saved.
+            <br /><br />
+            Add exercises to a day by picking one from your <strong>Exercise Library</strong> or creating a new one
+            inline. The library is shared across all your programs, so an exercise you create once can be reused
+            anywhere. Editing an exercise that came from the library also updates it there. Reorder exercises within
+            a day using the up/down arrows.
+            <br /><br />
+            Manage the library itself — creating, editing, or deleting exercises — independently of any single
+            program.
+            <br /><br />
+            Use <strong>Edit</strong> on a saved program to change its name, description, days, or exercises, or
+            <strong>Delete</strong> to remove it entirely. A program needs at least one day — you can't remove the
+            last one.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">TDEE &amp; Macro Calculators</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Your <strong>BMR</strong> (Basal Metabolic Rate) is roughly how many calories your body burns at rest
+            just staying alive. Multiplying it by your activity level gives your <strong>TDEE</strong> (Total Daily
+            Energy Expenditure) — the calories it takes to maintain your current weight day to day.
+            <br /><br />
+            On the <strong>TDEE tab</strong>, fill in your sex, age, height, weight, and activity level, then pick a
+            goal — <strong>Lose Weight</strong> shifts your range about 500 kcal/day below TDEE (roughly 1 lb/week,
+            a widely recommended, sustainable pace), <strong>Gain Weight</strong> shifts it about 350 kcal/day above
+            (roughly 0.5–0.7 lb/week of leaner gain), and <strong>Stay the Same</strong> keeps it close to TDEE.
+            Very aggressive deficits or surpluses beyond this tend to be harder to sustain and can cost muscle (when
+            cutting) or add excess fat (when bulking), so the calculator intentionally sticks to moderate ranges.
+            A few things to know: <strong>sex is required</strong> to calculate (the formula needs it), the height
+            dropdown in Imperial only covers <strong>4ft 0in–7ft 0in</strong> (switch to Metric if you're outside
+            that), and switching Imperial/Metric mid-form converts whatever you've already typed instead of clearing
+            it. Once calculated, <strong>Apply to Settings</strong> writes the range straight into your Settings
+            calorie target.
+            <br /><br />
+            The <strong>Macros tab</strong> uses your just-calculated TDEE range if you have one this session,
+            otherwise it falls back to your saved Settings range. It shows four starting points — High Protein, Low
+            Carb, Low Fat, and Standard — each broken down into grams; hit <strong>Use</strong> on any of them to
+            load it into the custom section below, where you can freely adjust the protein/carb/fat percentages
+            yourself. Custom percentages need to add up to <strong>100%</strong> — the calculator will still show
+            you the resulting grams if they don't, but it'll flag that the split is off.
+            <br /><br />
+            Try it on the <a href="../calculators/">Calculators page</a>.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">Diet Plans</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            The Diets page is a reference of well-studied, popular eating patterns — Mediterranean, DASH,
+            Intermittent Fasting, Keto, Plant-Based/Vegan, Paleo, and MIND. Each one expands into a short summary of
+            what it is and what it's associated with, plus links to the original scientific study behind it and a
+            couple of reputable sources for food lists, meal plans, or recipes if you want to actually try it.
+            It's meant purely as a starting point for research, not medical advice — check with a doctor or
+            registered dietitian before making a real change to how you eat.
+            <br /><br />
+            Take a look at the <a href="../diets/">Diets page</a>.
+          </div>
+        </div>
+      </div>
+      </main>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+    </footer>
+
+    <script src="guides.js" type="module"></script>
+  </body>
+</html>

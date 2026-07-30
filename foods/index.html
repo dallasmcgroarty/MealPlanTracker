@@ -38,6 +38,7 @@
       href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link rel="stylesheet" href="../styles.css" />
   </head>
   <body>
@@ -73,8 +74,8 @@
       </header>
       <div id="core-items-mgmt-list"></div>
       <div class="info-banners">
-        <div class="info-banner" onclick="this.classList.toggle('open')">
-          <div class="info-banner-header">
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
             <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
             <span class="info-banner-label info-label-warn">Target/Day controls what counts toward your daily goals</span>
             <span class="info-banner-chevron">▼</span>
@@ -85,8 +86,8 @@
             A target of <strong>0</strong> means the food is still loggable but excluded from all targets.
           </div>
         </div>
-        <div class="info-banner" onclick="this.classList.toggle('open')">
-          <div class="info-banner-header">
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
             <div class="info-dot" style="background:var(--muted);box-shadow: 0 0 6px var(--muted);"></div>
             <span class="info-banner-label info-label-info">Hiding a food removes it from tracking but keeps it saved</span>
             <span class="info-banner-chevron">▼</span>
@@ -96,8 +97,8 @@
             weekly cost. The food stays in storage and can be restored any time with <strong>Show</strong>.
           </div>
         </div>
-        <div class="info-banner" onclick="this.classList.toggle('open')">
-          <div class="info-banner-header">
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
             <div class="info-dot" style="background:var(--carbs);box-shadow: 0 0 6px var(--carbs);"></div>
             <span class="info-banner-label info-label-warn-2">Barcode scanning a food/product is <strong>not</strong> always accurate</span>
             <span class="info-banner-chevron">▼</span>
@@ -112,7 +113,10 @@
     </div>
 
     <footer class="app-footer">
-      <a class="footer-settings-btn" href="../settings/" data-page="settings" title="Settings">⚙</a>
+      <a class="footer-settings-btn" href="../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
     </footer>
 
     <!-- Barcode scanner -->

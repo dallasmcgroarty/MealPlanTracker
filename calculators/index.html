@@ -12,20 +12,20 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weight Tracker & Trends — Nawtch</title>
-    <meta name="description" content="Log your daily weight and see your trend over time with Nawtch's free, private weight tracker. Switch between lb and kg — your data never leaves your device." />
-    <link rel="canonical" href="https://nawtch.app/weight/" />
+    <title>Calculators — Nawtch</title>
+    <meta name="description" content="Calculate your TDEE and a recommended calorie range, then break it down into protein, carb, and fat targets in Nawtch." />
+    <link rel="canonical" href="https://nawtch.app/calculators/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nawtch" />
-    <meta property="og:title" content="Weight Tracker & Trends — Nawtch" />
-    <meta property="og:description" content="Log your daily weight and see your trend over time with Nawtch's free, private weight tracker. Switch between lb and kg — your data never leaves your device." />
-    <meta property="og:url" content="https://nawtch.app/weight/" />
+    <meta property="og:title" content="Calculators — Nawtch" />
+    <meta property="og:description" content="Calculate your TDEE and a recommended calorie range, then break it down into protein, carb, and fat targets in Nawtch." />
+    <meta property="og:url" content="https://nawtch.app/calculators/" />
     <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
 
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Weight Tracker & Trends — Nawtch" />
-    <meta name="twitter:description" content="Log your daily weight and see your trend over time with Nawtch's free, private weight tracker. Switch between lb and kg — your data never leaves your device." />
+    <meta name="twitter:title" content="Calculators — Nawtch" />
+    <meta name="twitter:description" content="Calculate your TDEE and a recommended calorie range, then break it down into protein, carb, and fat targets in Nawtch." />
     <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
 
     <link rel="icon" type="image/svg+xml" href="../media/nawtch-logo.svg" />
@@ -61,7 +61,36 @@
       </nav>
 
       <main>
-      <div id="tab-weight"></div>
+      <header>
+        <div class="header-left">
+          <h1>Calculators</h1>
+          <p class="subtitle">TDEE &amp; calorie range · Macro breakdown</p>
+        </div>
+        <a class="ghost-btn" style="font-size:11px;padding:6px 12px;" href="#" onclick="window.history.back(); return false;">← Back</a>
+      </header>
+
+      <!-- Rendered by calculators.js: tab bar + active tab content -->
+      <div id="calc-tabs-container"></div>
+      <div id="calc-tdee"></div>
+
+      <!-- Static (not JS-rendered) so this explanation and citation are present in
+           the raw HTML for crawlers/bots that don't execute JavaScript. Toggled
+           alongside #calc-tdee by calcSetTab() since it's TDEE-tab-only content. -->
+      <div id="calc-tdee-explain" class="settings-section">
+        <div class="settings-section-title">How We Calculate This</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Your BMR (calories burned at rest) is estimated with the <strong>Mifflin-St Jeor equation</strong>,
+            widely regarded as the most accurate predictive formula for resting energy expenditure in healthy
+            adults. Multiplying it by your activity level gives your <strong>TDEE</strong> — the calories needed
+            to maintain your current weight. Your goal (lose, stay the same, gain) then shifts that number up or
+            down to build a recommended daily range.
+          </p>
+          <a href="https://pubmed.ncbi.nlm.nih.gov/2305711/" target="_blank" rel="noopener">Read the original study →</a>
+        </div>
+      </div>
+
+      <div id="calc-macros" style="display:none;"></div>
       </main>
     </div>
 
@@ -72,8 +101,6 @@
       <a class="footer-settings-btn" href="../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
     </footer>
 
-    <!-- ECharts CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" defer></script>
-    <script src="weight.js" type="module"></script>
+    <script src="calculators.js" type="module"></script>
   </body>
 </html>

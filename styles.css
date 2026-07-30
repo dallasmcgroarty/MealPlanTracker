@@ -16,7 +16,7 @@
   --accent3: #f0a060;
   --warn: #f06060;
   --text: #e8eaf0;
-  --muted: #7a7f96;
+  --muted: #9fa5c4;
   --protein: #60f0a0;
   --carbs: #f0d060;
   --fat: #f09060;
@@ -171,19 +171,20 @@ h1 {
 }
 .field-label {
   font-family: "DM Mono", monospace;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 .field-hint {
   font-family: "DM Mono", monospace;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--accent3);
   margin-top: 2px;
 }
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+select {
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -195,7 +196,8 @@ input[type="number"] {
   outline: none;
   transition: border-color 0.15s;
 }
-input:focus {
+input:focus,
+select:focus {
   border-color: var(--accent);
 }
 input::placeholder {
@@ -518,7 +520,7 @@ input[readonly] {
   border: none;
   color: var(--muted);
   font-family: "DM Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   padding: 5px 12px;
   border-radius: 5px;
@@ -556,6 +558,7 @@ input[readonly] {
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
+  gap: 4px;
   padding: 0 10px;
   height: 44px;
   z-index: 100;
@@ -721,18 +724,18 @@ input[readonly] {
   font-size: 20px;
   font-weight: 800;
   line-height: 1;
-  margin-bottom: 3px;
+  margin-bottom: 6px;
 }
 .total-card .lbl {
   font-family: "DM Mono", monospace;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .total-card .sub {
   font-family: "DM Mono", monospace;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 2px;
 }
@@ -1148,6 +1151,13 @@ input[readonly] {
 .welcome-modal-box {
   max-width: 400px;
   text-align: center;
+  position: relative;
+}
+.welcome-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 1;
 }
 .welcome-modal-content {
   display: flex;
@@ -1232,21 +1242,21 @@ input[readonly] {
 }
 .info-banner {
   border-left: 3px solid transparent;
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.15s;
 }
 .info-banner:not(:last-child) {
   border-bottom: 1px solid var(--border);
-}
-.info-banner:hover {
-  background: var(--surface2);
 }
 .info-banner-header {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.info-banner-header:hover {
+  background: var(--surface2);
 }
 .info-dot {
   width: 8px;
@@ -1258,6 +1268,7 @@ input[readonly] {
   flex: 1;
   font-size: 12px;
   font-weight: 600;
+  margin: 0;
 }
 .info-label-warn {
   color: var(--accent2);
@@ -1287,6 +1298,13 @@ input[readonly] {
 }
 .info-banner-body strong {
   color: var(--text);
+}
+.info-banner-body a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.info-banner-body a:hover {
+  text-decoration: none;
 }
 .info-banner.open .info-banner-body {
   display: block;
@@ -2032,6 +2050,7 @@ input[readonly] {
   font-family: "Syne", sans-serif;
 }
 .day-date {
+  font-size: 13px;
   font-weight: 700;
   font-family: "Syne", sans-serif;
 }
@@ -2100,7 +2119,7 @@ input[readonly] {
 }
 .settings-section-title {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--muted);
   text-transform: uppercase;
@@ -2113,8 +2132,27 @@ input[readonly] {
 }
 .settings-desc {
   font-family: "DM Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   line-height: 1.7;
   margin-bottom: 12px;
+}
+.settings-section-body a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.settings-section-body a:hover {
+  text-decoration: none;
+}
+
+/* ─────────────────────────── guides page ──────────────────────────── */
+/* Guides page */
+.guides .info-banner .info-banner-header .info-banner-label,
+.diets .info-banner .info-banner-header .info-banner-label {
+  font-size: 15px;
+}
+
+.guides .info-banner .info-banner-body,
+.diets .info-banner .info-banner-body {
+  font-size: 13px;
 }

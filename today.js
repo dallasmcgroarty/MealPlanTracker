@@ -699,10 +699,12 @@ async function maybeShowWelcome() {
     modal = document.createElement('div');
     modal.id = 'welcome-modal';
     modal.className = 'pg-modal';
+    modal.addEventListener('click', (e) => { if (e.target === modal) window.startJourney(); });
     document.body.appendChild(modal);
   }
   modal.innerHTML = `
     <div class="pg-modal-box welcome-modal-box">
+      <button class="pg-close-btn welcome-close-btn" onclick="window.startJourney()">×</button>
       <div class="welcome-modal-content">
         <div class="welcome-wordmark">Nawtch</div>
         <h2 class="welcome-title">Welcome to Nawtch!</h2>

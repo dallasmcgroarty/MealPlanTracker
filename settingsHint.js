@@ -16,7 +16,7 @@ const HINT_DELAY_MS = 15000;
 
 function showArrow() {
   if (document.getElementById('settings-hint-arrow')) return;
-  const footerBtn = document.querySelector('.footer-settings-btn');
+  const footerBtn = document.querySelector('.footer-settings-btn[data-page="settings"]');
   if (!footerBtn) return;
   const arrow = document.createElement('div');
   arrow.id = 'settings-hint-arrow';
