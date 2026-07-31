@@ -13,19 +13,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Guides & How-To — Nawtch</title>
-    <meta name="description" content="Learn how to manage foods, track calories and weight, explore your history, build workout programs and exercises, calculate your TDEE and macros, browse popular diets, and keep your data safe in Nawtch." />
+    <meta name="description" content="Step-by-step guides for tracking food, weight, and workouts in Nawtch — plus how to calculate TDEE and macros, explore diets, and keep your data safe." />
     <link rel="canonical" href="https://nawtch.app/guides/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nawtch" />
     <meta property="og:title" content="Guides & How-To — Nawtch" />
-    <meta property="og:description" content="Learn how to manage foods, track calories and weight, explore your history, build workout programs and exercises, calculate your TDEE and macros, browse popular diets, and keep your data safe in Nawtch." />
+    <meta property="og:description" content="Step-by-step guides for tracking food, weight, and workouts in Nawtch — plus how to calculate TDEE and macros, explore diets, and keep your data safe." />
     <meta property="og:url" content="https://nawtch.app/guides/" />
     <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
 
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Guides & How-To — Nawtch" />
-    <meta name="twitter:description" content="Learn how to manage foods, track calories and weight, explore your history, build workout programs and exercises, calculate your TDEE and macros, browse popular diets, and keep your data safe in Nawtch." />
+    <meta name="twitter:description" content="Step-by-step guides for tracking food, weight, and workouts in Nawtch — plus how to calculate TDEE and macros, explore diets, and keep your data safe." />
     <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
 
     <link rel="icon" type="image/svg+xml" href="../media/nawtch-logo.svg" />
@@ -210,7 +210,7 @@
         <div class="info-banner">
           <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
             <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
-            <h2 class="info-banner-label">TDEE &amp; Macro Calculators</h2>
+            <h2 class="info-banner-label">Fitness Calculators</h2>
             <span class="info-banner-chevron">▼</span>
           </div>
           <div class="info-banner-body">
@@ -230,12 +230,30 @@
             it. Once calculated, <strong>Apply to Settings</strong> writes the range straight into your Settings
             calorie target.
             <br /><br />
+            The <strong>BMR tab</strong> surfaces that same resting-calorie number on its own, with its own
+            sex/age/height/weight inputs, for when you just want BMR without picking an activity level or goal.
+            <br /><br />
             The <strong>Macros tab</strong> uses your just-calculated TDEE range if you have one this session,
             otherwise it falls back to your saved Settings range. It shows four starting points — High Protein, Low
             Carb, Low Fat, and Standard — each broken down into grams; hit <strong>Use</strong> on any of them to
             load it into the custom section below, where you can freely adjust the protein/carb/fat percentages
             yourself. Custom percentages need to add up to <strong>100%</strong> — the calculator will still show
             you the resulting grams if they don't, but it'll flag that the split is off.
+            <br /><br />
+            The <strong>Body Fat % tab</strong> uses the U.S. Navy circumference method — enter your height, neck,
+            and waist (plus hip if you select Female) and it estimates body fat from those measurements alone. It's
+            a solid estimate (roughly ±3–4 percentage points against underwater weighing), not a clinical-grade
+            reading, and it's less reliable at the extremes of body composition — very high muscle mass or very low
+            body fat.
+            <br /><br />
+            The <strong>BMI tab</strong> is the standard weight-to-height screening measure, using the CDC's adult
+            category thresholds. It's a quick population-level check, not a full picture of body composition — it
+            can't tell fat from muscle, so very muscular or very lean people may land in a misleading category.
+            <br /><br />
+            The <strong>Ideal Weight tab</strong> uses the Devine formula, the clinical reference most commonly used
+            for medication dosing. Pick your sex and height and it returns a reference weight in kg and lb — treat
+            it as a population-average range, not a personal target, since it doesn't account for frame size or
+            muscle mass.
             <br /><br />
             Try it on the <a href="../calculators/">Calculators page</a>.
           </div>
@@ -247,12 +265,13 @@
             <span class="info-banner-chevron">▼</span>
           </div>
           <div class="info-banner-body">
-            The Diets page is a reference of well-studied, popular eating patterns — Mediterranean, DASH,
-            Intermittent Fasting, Keto, Plant-Based/Vegan, Paleo, and MIND. Each one expands into a short summary of
-            what it is and what it's associated with, plus links to the original scientific study behind it and a
-            couple of reputable sources for food lists, meal plans, or recipes if you want to actually try it.
-            It's meant purely as a starting point for research, not medical advice — check with a doctor or
-            registered dietitian before making a real change to how you eat.
+            The Diets page is a reference of popular eating patterns — Mediterranean, DASH, Intermittent Fasting,
+            Keto, Plant-Based/Vegan, Paleo, MIND, Whole30, and Flexible Dieting/IIFYM. Each one expands into a short
+            summary of what it is and what it's associated with, plus links to the original scientific study behind
+            it (or, for Whole30, an honest note that no independent clinical trial exists for it) and a couple of
+            reputable sources for food lists, meal plans, or recipes if you want to actually try it. It's meant
+            purely as a starting point for research, not medical advice — check with a doctor or registered
+            dietitian before making a real change to how you eat.
             <br /><br />
             Take a look at the <a href="../diets/">Diets page</a>.
           </div>
