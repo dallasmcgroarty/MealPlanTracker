@@ -93,15 +93,15 @@ header {
   margin-bottom: 6px;
 }
 h1 {
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 23px;
+  font-weight: 700;
   line-height: 1;
   color: var(--accent);
   margin-bottom: 4px;
 }
 .subtitle {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 .date-badge {
   font-family: "DM Mono", monospace;
@@ -111,14 +111,15 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 8px 14px;
-  text-align: right;
+  text-align: center;
 }
 .date-badge .date-day {
   font-size: 15px;
   font-weight: 500;
+  text-align: center;
 }
 .date-badge .date-reset {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 2px;
 }
@@ -171,14 +172,14 @@ h1 {
 }
 .field-label {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 .field-hint {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--accent3);
   margin-top: 2px;
 }
@@ -270,7 +271,7 @@ input[readonly] {
   border-radius: 7px;
   color: var(--muted);
   font-family: "DM Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   padding: 6px 12px;
   cursor: pointer;
   transition: all 0.15s;
@@ -558,9 +559,10 @@ input[readonly] {
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 0 10px;
-  height: 44px;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 16px;
+  height: 50px;
   z-index: 100;
 }
 .footer-settings-btn {
@@ -569,8 +571,8 @@ input[readonly] {
   border: none;
   color: var(--muted);
   font-family: "Syne", sans-serif;
-  font-size: 24px;
-  line-height: 24px;
+  font-size: 30px;
+  line-height: 30px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -580,6 +582,10 @@ input[readonly] {
   border-radius: 6px;
   transition: color 0.15s, background 0.15s;
   text-decoration: none;
+}
+.footer-settings-btn .material-symbols-outlined {
+  font-size: 30px;
+  line-height: 30px;
 }
 .footer-settings-btn:hover {
   color: var(--text);
@@ -624,6 +630,19 @@ input[readonly] {
 }
 
 @media (max-width: 660px) {
+  .app-footer {
+    gap: 6px;
+    height: 48px;
+    justify-content: space-around;
+  }
+  .footer-settings-btn {
+    font-size: 28px;
+    line-height: 28px;
+  }
+  .footer-settings-btn .material-symbols-outlined{
+    font-size: 28px;
+    line-height: 28px;
+  }
   .pg-modal-header {
     padding: 16px;
   }
@@ -807,7 +826,7 @@ input[readonly] {
   position: relative;
   height: 12px;
   font-family: "DM Mono", monospace;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
   margin-top: 20px;
 }
@@ -953,7 +972,7 @@ input[readonly] {
 }
 .srv-count .target {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 10px;
 }
 .srv-count .current {
   font-size: 15px;
@@ -971,7 +990,7 @@ input[readonly] {
   min-width: 0;
 }
 .item-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   margin-bottom: 2px;
   white-space: nowrap;
@@ -980,7 +999,7 @@ input[readonly] {
 }
 .item-serving-lbl {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   margin-bottom: 5px;
 }
@@ -991,7 +1010,7 @@ input[readonly] {
 }
 .im {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
 }
 .im-cal {
   color: var(--accent2);
@@ -1101,7 +1120,7 @@ input[readonly] {
   align-items: center;
   padding: 5px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 12px;
+  font-size: 13px;
 }
 .cost-row:last-child {
   border-bottom: none;
@@ -1134,7 +1153,7 @@ input[readonly] {
 }
 .cost-note {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 10px;
 }
@@ -1291,7 +1310,7 @@ input[readonly] {
 .info-banner-body {
   display: none;
   font-family: "DM Mono", monospace;
-  padding: 0 14px 12px 32px;
+  padding: 10px 6px 12px 32px;
   font-size: 11px;
   line-height: 1.7;
   color: var(--muted);
@@ -1339,7 +1358,7 @@ input[readonly] {
 }
 .mgmt-card-name {
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   word-break: break-word;
   flex: 1;
 }
@@ -1524,7 +1543,7 @@ input[readonly] {
   gap: 8px;
   margin-bottom: 20px;
   font-family: "DM Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
 }
 .pg-step {
   color: var(--muted);
@@ -1782,7 +1801,7 @@ input[readonly] {
 }
 .pg-ex-badge {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -1791,7 +1810,7 @@ input[readonly] {
 }
 .pg-ex-card-notes {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   padding: 0px 6px 0px 0px;
   flex: 1;
@@ -1842,7 +1861,7 @@ input[readonly] {
 }
 .pg-ex-create-sub {
   font-family: "DM Mono", monospace;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -2016,7 +2035,7 @@ input[readonly] {
 }
 .days-table th {
   font-family: "DM Mono", monospace;
-  font-size: 9px;
+  font-size: 10px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -2050,7 +2069,7 @@ input[readonly] {
   font-family: "Syne", sans-serif;
 }
 .day-date {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   font-family: "Syne", sans-serif;
 }
@@ -2078,12 +2097,12 @@ input[readonly] {
 }
 .in-range {
   color: var(--protein);
-  font-size: 9px;
+  font-size: 10px;
   font-family: "DM Mono", monospace;
 }
 .out-range {
   color: var(--warn);
-  font-size: 9px;
+  font-size: 10px;
   font-family: "DM Mono", monospace;
 }
 .partial-week-badge {
@@ -2091,6 +2110,49 @@ input[readonly] {
   color: var(--muted);
   font-family: "DM Mono", monospace;
   margin-left: 4px;
+}
+
+@media (max-width: 660px) {
+  .macro-table {
+    min-width: 0;
+  }
+  .macro-table thead {
+    display: none;
+  }
+  .macro-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+      "plan plan plan"
+      "p c f"
+      "btn btn btn";
+    row-gap: 8px;
+    padding: 12px;
+  }
+  .macro-table tbody td {
+    padding: 0;
+    border-bottom: none;
+    white-space: normal;
+  }
+  .macro-table tbody td:nth-child(1) { grid-area: plan; }
+  .macro-table tbody td:nth-child(2) { grid-area: p; }
+  .macro-table tbody td:nth-child(3) { grid-area: c; }
+  .macro-table tbody td:nth-child(4) { grid-area: f; }
+  .macro-table tbody td:nth-child(5) {
+    grid-area: btn;
+    text-align: left;
+    padding-right: 0;
+  }
+  .macro-table tbody td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 3px;
+  }
 }
 
 /* Overview chart sizing (promoted out of index.html's old inline <style>) */

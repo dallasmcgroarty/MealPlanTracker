@@ -371,7 +371,7 @@ async function renderWeeklyCost() {
     const row = document.createElement("div");
     row.className = "cost-row";
     const isToday = dateStr === todayStr();
-    row.innerHTML = `<span>${formatDateShort(dateStr)}${isToday ? ' <em style="color:var(--accent);font-style:normal;font-size:9px">today</em>' : ""}</span><span class="amt actual-amt">$${dayCost.toFixed(2)}</span>`;
+    row.innerHTML = `<span>${formatDateShort(dateStr)}${isToday ? ' <em style="color:var(--accent);font-style:normal;font-size:11px">today</em>' : ""}</span><span class="amt actual-amt">$${dayCost.toFixed(2)}</span>`;
     actualRows.appendChild(row);
   });
 

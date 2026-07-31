@@ -61,29 +61,24 @@ window.wtSetUnit = async function (unit) {
   renderWeightTab();
 };
 
+function renderHeader() {
+  const el = document.getElementById("wt-hdr-date");
+  if (el) el.textContent = formatHeaderDate();
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // WEIGHT TAB
 // ═══════════════════════════════════════════════════════════════════
 export function renderWeightTab() {
   const tab = document.getElementById("tab-weight");
   if (!tab) return;
+  renderHeader();
   const today = todayStr();
   const todayEntry = WEIGHT_ENTRIES.find((e) => e.date === today);
   const hasAny = WEIGHT_ENTRIES.length > 0;
   const prefill = todayEntry ? round1(kgToDisplay(todayEntry.weightKg)) : "";
 
   tab.innerHTML = `
-    <header>
-      <div class="header-left">
-        <h1>Weight</h1>
-        <p class="subtitle">Log your weight · Track trends over time</p>
-      </div>
-      <div class="date-badge">
-        <div class="date-day">${formatHeaderDate()}</div>
-        <div class="date-reset">Once per day</div>
-      </div>
-    </header>
-
     ${
       hasAny
         ? `

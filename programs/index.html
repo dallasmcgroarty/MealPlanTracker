@@ -61,7 +61,17 @@
       </nav>
 
       <main>
-      <div id="tab-programs"></div>
+      <header>
+        <div class="header-left">
+          <h1>Programs & Exercises</h1>
+          <p class="subtitle">Create & manage your workout programs</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-direction: column;">
+          <button style="align-self: auto;" class="add-btn" onclick="window.pgOpenCreate()">+ New Program</button>
+          <button style="align-self: auto;" class="ghost-btn pg-exercise-manage-btn" onclick="window.pgOpenExLibrary()">Exercise Library</button>
+        </div>
+      </header>
+      <div id="programs-list"></div>
       </main>
     </div>
 

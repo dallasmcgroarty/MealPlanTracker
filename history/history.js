@@ -332,7 +332,7 @@ async function renderHistory() {
           <div class="month-stats-scroll" style="position:relative;overflow-x:auto;width:100%;margin-top:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
             <table style="margin-top:6px;font-size:12px;color:var(--muted);border-collapse:collapse;font-family:'DM Mono',monospace;min-width:500px;width:max-content;">
               <thead>
-                <tr style="text-transform:uppercase;font-size:10px">
+                <tr style="text-transform:uppercase;font-size:11px">
                   <th style="padding-right:18px;text-align:left;font-weight:500;">logged</th>
                   <th style="padding-right:18px;text-align:left;font-weight:500;">kcal/day</th>
                   <th style="padding-right:18px;text-align:left;font-weight:500;">$/day</th>

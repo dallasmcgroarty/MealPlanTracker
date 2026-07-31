@@ -69,7 +69,7 @@
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
           <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">stored locally</span>
           <div class="export-dropdown">
-            <button class="ghost-btn export-dropdown-trigger" style="font-size:11px;padding:6px 12px;" onclick="window.toggleExportDropdown(event)">Export ▾</button>
+            <button class="ghost-btn export-dropdown-trigger" onclick="window.toggleExportDropdown(event)">Export ▾</button>
             <div class="export-dropdown-menu">
               <button onclick="window.exportHistory('csv')">↓ CSV</button>
               <button onclick="window.exportHistory('json')">↓ JSON</button>
@@ -87,7 +87,7 @@
         <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
           <div style="min-width:320px;max-width:420px;width:100%;">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
-              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);" id="hist-cal-title">Calories per Day</div>
+              <div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--muted);" id="hist-cal-title">Calories per Day</div>
               <div class="wt-toggle" id="hist-cal-toggle">
                 <button class="wt-toggle-btn active" id="hist-cal-toggle-daily" onclick="window.histSetCalChartMode('daily')">Daily</button>
                 <button class="wt-toggle-btn" id="hist-cal-toggle-weekly" onclick="window.histSetCalChartMode('weekly')">Weekly</button>
@@ -97,7 +97,7 @@
           </div>
           <div style="min-width:320px;max-width:420px;width:100%;">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
-              <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);" id="hist-cost-title">Weekly Cost</div>
+              <div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--muted);" id="hist-cost-title">Weekly Cost</div>
               <div class="wt-toggle" id="hist-cost-toggle">
                 <button class="wt-toggle-btn active" id="hist-cost-toggle-weekly" onclick="window.histSetCostChartMode('weekly')">Weekly</button>
                 <button class="wt-toggle-btn" id="hist-cost-toggle-monthly" onclick="window.histSetCostChartMode('monthly')">Monthly</button>
@@ -106,7 +106,7 @@
             <div id="chart-weekly-cost" class="echart-container"></div>
           </div>
           <div style="min-width:220px;max-width:320px;width:100%;">
-            <div style="font-family:'Syne',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px;">Macro Split</div>
+            <div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--muted);margin-bottom:4px;">Macro Split</div>
             <div id="chart-macros" class="echart-container echart-macros"></div>
           </div>
         </div>

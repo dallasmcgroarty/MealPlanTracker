@@ -52,22 +52,8 @@ export function renderProgramsTab() {
 }
 
 function renderProgramsList() {
-  const tab = document.getElementById('tab-programs');
-  tab.innerHTML = `
-    <header>
-      <div class="header-left">
-        <h1>Programs</h1>
-        <p class="subtitle">Create & manage your workout programs</p>
-      </div>
-      <div style="display:flex;gap:8px;flex-direction: column;">
-        <button style="align-self: auto;" class="add-btn" onclick="window.pgOpenCreate()">+ New Program</button>
-        <button style="align-self: auto;" class="ghost-btn pg-exercise-manage-btn" onclick="window.pgOpenExLibrary()">Exercise Library</button>
-      </div>
-    </header>
-    <div id="programs-list"></div>
-  `;
-
   const list = document.getElementById('programs-list');
+  list.innerHTML = '';
   if (!PROGRAMS.length) {
     list.innerHTML = `<div class="no-history">No programs yet.<br><br>Create your first workout program to get started.</div>`;
     return;
@@ -325,8 +311,8 @@ function buildExerciseGridHTML() {
       ${ex.notes ? `<div class="pg-ex-card-notes">${esc(ex.notes)}</div>` : ''}
       ${!exLibraryMode ? `<button class="pg-ex-add-btn" onclick="window.pgAddFromLibrary('${ex.id}')">+ Add</button>` : ''}
       <div style="display:flex;gap:6px;">
-        <button class="ghost-btn" style="flex:1;font-size:10px;padding:4px 0;" onclick="window.pgEditFromLibrary('${ex.id}')">Edit</button>
-        <button class="ghost-btn" style="flex:1;font-size:10px;padding:4px 0;color:var(--warn);" onclick="window.pgDeleteFromLibrary('${ex.id}')">Delete</button>
+        <button class="ghost-btn" style="flex:1;font-size:11px;padding:4px 0;" onclick="window.pgEditFromLibrary('${ex.id}')">Edit</button>
+        <button class="ghost-btn" style="flex:1;font-size:11px;padding:4px 0;color:var(--warn);" onclick="window.pgDeleteFromLibrary('${ex.id}')">Delete</button>
       </div>
     </div>`;
   }).join('');
