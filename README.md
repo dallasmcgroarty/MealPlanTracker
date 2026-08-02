@@ -20,3 +20,11 @@ https://nawtch.com
 - access via the web on any device
 - cost tracking
 - simple, fast and free
+
+---
+
+## Copyright
+
+© 2026 Dallas McGroarty. All Rights Reserved.
+
+This repository is publicly visible for reference only. No permission is granted to copy, modify, distribute, or reuse any part of this software without prior written permission.
