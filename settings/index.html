@@ -15,6 +15,7 @@
     <title>Settings & Data Backup — Nawtch</title>
     <meta name="description" content="Manage your Nawtch calorie targets and weight units, and back up or restore all your data as a single JSON file." />
     <link rel="canonical" href="https://nawtch.app/settings/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/settings/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nawtch" />
@@ -87,13 +88,16 @@
       <div class="settings-section">
         <div class="settings-section-title">Calorie Target Range</div>
         <div class="settings-section-body">
+          <p class="settings-desc">
+            Get a recommended target calorie estimate by using the TDEE calculator on the <a href="../calculators/">Fitness & Nutrition Calculators page</a>.
+          </p>
           <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
             <div class="field-group" style="flex:1;min-width:80px;">
-              <span class="field-label">Floor (kcal)</span>
+              <span class="field-label" id="settings-cal-low-label">Floor (kcal)</span>
               <input id="settings-cal-low" type="number" min="0" step="50" />
             </div>
             <div class="field-group" style="flex:1;min-width:80px;">
-              <span class="field-label">Ceiling (kcal)</span>
+              <span class="field-label" id="settings-cal-high-label">Ceiling (kcal)</span>
               <input id="settings-cal-high" type="number" min="0" step="50" />
             </div>
             <button class="add-btn" style="padding:6px 14px;font-size:12px;" onclick="window.saveCalRangeFromSettings()">Save</button>
@@ -107,6 +111,27 @@
         <div class="settings-section-body">
           <p class="settings-desc">Choose the unit used for weight tracking. Applies everywhere weight is shown.</p>
           <div class="wt-toggle" id="settings-wt-unit-toggle"></div>
+        </div>
+      </div>
+
+      <!-- Energy Unit -->
+      <div class="settings-section">
+        <div class="settings-section-title">Energy Unit</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">Choose the unit used for calories. Applies everywhere energy is shown.</p>
+          <div class="wt-toggle" id="settings-energy-unit-toggle"></div>
+        </div>
+      </div>
+
+      <!-- Currency -->
+      <div class="settings-section" style="overflow:visible !important;">
+        <div class="settings-section-title">Currency</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">Choose the currency symbol shown next to cost. This only changes the label — amounts are not converted.</p>
+          <div class="export-dropdown" style="display: inline-block;" id="settings-currency-dropdown">
+            <button class="ghost-btn export-dropdown-trigger" id="settings-currency-trigger" onclick="window.toggleCurrencyDropdown(event)">USD ($) ▾</button>
+            <div class="export-dropdown-menu" id="settings-currency-menu"></div>
+          </div>
         </div>
       </div>
 

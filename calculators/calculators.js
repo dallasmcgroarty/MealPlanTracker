@@ -82,7 +82,7 @@ function renderCalcTabs() {
       <button class="nav-tab ${activeTab === "tdee" ? "active" : ""}" onclick="window.calcSetTab('tdee')">TDEE</button>
       <button class="nav-tab ${activeTab === "bmr" ? "active" : ""}" onclick="window.calcSetTab('bmr')">BMR</button>
       <button class="nav-tab ${activeTab === "macros" ? "active" : ""}" onclick="window.calcSetTab('macros')">Macros</button>
-      <button class="nav-tab ${activeTab === "bodyfat" ? "active" : ""}" onclick="window.calcSetTab('bodyfat')">Body Fat %</button>
+      <button class="nav-tab ${activeTab === "bodyfat" ? "active" : ""}" onclick="window.calcSetTab('bodyfat')">Body Fat</button>
       <button class="nav-tab ${activeTab === "bmi" ? "active" : ""}" onclick="window.calcSetTab('bmi')">BMI</button>
       <button class="nav-tab ${activeTab === "ibw" ? "active" : ""}" onclick="window.calcSetTab('ibw')">Ideal Weight</button>
     </nav>
@@ -164,7 +164,7 @@ function renderTdeeTab() {
           <div class="wt-toggle">
             ${GOALS.map((g) => `<button class="wt-toggle-btn ${goal === g.id ? "active" : ""}" onclick="window.calcSetGoal('${g.id}')">${g.label}</button>`).join("")}
           </div>
-          <span class="field-hint" style="display:block;margin-top:6px;">Lose: ~500 kcal/day deficit (≈1 lb/wk) · Gain: ~350 kcal/day surplus (≈0.5–0.7 lb/wk)</span>
+          <span class="field-hint" style="display:block;margin-top:6px;">Lose: ~${prefs.formatEnergy(500)}/day deficit (≈1 lb/wk) · Gain: ~${prefs.formatEnergy(350)}/day surplus (≈0.5–0.7 lb/wk)</span>
         </div>
 
         <button class="add-btn" style="margin-top:16px;" onclick="window.calcRunTdee()">Calculate</button>
@@ -174,6 +174,13 @@ function renderTdeeTab() {
   `;
 }
 
+function formatEnergyRange(lowKcal, highKcal) {
+  const unit = prefs.getEnergyUnitSync();
+  const low = Math.round(prefs.kcalToDisplayUnit(lowKcal, unit)).toLocaleString();
+  const high = Math.round(prefs.kcalToDisplayUnit(highKcal, unit)).toLocaleString();
+  return `${low}–${high} ${unit}`;
+}
+
 function renderTdeeResult() {
   return `
     <div class="settings-section">
@@ -181,17 +188,17 @@ function renderTdeeResult() {
       <div class="settings-section-body">
         <div class="totals-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0;">
           <div class="total-card">
-            <div class="val">${tdeeResult.bmr.toLocaleString()}</div>
+            <div class="val">${prefs.formatEnergy(tdeeResult.bmr)}</div>
             <div class="lbl">BMR</div>
             <div class="sub">at rest</div>
           </div>
           <div class="total-card">
-            <div class="val">${tdeeResult.tdee.toLocaleString()}</div>
+            <div class="val">${prefs.formatEnergy(tdeeResult.tdee)}</div>
             <div class="lbl">TDEE</div>
             <div class="sub">to maintain</div>
           </div>
           <div class="total-card tc-cal">
-            <div class="val">${tdeeResult.low.toLocaleString()}–${tdeeResult.high.toLocaleString()}</div>
+            <div class="val">${formatEnergyRange(tdeeResult.low, tdeeResult.high)}</div>
             <div class="lbl">Target Range</div>
             <div class="sub">${tdeeResult.goalLabel}</div>
           </div>
@@ -268,7 +275,7 @@ window.calcRunTdee = function () {
 
 window.calcApplyToSettings = async function () {
   if (!tdeeResult) return;
-  if (!(await showConfirm(`Set calorie range to ${tdeeResult.low.toLocaleString()} – ${tdeeResult.high.toLocaleString()} kcal?`, "Save"))) return;
+  if (!(await showConfirm(`Set calorie range to ${formatEnergyRange(tdeeResult.low, tdeeResult.high)}?`, "Save"))) return;
   await prefs.setCalRange(tdeeResult.low, tdeeResult.high);
 };
 
@@ -337,8 +344,8 @@ function renderBmrResult() {
       <div class="settings-section-body">
         <div class="totals-grid" style="grid-template-columns:1fr;margin-bottom:0;">
           <div class="total-card">
-            <div class="val">${bmrResult.toLocaleString()}</div>
-            <div class="lbl">kcal / day</div>
+            <div class="val">${prefs.formatEnergy(bmrResult)}</div>
+            <div class="lbl">per day</div>
             <div class="sub">calories burned at complete rest</div>
           </div>
         </div>
@@ -435,7 +442,7 @@ async function renderMacrosTab() {
     <div class="settings-section">
       <h2 class="settings-section-title">Macro Breakdown</h2>
       <div class="settings-section-body">
-        <p class="settings-desc">Based on ${source}: ${low.toLocaleString()}–${high.toLocaleString()} kcal/day (avg ${mid.toLocaleString()} kcal).</p>
+        <p class="settings-desc">Based on ${source}: ${formatEnergyRange(low, high)}/day (avg ${prefs.formatEnergy(mid)}).</p>
         <div style="overflow-x:auto;">
         <table class="days-table macro-table" style="margin-top:12px;">
           <thead><tr><th>Plan</th><th>Protein</th><th>Carbs</th><th>Fat</th><th></th></tr></thead>
@@ -868,6 +875,7 @@ window.calcRunIbw = function () {
 // ═══════════════════════════════════════════════════════════════════
 async function init() {
   await db.openDB();
+  await prefs.getEnergyUnit();
   units = (await prefs.getWeightUnit()) === "kg" ? "metric" : "imperial";
   try {
     const weights = await db.dbGetAll("weights");

@@ -15,6 +15,7 @@
     <title>Nawtch — Free Calorie & Macro Tracker, No Account Needed</title>
     <meta name="description" content="Nawtch is a free, fast fitness tracker with no account required. Log food, macros, and cost, track weight, manage workout programs and exercises, and view your full history — all stored privately on your device." />
     <link rel="canonical" href="https://nawtch.app/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nawtch" />
@@ -109,7 +110,7 @@
       <div class="totals-grid">
         <div class="total-card tc-cal">
           <div class="val" id="tot-cal">0</div>
-          <div class="lbl">Logged kcal</div>
+          <div class="lbl" id="tot-cal-lbl">Logged kcal</div>
           <div class="sub" id="tot-cal-sub">/ 1,250 target</div>
         </div>
         <div class="total-card tc-p">
@@ -147,11 +148,11 @@
             <div id="cal-range-editor" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px;">
               <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
                 <div class="field-group" style="flex:1;min-width:80px;">
-                  <span class="field-label">Floor (kcal)</span>
+                  <span class="field-label" id="cal-range-low-label">Floor (kcal)</span>
                   <input id="cal-range-low-input" type="number" min="0" step="50" />
                 </div>
                 <div class="field-group" style="flex:1;min-width:80px;">
-                  <span class="field-label">Ceiling (kcal)</span>
+                  <span class="field-label" id="cal-range-high-label">Ceiling (kcal)</span>
                   <input id="cal-range-high-input" type="number" min="0" step="50" />
                 </div>
                 <div style="display:flex;gap:6px;">
@@ -245,7 +246,7 @@
               <input type="text" id="cf-name" placeholder="e.g. Banana" />
             </div>
             <div class="field-group">
-              <span class="field-label">Calories</span>
+              <span class="field-label" id="cf-cal-label">Calories (kcal)</span>
               <input type="number" id="cf-cal" placeholder="105" min="0" />
             </div>
             <div class="field-group">
@@ -264,7 +265,7 @@
           <!-- Row 2: cost fields -->
           <div class="add-row add-row-2">
             <div class="field-group">
-              <span class="field-label">Bulk Total Price ($)</span>
+              <span class="field-label" id="cf-bulk-price-label">Bulk Total Price ($)</span>
               <input
                 type="number"
                 id="cf-bulk-price"
@@ -287,7 +288,7 @@
               <span class="field-hint">total servings</span>
             </div>
             <div class="field-group">
-              <span class="field-label">Cost / Serving ($)</span>
+              <span class="field-label" id="cf-cost-label">Cost / Serving ($)</span>
               <input
                 type="number"
                 id="cf-cost-per-srv"

@@ -58,7 +58,7 @@ function applyCaloriesChartOption({ calLabels, calData, calWeekLabels, calWeekAv
       formatter: params => {
         const p = params[0];
         const label = isCalWeekly ? `Week of ${fmtChartDate(p.axisValue)}` : fmtChartDate(p.axisValue);
-        return `${label}<br/>${calSeriesName}: ${p.value || 0} kcal`;
+        return `${label}<br/>${calSeriesName}: ${prefs.formatEnergy(p.value || 0)}`;
       }
     },
     grid: { left: 40, right: 20, top: 20, bottom: 55 },
@@ -75,14 +75,15 @@ function applyCaloriesChartOption({ calLabels, calData, calWeekLabels, calWeekAv
       type: 'value',
       min: 0,
       max: calChartData.length ? Math.ceil(Math.max(...calChartData, calRange.high) * 1.15 / 250) * 250 : 2000,
-      splitLine: { show: false }
+      splitLine: { show: false },
+      axisLabel: { formatter: v => Math.round(prefs.kcalToDisplayUnit(v, prefs.getEnergyUnitSync())) },
     },
     series: [
       { name: calSeriesName, type: 'line', data: calChartData, smooth: true, symbolSize: 6,
         lineStyle: { color: '#60c8f0', width: 3 }, areaStyle: { color: 'rgba(96,200,240,0.12)' } },
-      { name: `Target Low (${calRange.low})`, type: 'line', data: calChartTargetLow, smooth: true, symbol: 'none',
+      { name: `Target Low (${prefs.formatEnergy(calRange.low)})`, type: 'line', data: calChartTargetLow, smooth: true, symbol: 'none',
         tooltip: { show: false }, lineStyle: { color: '#60f0a0', type: 'dashed', width: 2 } },
-      { name: `Target High (${calRange.high})`, type: 'line', data: calChartTargetHigh, smooth: true, symbol: 'none',
+      { name: `Target High (${prefs.formatEnergy(calRange.high)})`, type: 'line', data: calChartTargetHigh, smooth: true, symbol: 'none',
         tooltip: { show: false }, lineStyle: { color: '#f0a060', type: 'dashed', width: 2 } },
     ],
     legend: { show: false },
@@ -129,12 +130,12 @@ function applyWeeklyCostChartOption({ weekLabels, weekCostData, monthLabels, mon
       trigger: 'axis',
       formatter: params => {
         const p = params[0];
-        if (isMonthly) return `${fmtMonthLabel(p.axisValue)}<br/>Cost: $${(p.value || 0).toFixed(2)}`;
+        if (isMonthly) return `${fmtMonthLabel(p.axisValue)}<br/>Cost: ${prefs.formatCurrency(p.value || 0)}`;
         const start = new Date(p.axisValue + 'T00:00:00');
         const end = new Date(p.axisValue + 'T00:00:00');
         end.setDate(end.getDate() + 6);
         const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        return `${fmt(start)} – ${fmt(end)}<br/>Cost: $${(p.value || 0).toFixed(2)}`;
+        return `${fmt(start)} – ${fmt(end)}<br/>Cost: ${prefs.formatCurrency(p.value || 0)}`;
       }
     },
     grid: { left: 40, right: 20, top: 20, bottom: 55 },
@@ -334,8 +335,8 @@ async function renderHistory() {
               <thead>
                 <tr style="text-transform:uppercase;font-size:11px">
                   <th style="padding-right:18px;text-align:left;font-weight:500;">logged</th>
-                  <th style="padding-right:18px;text-align:left;font-weight:500;">kcal/day</th>
-                  <th style="padding-right:18px;text-align:left;font-weight:500;">$/day</th>
+                  <th style="padding-right:18px;text-align:left;font-weight:500;">${prefs.getEnergyUnitSync()}/day</th>
+                  <th style="padding-right:18px;text-align:left;font-weight:500;">${prefs.getCurrencySymbol()}/day</th>
                   <th style="padding-right:18px;text-align:left;font-weight:500;">Hit rate</th>
                   <th style="padding-right:18px;text-align:left;font-weight:500;">protein/day</th>
                   <th style="padding-right:18px;text-align:left;font-weight:500;">carbs/day</th>
@@ -345,8 +346,8 @@ async function renderHistory() {
               <tbody>
                 <tr>
                   <td style="padding-right:18px;"><strong style="color:var(--muted);font-weight:600;">${mStats.days}</strong><span style="color:var(--muted);opacity:0.5;">/${totalDays} days</span></td>
-                  <td style="padding-right:18px;">~<strong style="color:var(--protein);font-weight:600;">${mStats.days ? Math.round(mStats.totalCal / mStats.days) : 0}</strong></td>
-                  <td style="padding-right:18px;">~<strong style="color:var(--accent);font-weight:600;">$${mStats.days ? (mStats.totalCost / mStats.days).toFixed(2) : '0.00'}</strong></td>
+                  <td style="padding-right:18px;">~<strong style="color:var(--protein);font-weight:600;">${mStats.days ? Math.round(prefs.kcalToDisplayUnit(mStats.totalCal / mStats.days, prefs.getEnergyUnitSync())) : 0}</strong></td>
+                  <td style="padding-right:18px;">~<strong style="color:var(--accent);font-weight:600;">${prefs.formatCurrency(mStats.days ? mStats.totalCost / mStats.days : 0)}</strong></td>
                   <td style="padding-right:18px;">~<strong style="color:var(--protein);font-weight:600;">${mStats.days ? Math.round((mStats.inRangeDays / mStats.days) * 100) : 0}%</strong></td>
                   <td style="padding-right:18px;">~<strong style="color:var(--protein);font-weight:600;">${mStats.days ? Math.round(mStats.totalProtein / mStats.days) : 0}g</strong></td>
                   <td style="padding-right:18px;">~<strong style="color:var(--carbs);font-weight:600;">${mStats.days ? Math.round(mStats.totalCarb / mStats.days) : 0}g</strong></td>
@@ -387,8 +388,8 @@ async function renderHistory() {
             <div class="week-days-logged">${dayDates.length} day(s) logged${isPartial ? " this month" : ""}</div>
         </div>
         <div class="week-header-right">
-            <div class="week-summary-stat">avg <span>${avgCal} kcal</span>/day</div>
-            <div class="week-summary-stat">total <span class="wcost">$${weekTotal.toFixed(2)}</span></div>
+            <div class="week-summary-stat">avg <span>${prefs.formatEnergy(avgCal)}</span>/day</div>
+            <div class="week-summary-stat">total <span class="wcost">${prefs.formatCurrency(weekTotal)}</span></div>
             <div class="week-chevron">▼</div>
         </div>
         </div>
@@ -411,21 +412,21 @@ async function renderHistory() {
               : '<br><span class="out-range">⚠ out</span>';
             return `<tr>
               <td><span class="day-date">${formatDate(d)}</span>${rangeLabel}</td>
-              <td class="day-cal">${Math.round(day.cal)} kcal</td>
+              <td class="day-cal">${prefs.formatEnergy(day.cal)}</td>
               <td class="day-p">${Math.round(day.p)}g</td>
               <td class="day-c">${Math.round(day.c)}g</td>
               <td class="day-f">${day.f ? day.f.toFixed(1) : 0}g</td>
-              <td class="day-cost">$${(day.cost || 0).toFixed(2)}</td>
+              <td class="day-cost">${prefs.formatCurrency(day.cost || 0)}</td>
             </tr>`;
           })
           .join("")}
             <tr class="week-total-row">
               <td class="week-total-label">${isPartial ? "Month Portion" : "Week Total"}</td>
-              <td class="day-cal">${Math.round(weekCal)} kcal</td>
+              <td class="day-cal">${prefs.formatEnergy(weekCal)}</td>
               <td class="day-p">${Math.round(dayDates.reduce((s, d) => s + (days[d].p || 0), 0))}g</td>
               <td class="day-c">${Math.round(dayDates.reduce((s, d) => s + (days[d].c || 0), 0))}g</td>
               <td class="day-f">${dayDates.reduce((s, d) => s + (days[d].f || 0), 0).toFixed(1)}g</td>
-              <td class="day-cost">$${weekTotal.toFixed(2)}</td>
+              <td class="day-cost">${prefs.formatCurrency(weekTotal)}</td>
             </tr>
             </tbody>
         </table>
@@ -534,13 +535,15 @@ async function exportHistory(format) {
   const timestamp = todayStr();
   let content, mime, filename;
 
+  // Exports always use kcal (canonical storage unit), regardless of the
+  // display setting, so files stay portable and unambiguous.
   if (format === "json") {
-    const exportData = allDays.map(({ date, cal, p, c, f, cost }) => ({ date, cal, protein_g: p, carbs_g: c, fat_g: f, cost }));
+    const exportData = allDays.map(({ date, cal, p, c, f, cost }) => ({ date, calories_kcal: Math.round(cal), protein_g: p, carbs_g: c, fat_g: f, cost }));
     content = JSON.stringify(exportData, null, 2);
     mime = "application/json";
     filename = `Nawtch-history-${timestamp}.json`;
   } else {
-    const rows = [["date", "calories", "protein_g", "carbs_g", "fat_g", "cost"]];
+    const rows = [["date", "calories_kcal", "protein_g", "carbs_g", "fat_g", "cost"]];
     allDays.forEach(({ date, cal, p, c, f, cost }) => {
       rows.push([date, Math.round(cal), Math.round(p), Math.round(c), f.toFixed(1), cost.toFixed(2)]);
     });
@@ -575,6 +578,8 @@ document.addEventListener("click", () => {
 async function init() {
   await db.openDB();
   calRange = await prefs.getCalRange();
+  await prefs.getEnergyUnit();
+  await prefs.getCurrency();
   await renderHistory();
 }
 

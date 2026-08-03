@@ -10,17 +10,24 @@ import "../settingsHint.js";
 // ═══════════════════════════════════════════════════════════════════
 async function renderCalRangeInputs() {
   const range = await prefs.getCalRange();
-  document.getElementById("settings-cal-low").value = range.low;
-  document.getElementById("settings-cal-high").value = range.high;
+  const unit = await prefs.getEnergyUnit();
+  document.getElementById("settings-cal-low-label").textContent = `Floor (${unit})`;
+  document.getElementById("settings-cal-high-label").textContent = `Ceiling (${unit})`;
+  document.getElementById("settings-cal-low").value = Math.round(prefs.kcalToDisplayUnit(range.low, unit));
+  document.getElementById("settings-cal-high").value = Math.round(prefs.kcalToDisplayUnit(range.high, unit));
 }
 
 async function saveCalRangeFromSettings() {
+  const unit = await prefs.getEnergyUnit();
   const current = await prefs.getCalRange();
-  const low = parseInt(document.getElementById("settings-cal-low").value) || current.low;
-  const high = parseInt(document.getElementById("settings-cal-high").value) || current.high;
+  const lowRaw = parseFloat(document.getElementById("settings-cal-low").value);
+  const highRaw = parseFloat(document.getElementById("settings-cal-high").value);
+  const low = Number.isFinite(lowRaw) ? Math.round(prefs.displayUnitToKcal(lowRaw, unit)) : current.low;
+  const high = Number.isFinite(highRaw) ? Math.round(prefs.displayUnitToKcal(highRaw, unit)) : current.high;
   if (low >= high) return;
-  if (!await showConfirm(`Set calorie range to ${low.toLocaleString()} – ${high.toLocaleString()} kcal?`, 'Save')) return;
+  if (!await showConfirm(`Set calorie range to ${prefs.formatEnergy(low)} – ${prefs.formatEnergy(high)}?`, 'Save')) return;
   await prefs.setCalRange(low, high);
+  await renderCalRangeInputs();
 }
 window.saveCalRangeFromSettings = saveCalRangeFromSettings;
 
@@ -44,6 +51,63 @@ window.settingsSetUnit = async function (unit) {
   await prefs.setWeightUnit(unit);
   renderUnitToggle();
 };
+
+// ═══════════════════════════════════════════════════════════════════
+// ENERGY UNIT
+// ═══════════════════════════════════════════════════════════════════
+function energyUnitToggleHTML(unit) {
+  return `
+    <button class="wt-toggle-btn ${unit === "kcal" ? "active" : ""}" onclick="window.settingsSetEnergyUnit('kcal')">kcal</button>
+    <button class="wt-toggle-btn ${unit === "kJ" ? "active" : ""}" onclick="window.settingsSetEnergyUnit('kJ')">kJ</button>
+  `;
+}
+
+async function renderEnergyUnitToggle() {
+  const unit = await prefs.getEnergyUnit();
+  const el = document.getElementById("settings-energy-unit-toggle");
+  if (el) el.innerHTML = energyUnitToggleHTML(unit);
+}
+
+window.settingsSetEnergyUnit = async function (unit) {
+  await prefs.setEnergyUnit(unit);
+  await renderEnergyUnitToggle();
+  await renderCalRangeInputs();
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// CURRENCY
+// ═══════════════════════════════════════════════════════════════════
+function currencyMenuHTML(currency) {
+  return prefs.CURRENCIES.map((code) =>
+    `<button style="${currency === code ? "background:var(--surface2);color:var(--text);font-weight:600;" : ""}" onclick="window.settingsSetCurrency('${code}')">${prefs.CURRENCY_SYMBOLS[code]} ${code}${currency === code ? " ✓" : ""}</button>`
+  ).join("");
+}
+
+async function renderCurrencyToggle() {
+  const currency = await prefs.getCurrency();
+  const trigger = document.getElementById("settings-currency-trigger");
+  const menu = document.getElementById("settings-currency-menu");
+  if (trigger) trigger.textContent = `${currency} (${prefs.CURRENCY_SYMBOLS[currency]}) ▾`;
+  if (menu) menu.innerHTML = currencyMenuHTML(currency);
+}
+
+window.settingsSetCurrency = async function (code) {
+  await prefs.setCurrency(code);
+  document.getElementById("settings-currency-dropdown")?.classList.remove("open");
+  await renderCurrencyToggle();
+};
+
+window.toggleCurrencyDropdown = function (e) {
+  e.stopPropagation();
+  const dd = e.currentTarget.closest(".export-dropdown");
+  const wasOpen = dd.classList.contains("open");
+  document.querySelectorAll(".export-dropdown.open").forEach(el => el.classList.remove("open"));
+  if (!wasOpen) dd.classList.add("open");
+};
+
+document.addEventListener("click", () => {
+  document.querySelectorAll(".export-dropdown.open").forEach(el => el.classList.remove("open"));
+});
 
 // ═══════════════════════════════════════════════════════════════════
 // FULL BACKUP EXPORT / IMPORT
@@ -118,8 +182,11 @@ window.handleImportFile = handleImportFile;
 // ═══════════════════════════════════════════════════════════════════
 async function init() {
   await db.openDB();
+  await prefs.getEnergyUnit();
   await renderCalRangeInputs();
   await renderUnitToggle();
+  await renderEnergyUnitToggle();
+  await renderCurrencyToggle();
 }
 
 init();

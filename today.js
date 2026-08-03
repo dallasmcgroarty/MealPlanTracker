@@ -182,18 +182,18 @@ function renderCoreItems() {
     </div>
     <div class="item-info">
     <div class="item-name">${esc(item.name)}</div>
-    <div class="item-serving-lbl">${esc(item.freq)} · $${item.costPerServing.toFixed(2)}/serving</div>
+    <div class="item-serving-lbl">${esc(item.freq)} · ${prefs.formatCurrency(item.costPerServing)}/serving</div>
     <div class="item-macros">
-        <span class="im im-cal">${item.cal * srv} kcal</span>
+        <span class="im im-cal">${prefs.formatEnergy(item.cal * srv)}</span>
         <span class="im im-p">P: ${(item.p * srv).toFixed(0)}g</span>
         <span class="im im-c">C: ${(item.c * srv).toFixed(0)}g</span>
         <span class="im im-f">F: ${(item.f * srv).toFixed(1)}g</span>
-        <span class="im" style="color:var(--muted)">(${item.cal}kcal ea)</span>
+        <span class="im" style="color:var(--muted)">(${prefs.formatEnergy(item.cal)} ea)</span>
     </div>
     </div>
     <div class="item-right">
-    <div class="item-cost-lbl">$${spentToday} spent</div>
-    <div class="item-cost-target">target: $${targetDay}/day</div>
+    <div class="item-cost-lbl">${prefs.getCurrencySymbol()}${spentToday} spent</div>
+    <div class="item-cost-target">target: ${prefs.getCurrencySymbol()}${targetDay}/day</div>
     </div>`;
     list.appendChild(card);
   });
@@ -221,9 +221,9 @@ function renderCustomItems() {
     </div>
     <div class="item-info">
     <div class="item-name">${esc(item.name)}</div>
-    <div class="item-serving-lbl">custom · ${srvLabel} · $${parseFloat(item.costPerSrv || 0).toFixed(2)}/srv</div>
+    <div class="item-serving-lbl">custom · ${srvLabel} · ${prefs.formatCurrency(parseFloat(item.costPerSrv || 0))}/srv</div>
     <div class="item-macros">
-        <span class="im im-cal">${item.cal} kcal</span>
+        <span class="im im-cal">${prefs.formatEnergy(item.cal)}</span>
         <span class="im im-p">P: ${item.p}g</span>
         <span class="im im-c">C: ${item.c}g</span>
         <span class="im im-f">F: ${item.f}g</span>
@@ -238,6 +238,7 @@ function renderCustomItems() {
 }
 
 function renderStats() {
+  const unit = prefs.getEnergyUnitSync();
   const low = calRange.low, high = calRange.high;
   const maxCal = Math.ceil((calRange.high + 250) / 500) * 500;
   const zone = document.querySelector('.target-zone');
@@ -246,15 +247,16 @@ function renderStats() {
     const width = ((high - low) / maxCal) * 100;
     zone.style.left = left + '%';
     zone.style.width = width + '%';
-    zone.querySelector('.zone-label-low').textContent = low.toLocaleString();
-    zone.querySelector('.zone-label-high').textContent = high.toLocaleString();
+    zone.querySelector('.zone-label-low').textContent = Math.round(prefs.kcalToDisplayUnit(low, unit)).toLocaleString();
+    zone.querySelector('.zone-label-high').textContent = Math.round(prefs.kcalToDisplayUnit(high, unit)).toLocaleString();
   }
   const scaleEl = document.getElementById("cal-scale");
   if (scaleEl) {
     scaleEl.innerHTML = "";
     for (let v = 0; v <= maxCal; v += 500) {
       const pct = (v / maxCal) * 100;
-      const label = v === 0 ? "0" : v < 1000 ? String(v) : `${v / 1000}k`;
+      const dv = Math.round(prefs.kcalToDisplayUnit(v, unit));
+      const label = dv === 0 ? "0" : dv < 1000 ? String(dv) : `${dv / 1000}k`;
       const span = document.createElement("span");
       span.textContent = label;
       if (v === 0) {
@@ -270,14 +272,15 @@ function renderStats() {
   const tot = computeTotals();
   const tgtCal = CORE_ITEMS.filter(i => !i.inactive).reduce((s, i) => s + i.cal * i.target, 0);
 
-  document.getElementById("tot-cal").textContent = Math.round(tot.cal);
-  document.getElementById("tot-cal-sub").textContent = `/ ${tgtCal} target`;
+  document.getElementById("tot-cal").textContent = Math.round(prefs.kcalToDisplayUnit(tot.cal, unit));
+  document.getElementById("tot-cal-lbl").textContent = unit === "kJ" ? "Logged kJ" : "Logged kcal";
+  document.getElementById("tot-cal-sub").textContent = `/ ${Math.round(prefs.kcalToDisplayUnit(tgtCal, unit))} target`;
   document.getElementById("tot-p").textContent = Math.round(tot.p) + "g";
   document.getElementById("tot-c").textContent = Math.round(tot.c) + "g";
   document.getElementById("tot-f").textContent = tot.f.toFixed(1) + "g";
-  document.getElementById("tot-spent").textContent = "$" + tot.cost.toFixed(2);
+  document.getElementById("tot-spent").textContent = prefs.formatCurrency(tot.cost);
   const activeTargetCost = CORE_ITEMS.filter(i => !i.inactive).reduce((s, i) => s + i.costPerServing * i.target, 0);
-  document.getElementById("tot-target-cost").textContent = "$" + activeTargetCost.toFixed(2);
+  document.getElementById("tot-target-cost").textContent = prefs.formatCurrency(activeTargetCost);
 
   document.getElementById("cal-fill").style.width =
     Math.min((tot.cal / maxCal) * 100, 100) + "%";
@@ -292,15 +295,15 @@ function renderStats() {
   } else if (tot.cal < low) {
     dot.style.cssText = "background:var(--accent3);box-shadow:0 0 8px var(--accent3);";
     banner.style.borderLeftColor = "var(--accent3)";
-    txt.innerHTML = `<strong style="color:var(--accent3)">${Math.round(tot.cal)} kcal</strong> logged · <strong style="color:var(--accent3)">${Math.round(low - tot.cal)} kcal</strong> below floor · <strong style="color:var(--accent)">${Math.round(high - tot.cal)} kcal</strong> of wiggle room for extras.`;
+    txt.innerHTML = `<strong style="color:var(--accent3)">${prefs.formatEnergy(tot.cal)}</strong> logged · <strong style="color:var(--accent3)">${prefs.formatEnergy(low - tot.cal)}</strong> below floor · <strong style="color:var(--accent)">${prefs.formatEnergy(high - tot.cal)}</strong> of wiggle room for extras.`;
   } else if (tot.cal <= high) {
     dot.style.cssText = "background:var(--protein);box-shadow:0 0 8px var(--protein);";
     banner.style.borderLeftColor = "var(--protein)";
-    txt.innerHTML = `<strong style="color:var(--protein)">${Math.round(tot.cal)} kcal</strong> logged — in range! <strong style="color:var(--protein)">${Math.round(high - tot.cal)} kcal</strong> of ceiling remaining.`;
+    txt.innerHTML = `<strong style="color:var(--protein)">${prefs.formatEnergy(tot.cal)}</strong> logged — in range! <strong style="color:var(--protein)">${prefs.formatEnergy(high - tot.cal)}</strong> of ceiling remaining.`;
   } else {
     dot.style.cssText = "background:var(--warn);box-shadow:0 0 8px var(--warn);";
     banner.style.borderLeftColor = "var(--warn)";
-    txt.innerHTML = `<strong style="color:var(--warn)">${Math.round(tot.cal)} kcal</strong> — <strong style="color:var(--warn)">${Math.round(tot.cal - high)} kcal over</strong> your ${high.toLocaleString()} ceiling.`;
+    txt.innerHTML = `<strong style="color:var(--warn)">${prefs.formatEnergy(tot.cal)}</strong> — <strong style="color:var(--warn)">${prefs.formatEnergy(tot.cal - high)} over</strong> your ${prefs.formatEnergy(high)} ceiling.`;
   }
 
   const calP = tot.p * 4, calC = tot.c * 4, calF = tot.f * 9;
@@ -325,10 +328,10 @@ async function renderWeeklyCost() {
     targetTotal += weeklyAmt;
     const row = document.createElement("div");
     row.className = "cost-row";
-    row.innerHTML = `<span>${esc(item.name.split(" ").slice(0, 3).join(" "))}</span><span class="amt target-amt">$${weeklyAmt.toFixed(2)}</span>`;
+    row.innerHTML = `<span>${esc(item.name.split(" ").slice(0, 3).join(" "))}</span><span class="amt target-amt">${prefs.formatCurrency(weeklyAmt)}</span>`;
     targetRows.appendChild(row);
   });
-  document.getElementById("weekly-target-total").textContent = "$" + targetTotal.toFixed(2);
+  document.getElementById("weekly-target-total").textContent = prefs.formatCurrency(targetTotal);
 
   const weekStart = weekStartFor(todayStr());
   document.getElementById("week-start-label").textContent = formatDate(weekStart);
@@ -371,7 +374,7 @@ async function renderWeeklyCost() {
     const row = document.createElement("div");
     row.className = "cost-row";
     const isToday = dateStr === todayStr();
-    row.innerHTML = `<span>${formatDateShort(dateStr)}${isToday ? ' <em style="color:var(--accent);font-style:normal;font-size:11px">today</em>' : ""}</span><span class="amt actual-amt">$${dayCost.toFixed(2)}</span>`;
+    row.innerHTML = `<span>${formatDateShort(dateStr)}${isToday ? ' <em style="color:var(--accent);font-style:normal;font-size:11px">today</em>' : ""}</span><span class="amt actual-amt">${prefs.formatCurrency(dayCost)}</span>`;
     actualRows.appendChild(row);
   });
 
@@ -382,7 +385,7 @@ async function renderWeeklyCost() {
       "<div style=\"font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:6px 0;\">No spending logged yet this week.</div>";
   }
 
-  document.getElementById("weekly-actual-total").textContent = "$" + totalActual.toFixed(2);
+  document.getElementById("weekly-actual-total").textContent = prefs.formatCurrency(totalActual);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -410,12 +413,12 @@ function calcCostPerServing() {
   if (bulkPrice > 0 && bulkServings > 0) {
     const perSrv = bulkPrice / bulkServings;
     document.getElementById("cf-cost-per-srv").value = perSrv.toFixed(2);
-    document.getElementById("cf-cost-hint").textContent = `= $${perSrv.toFixed(2)} per serving`;
+    document.getElementById("cf-cost-hint").textContent = `= ${prefs.formatCurrency(perSrv)} per serving`;
   }
 
   const perSrv = parseFloat(document.getElementById("cf-cost-per-srv").value) || 0;
   const todayCost = perSrv * eatenToday;
-  document.getElementById("cf-today-cost-hint").textContent = `today's cost: $${todayCost.toFixed(2)}`;
+  document.getElementById("cf-today-cost-hint").textContent = `today's cost: ${prefs.formatCurrency(todayCost)}`;
 }
 window.calcCostPerServing = calcCostPerServing;
 
@@ -425,7 +428,7 @@ function clearBulkIfManual() {
   document.getElementById("cf-cost-hint").textContent = "or enter manually";
   const perSrv = parseFloat(document.getElementById("cf-cost-per-srv").value) || 0;
   const eaten = parseFloat(document.getElementById("cf-servings-eaten").value) || 1;
-  document.getElementById("cf-today-cost-hint").textContent = `today's cost: $${(perSrv * eaten).toFixed(2)}`;
+  document.getElementById("cf-today-cost-hint").textContent = `today's cost: ${prefs.formatCurrency(perSrv * eaten)}`;
 }
 window.clearBulkIfManual = clearBulkIfManual;
 
@@ -440,7 +443,8 @@ async function handleAddCustomItem() {
   const bulkPrice = Math.max(0, parseFloat(document.getElementById("cf-bulk-price").value) || 0);
   const bulkServings = Math.max(0, parseFloat(document.getElementById("cf-bulk-servings").value) || 0);
   const todayCost = costPerSrv * servingsEaten;
-  const calPerSrv = Math.max(0, parseFloat(document.getElementById("cf-cal").value) || 0);
+  const calPerSrvRaw = Math.max(0, parseFloat(document.getElementById("cf-cal").value) || 0);
+  const calPerSrv = Math.round(prefs.displayUnitToKcal(calPerSrvRaw, prefs.getEnergyUnitSync()));
   const pPerSrv = Math.max(0, parseFloat(document.getElementById("cf-p").value) || 0);
   const cPerSrv = Math.max(0, parseFloat(document.getElementById("cf-c").value) || 0);
   const fPerSrv = Math.max(0, parseFloat(document.getElementById("cf-f").value) || 0);
@@ -463,7 +467,7 @@ async function handleAddCustomItem() {
     .forEach((id) => (document.getElementById(id).value = ""));
   document.getElementById("cf-servings-eaten").value = "1";
   document.getElementById("cf-cost-hint").textContent = "or enter manually";
-  document.getElementById("cf-today-cost-hint").textContent = "today's cost: $0.00";
+  document.getElementById("cf-today-cost-hint").textContent = `today's cost: ${prefs.formatCurrency(0)}`;
   document.getElementById("cf-name").focus();
 }
 window.addCustomItem = handleAddCustomItem;
@@ -479,8 +483,9 @@ window.removeCustomItem = handleRemoveCustomItem;
 function openCustomFoodEditModal(idx) {
   const item = customItems[idx];
   if (!item) return;
+  const energyUnit = prefs.getEnergyUnitSync();
   const srv = item.servingsEaten || 1;
-  const calPerSrv = Math.round((item.cal / srv) * 10) / 10;
+  const calPerSrv = Math.round(prefs.kcalToDisplayUnit(item.cal / srv, energyUnit) * 10) / 10;
   const pPerSrv = Math.round((item.p / srv) * 10) / 10;
   const cPerSrv = Math.round((item.c / srv) * 10) / 10;
   const fPerSrv = Math.round((item.f / srv) * 10) / 10;
@@ -508,7 +513,7 @@ function openCustomFoodEditModal(idx) {
             <input type="text" id="cfe-name" placeholder="e.g. Banana" value="${safeName}" />
           </div>
           <div class="field-group">
-            <span class="field-label">Calories</span>
+            <span class="field-label">Calories (${energyUnit})</span>
             <input type="number" id="cfe-cal" placeholder="105" min="0" value="${calPerSrv || ''}" />
           </div>
           <div class="field-group">
@@ -526,7 +531,7 @@ function openCustomFoodEditModal(idx) {
         </div>
         <div class="add-row add-row-2" style="margin-top:12px;">
           <div class="field-group">
-            <span class="field-label">Bulk Total Price ($)</span>
+            <span class="field-label">Bulk Total Price (${prefs.getCurrencySymbol()})</span>
             <input type="number" id="cfe-bulk-price" placeholder="15.00" min="0" step="0.01" value="${item.bulkPrice || ''}" />
             <span class="field-hint">total you paid</span>
           </div>
@@ -536,7 +541,7 @@ function openCustomFoodEditModal(idx) {
             <span class="field-hint">total servings</span>
           </div>
           <div class="field-group">
-            <span class="field-label">Cost / Serving ($)</span>
+            <span class="field-label">Cost / Serving (${prefs.getCurrencySymbol()})</span>
             <input type="number" id="cfe-cost-per-srv" placeholder="0.50" min="0" step="0.01" value="${item.costPerSrv || ''}" />
           </div>
           <div class="field-group">
@@ -563,7 +568,8 @@ window.saveCustomItemEdit = async (idx) => {
   if (!name) { document.getElementById('cfe-name').focus(); return; }
   if (!await showConfirm(`Save changes to "${name}"?`, 'Save')) return;
   const servingsEaten = Math.max(1, parseFloat(document.getElementById('cfe-servings-eaten').value) || 1);
-  const calPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-cal').value) || 0);
+  const calPerSrvRaw = Math.max(0, parseFloat(document.getElementById('cfe-cal').value) || 0);
+  const calPerSrv = Math.round(prefs.displayUnitToKcal(calPerSrvRaw, prefs.getEnergyUnitSync()));
   const pPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-p').value) || 0);
   const cPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-c').value) || 0);
   const fPerSrv = Math.max(0, parseFloat(document.getElementById('cfe-f').value) || 0);
@@ -633,17 +639,23 @@ window.confirmResetDay = confirmResetDay;
 // CALORIE RANGE (inline editor)
 // ═══════════════════════════════════════════════════════════════════
 function showCalRangeEditor() {
+  const unit = prefs.getEnergyUnitSync();
   document.getElementById("cal-range-editor").style.display = "block";
-  document.getElementById("cal-range-low-input").value = calRange.low;
-  document.getElementById("cal-range-high-input").value = calRange.high;
+  document.getElementById("cal-range-low-label").textContent = `Floor (${unit})`;
+  document.getElementById("cal-range-high-label").textContent = `Ceiling (${unit})`;
+  document.getElementById("cal-range-low-input").value = Math.round(prefs.kcalToDisplayUnit(calRange.low, unit));
+  document.getElementById("cal-range-high-input").value = Math.round(prefs.kcalToDisplayUnit(calRange.high, unit));
 }
 window.showCalRangeEditor = showCalRangeEditor;
 
 async function saveCalRange() {
-  const low = parseInt(document.getElementById("cal-range-low-input").value) || calRange.low;
-  const high = parseInt(document.getElementById("cal-range-high-input").value) || calRange.high;
+  const unit = prefs.getEnergyUnitSync();
+  const lowRaw = parseFloat(document.getElementById("cal-range-low-input").value);
+  const highRaw = parseFloat(document.getElementById("cal-range-high-input").value);
+  const low = Number.isFinite(lowRaw) ? Math.round(prefs.displayUnitToKcal(lowRaw, unit)) : calRange.low;
+  const high = Number.isFinite(highRaw) ? Math.round(prefs.displayUnitToKcal(highRaw, unit)) : calRange.high;
   if (low >= high) return;
-  if (!await showConfirm(`Set calorie range to ${low.toLocaleString()} – ${high.toLocaleString()} kcal?`, 'Save')) return;
+  if (!await showConfirm(`Set calorie range to ${prefs.formatEnergy(low)} – ${prefs.formatEnergy(high)}?`, 'Save')) return;
   calRange = { low, high };
   await prefs.setCalRange(low, high);
   document.getElementById("cal-range-editor").style.display = "none";
@@ -661,7 +673,7 @@ window.cancelCalRange = cancelCalRange;
 // ═══════════════════════════════════════════════════════════════════
 function fillCustomFoodFormFromScan(foodData) {
   document.getElementById('cf-name').value = foodData.name || '';
-  document.getElementById('cf-cal').value = foodData.cal ?? 0;
+  document.getElementById('cf-cal').value = Math.round(prefs.kcalToDisplayUnit(foodData.cal ?? 0, prefs.getEnergyUnitSync()));
   document.getElementById('cf-p').value = foodData.p ?? 0;
   document.getElementById('cf-c').value = foodData.c ?? 0;
   document.getElementById('cf-f').value = foodData.f ?? 0;
@@ -736,6 +748,12 @@ document.addEventListener("keydown", (e) => {
 async function init() {
   await db.openDB();
   calRange = await prefs.getCalRange();
+  const energyUnit = await prefs.getEnergyUnit();
+  document.getElementById('cf-cal-label').textContent = `Calories (${energyUnit})`;
+  await prefs.getCurrency();
+  document.getElementById('cf-bulk-price-label').textContent = `Bulk Total Price (${prefs.getCurrencySymbol()})`;
+  document.getElementById('cf-cost-label').textContent = `Cost / Serving (${prefs.getCurrencySymbol()})`;
+  document.getElementById('cf-today-cost-hint').textContent = `today's cost: ${prefs.formatCurrency(0)}`;
   await loadCoreItems();
 
   const saved = db.loadTodayLS(todayStr());

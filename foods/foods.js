@@ -1,5 +1,6 @@
 import * as db from "../db.js";
 import { CORE_ITEMS, loadCoreItems, saveCoreItem, deleteCoreItemFromDB } from "../items.js";
+import * as prefs from "../prefs.js";
 import { showConfirm, showAlert } from "../ui.js";
 import * as barcode from "../barcode.js";
 import "../nav.js";
@@ -22,6 +23,7 @@ function ensureFoodModal() {
 
 function openFoodModal(isEdit) {
   ensureFoodModal();
+  const energyUnit = prefs.getEnergyUnitSync();
   const modal = document.getElementById('food-form-modal');
   modal.innerHTML = `
     <div class="pg-modal-box pg-modal-box-lg">
@@ -36,7 +38,7 @@ function openFoodModal(isEdit) {
             <input id="ci-name" type="text" placeholder="e.g. Chicken Breast" />
           </div>
           <div class="field-group">
-            <span class="field-label">Calories</span>
+            <span class="field-label">Calories (${energyUnit})</span>
             <input id="ci-cal" type="number" placeholder="120" min="0" />
           </div>
           <div class="field-group">
@@ -54,7 +56,7 @@ function openFoodModal(isEdit) {
         </div>
         <div class="add-row add-row-2" style="margin-top:12px;">
           <div class="field-group">
-            <span class="field-label">Bulk Total Price ($)</span>
+            <span class="field-label">Bulk Total Price (${prefs.getCurrencySymbol()})</span>
             <input type="number" id="ci-bulk-price" placeholder="15.00" min="0" step="0.01" oninput="window.calcCoreCostPerServing()" />
             <span class="field-hint">total you paid</span>
           </div>
@@ -64,7 +66,7 @@ function openFoodModal(isEdit) {
             <span class="field-hint">total servings</span>
           </div>
           <div class="field-group">
-            <span class="field-label">Cost / Serving ($)</span>
+            <span class="field-label">Cost / Serving (${prefs.getCurrencySymbol()})</span>
             <input type="number" id="ci-cost" placeholder="0.50" min="0" step="0.01" oninput="window.clearCoreBulkIfManual()" />
             <span class="field-hint" id="ci-cost-hint">or enter manually</span>
           </div>
@@ -129,7 +131,7 @@ window.clearCoreBulkIfManual = clearCoreBulkIfManual;
 
 function fillFoodFormFromScan(foodData) {
   document.getElementById('ci-name').value = foodData.name || '';
-  document.getElementById('ci-cal').value = foodData.cal ?? 0;
+  document.getElementById('ci-cal').value = Math.round(prefs.kcalToDisplayUnit(foodData.cal ?? 0, prefs.getEnergyUnitSync()));
   document.getElementById('ci-p').value = foodData.p ?? 0;
   document.getElementById('ci-c').value = foodData.c ?? 0;
   document.getElementById('ci-f').value = foodData.f ?? 0;
@@ -139,7 +141,7 @@ function fillFoodFormFromScan(foodData) {
 function fillCoreItemForm(idx) {
   const item = CORE_ITEMS[idx];
   document.getElementById("ci-name").value = item.name;
-  document.getElementById("ci-cal").value = item.cal;
+  document.getElementById("ci-cal").value = Math.round(prefs.kcalToDisplayUnit(item.cal, prefs.getEnergyUnitSync()));
   document.getElementById("ci-p").value = item.p;
   document.getElementById("ci-c").value = item.c;
   document.getElementById("ci-f").value = item.f;
@@ -168,7 +170,8 @@ function fillCoreItemForm(idx) {
     if (!updatedName) return;
     if (!await showConfirm(`Save changes to "${updatedName}"?`, 'Save')) return;
     item.name = updatedName;
-    item.cal = Math.max(0, parseFloat(document.getElementById("ci-cal").value) || 0);
+    const calRaw = Math.max(0, parseFloat(document.getElementById("ci-cal").value) || 0);
+    item.cal = Math.round(prefs.displayUnitToKcal(calRaw, prefs.getEnergyUnitSync()));
     item.p = Math.max(0, parseFloat(document.getElementById("ci-p").value) || 0);
     item.c = Math.max(0, parseFloat(document.getElementById("ci-c").value) || 0);
     item.f = Math.max(0, parseFloat(document.getElementById("ci-f").value) || 0);
@@ -186,7 +189,8 @@ function fillCoreItemForm(idx) {
 async function handleAddCoreItem(e) {
   if (e) e.preventDefault();
   const name = document.getElementById("ci-name").value.trim();
-  const cal = Math.max(0, parseFloat(document.getElementById("ci-cal").value) || 0);
+  const calRaw = Math.max(0, parseFloat(document.getElementById("ci-cal").value) || 0);
+  const cal = Math.round(prefs.displayUnitToKcal(calRaw, prefs.getEnergyUnitSync()));
   const p = Math.max(0, parseFloat(document.getElementById("ci-p").value) || 0);
   const c = Math.max(0, parseFloat(document.getElementById("ci-c").value) || 0);
   const f = Math.max(0, parseFloat(document.getElementById("ci-f").value) || 0);
@@ -390,6 +394,8 @@ function renderCoreItemsMgmt() {
 // ═══════════════════════════════════════════════════════════════════
 async function init() {
   await db.openDB();
+  await prefs.getEnergyUnit();
+  await prefs.getCurrency();
   await loadCoreItems();
   renderCoreItemsMgmt();
 }
