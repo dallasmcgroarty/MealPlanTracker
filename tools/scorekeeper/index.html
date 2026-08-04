@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Free Online Scorekeeper – No App, No Account | Nawtch</title>
+    <meta name="description" content="Keep score for board games, card games, drinking games, and more. Free, fast, and private — no sign-up, no app download, works right in your browser." />
+    <link rel="canonical" href="https://nawtch.app/tools/scorekeeper/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/tools/scorekeeper/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Free Online Scorekeeper – No App, No Account | Nawtch" />
+    <meta property="og:description" content="Keep score for board games, card games, drinking games, and more. Free, fast, and private — no sign-up, no app download, works right in your browser." />
+    <meta property="og:url" content="https://nawtch.app/tools/scorekeeper/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Free Online Scorekeeper – No App, No Account | Nawtch" />
+    <meta name="twitter:description" content="Keep score for board games, card games, drinking games, and more. Free, fast, and private — no sign-up, no app download, works right in your browser." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/x-icon" sizes="48x48" href="../../media/favicon-48x48.ico" />
+    <link rel="icon" type="image/svg+xml" href="../../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" size="32x32" href="../../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="../../styles.css" />
+    <link rel="stylesheet" href="scorekeeper.css" />
+  </head>
+  <body class="tools">
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="../../" data-page="today">Today</a>
+        <a class="nav-tab" href="../../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Free Online Scorekeeper</h1>
+          <p class="subtitle">Track scores for board games, card games, drinking games, or any game where points matter — no account needed. Add players, log points, and keep the game moving without pen and paper.</p>
+        </div>
+        <a class="ghost-btn" href="#" onclick="window.history.back(); return false;">← Back</a>
+      </header>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Add Player</div>
+        <div class="settings-section-body">
+          <form id="player-input" class="sk-add-form">
+            <div class="field-group">
+              <label class="field-label" for="player-name">Name</label>
+              <input type="text" id="player-name" placeholder="Player name" autocomplete="off">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="player-score">Starting score</label>
+              <input type="number" id="player-score" placeholder="0">
+            </div>
+            <button type="submit" class="add-btn" id="new-player">Add Player</button>
+          </form>
+          <p class="field-hint" id="default-score">Default score is 0 if left blank</p>
+        </div>
+      </div>
+
+      <div class="items-section">
+        <div class="section-title">Players</div>
+        <div id="card-set"></div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Adjust Score</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">Select a player above, then use the controls below to adjust their score.</p>
+          <div id="functions">
+            <span class="material-symbols-outlined sk-step-btn" id="minus" role="button" tabindex="0" aria-label="Subtract from selected player's score">remove</span>
+            <input type="number" min="0" oninput="validity.valid||(value='');" id="score-update" placeholder="0">
+            <span class="material-symbols-outlined sk-step-btn" id="plus" role="button" tabindex="0" aria-label="Add to selected player's score">add</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sk-danger-row">
+        <button type="button" class="ghost-btn" id="reset-all-btn">Reset All Scores</button>
+        <button type="button" class="ghost-btn" id="clear-all-btn">Delete All Players</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Keeping Score - How It Works</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">To use the free scorekeeper, first add players using the form above. Then select a player to adjust their score using the controls.
+            Players will automatically be ranked from highest to lowest score. You can reset all scores or delete all players using the buttons provided. All data is stored locally in your browser and will persist across sessions until cleared.</p>
+        </div>
+      </div>
+      </main>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+      <a class="footer-settings-btn" href="../../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
+    </footer>
+
+    <script src="scorekeeper.js" type="module"></script>
+  </body>
+</html>

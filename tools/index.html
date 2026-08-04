@@ -12,21 +12,21 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weight Tracker & Weight Loss Progress | Nawtch</title>
-    <meta name="description" content="Log your daily weight and see your trend over time with Nawtch's free, private weight tracker. Switch between lb and kg — your data never leaves your device." />
-    <link rel="canonical" href="https://nawtch.app/weight/" />
-    <link rel="alternate" hreflang="en" href="https://nawtch.app/weight/" />
-    
+    <title>Free Online Tools – No App, No Account | Nawtch</title>
+    <meta name="description" content="Browse Nawtch's free browser-based tools — no downloads, no sign-up, no ads. Everything runs and saves privately on your device." />
+    <link rel="canonical" href="https://nawtch.app/tools/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/tools/" />
+
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nawtch" />
-    <meta property="og:title" content="Weight Tracker & Weight Loss Progress | Nawtch" />
-    <meta property="og:description" content="Log your daily weight and see your trend over time with Nawtch's free, private weight tracker. Switch between lb and kg — your data never leaves your device." />
-    <meta property="og:url" content="https://nawtch.app/weight/" />
+    <meta property="og:title" content="Free Online Tools – No App, No Account | Nawtch" />
+    <meta property="og:description" content="Browse Nawtch's free browser-based tools — no downloads, no sign-up, no ads. Everything runs and saves privately on your device." />
+    <meta property="og:url" content="https://nawtch.app/tools/" />
     <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
 
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content=Weight Tracker & Weight Loss Progress | Nawtch" />
-    <meta name="twitter:description" content="Log your daily weight and see your trend over time with Nawtch's free, private weight tracker. Switch between lb and kg — your data never leaves your device." />
+    <meta name="twitter:title" content="Free Online Tools – No App, No Account | Nawtch" />
+    <meta name="twitter:description" content="Browse Nawtch's free browser-based tools — no downloads, no sign-up, no ads. Everything runs and saves privately on your device." />
     <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
 
     <link rel="icon" type="image/x-icon" sizes="48x48" href="../media/favicon-48x48.ico" />
@@ -43,7 +43,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link rel="stylesheet" href="../styles.css" />
   </head>
-  <body>
+  <body class="tools">
     <div id="confirm-modal" role="dialog" aria-modal="true">
       <div class="confirm-box">
         <p id="confirm-message"></p>
@@ -65,15 +65,24 @@
       <main>
       <header>
         <div class="header-left">
-          <h1>Weight Tracker</h1>
-          <p class="subtitle">Track your body weight, monitor weight loss progress, and view trends over time with a private weight tracker.</p>
+          <h1>Free Tools</h1>
+          <p class="subtitle">A growing set of fast, free tools that work right in your browser. No account, no app to install, nothing stored anywhere but your own device.</p>
         </div>
-        <div class="date-badge">
-          <div class="date-day" id="wt-hdr-date">—</div>
-          <div class="date-reset">Once per day</div>
-        </div>
+        <a class="ghost-btn" href="#" onclick="window.history.back(); return false;">← Back</a>
       </header>
-      <div id="tab-weight"></div>
+
+      <div class="items-section">
+        <div class="section-title">Available Tools</div>
+        <a class="tool-card" href="scorekeeper/">
+          <span class="material-symbols-outlined tool-card-icon">scoreboard</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">Scorekeeper</div>
+            <div class="tool-card-desc">Track scores for board games, card games, drinking games, or any game where points matter.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+      </div>
+
       </main>
     </div>
 
@@ -85,8 +94,6 @@
       <a class="footer-settings-btn" href="../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
     </footer>
 
-    <!-- ECharts CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" defer></script>
-    <script src="weight.js" type="module"></script>
+    <script src="tools.js" type="module"></script>
   </body>
 </html>

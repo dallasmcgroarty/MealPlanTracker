@@ -1,0 +1,149 @@
+/* Scorekeeper — page-specific layout. Shared chrome (header, buttons, form
+   fields, settings-section cards) comes from styles.css; this file only
+   covers what's unique to this tool. */
+
+.sk-add-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: end;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 560px) {
+  .sk-add-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Player list — single column on every breakpoint */
+#card-set {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sk-empty-hint {
+  color: var(--muted);
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.sk-player-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+  animation: sk-slide-down 0.4s ease;
+}
+.sk-player-card:hover {
+  border-color: var(--accent);
+}
+.sk-player-card.selected {
+  border-color: var(--accent);
+  background: var(--surface2);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.sk-player-card.no-animate {
+  animation: none;
+}
+.sk-player-name {
+  font-size: 16px;
+  font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sk-player-score {
+  font-family: "DM Mono", monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+@keyframes sk-slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* +/- and the score input are the one place intentionally larger than
+   normal site sizing, per design — everything else matches the rest of
+   the app's scale. */
+#functions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.sk-step-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.sk-step-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.sk-step-btn:active {
+  transform: scale(0.92);
+}
+#score-update {
+  width: 110px;
+  height: 56px;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  font-family: "DM Mono", monospace;
+  flex-shrink: 0;
+}
+
+.sk-danger-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  margin-bottom: 60px;
+}
+
+@media (max-width: 380px) {
+  .sk-step-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
+  }
+  #score-update {
+    width: 90px;
+    height: 48px;
+    font-size: 24px;
+  }
+}

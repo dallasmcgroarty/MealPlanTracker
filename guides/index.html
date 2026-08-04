@@ -354,6 +354,49 @@
             Take a look at the <a href="../diets/">Diets page</a>.
           </div>
         </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">Tools & Utilities</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            The Tools page is a small collection of standalone helpers that live outside your daily food, weight, and
+            workout tracking — useful on their own, with nothing to log and no connection to your Nawtch tracking
+            data. It currently has one tool, <strong>Scorekeeper</strong>, with more planned over time.
+            <br /><br />
+            Check out the <a href="../tools/">Tools page</a>.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+            <h2 class="info-banner-label">Scorekeeper</h2>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Scorekeeper is a free-standing scoreboard for board games, card games, or anything else where you just
+            need to track points for a group of players — no relation to your food, weight, or workout data.
+            <br /><br />
+            Add a player with a <strong>name</strong> and optional <strong>starting score</strong> (defaults to 0).
+            Tap a player's card to select them — a selected card is highlighted — then use the <strong>−</strong> /
+            <strong>+</strong> controls to subtract or add whatever amount you type into the box between them.
+            Players are automatically re-ranked <strong>highest to lowest</strong> after every score change.
+            <strong>Reset All Scores</strong> zeroes everyone out without removing them, while <strong>Delete All
+            Players</strong> removes every player entirely — both ask for confirmation first since neither can be
+            undone.
+            <br /><br />
+            <strong>localStorage need-to-knows:</strong> like the rest of Nawtch, Scorekeeper stores everything
+            locally in this browser, not on a server — nothing leaves your device. That means the same storage
+            caveats from <strong>How to Keep Your Data Safe</strong> above apply here too: using a private/incognito
+            window, clearing this site's browser data, or uninstalling the browser can permanently erase your
+            players. Unlike your food/weight/program data, though, <strong>Scorekeeper's players are not included in
+            Settings' Export Full Backup / Import Backup</strong> — it keeps its own separate storage, so there's
+            currently no built-in way to back up or transfer a player list between browsers or devices.
+            <br /><br />
+            Try it on the <a href="../tools/scorekeeper/">Scorekeeper page</a>.
+          </div>
+        </div>
       </div>
       </main>
     </div>
@@ -363,6 +406,7 @@
       <a class="footer-settings-btn" href="../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
       <a class="footer-settings-btn" href="../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
       <a class="footer-settings-btn" href="../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+      <a class="footer-settings-btn" href="../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
     </footer>
 
     <script src="guides.js" type="module"></script>

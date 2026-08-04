@@ -2259,3 +2259,52 @@ input[readonly] {
 .diets .info-banner .info-banner-body {
   font-size: 13px;
 }
+
+/* ─────────────────────────── tools page ──────────────────────────── */
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.tool-card:hover {
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+.tool-card-icon {
+  font-size: 26px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.tool-card-info {
+  flex: 1;
+  min-width: 0;
+}
+.tool-card-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.tool-card-desc {
+  font-size: 12px;
+  font-family: "DM Mono", monospace;
+  color: var(--muted);
+}
+.tool-card-arrow {
+  color: var(--muted);
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.tool-card:hover .tool-card-arrow {
+  color: var(--accent);
+}
