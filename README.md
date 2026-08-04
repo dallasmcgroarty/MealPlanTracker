@@ -6,16 +6,25 @@ https://nawtch.app
 https://nawtch.com
 
 ## What it does
-- daily food & cost tracking
+- daily food & cost tracking 
 - manage your foods
+  - https://nawtch.app/foods/
 - daily weight logging and history
+  - https://nawtch.app/history/
 - create and manage workout programs
+  - https://nawtch.app/programs/
 - view your history and stats
-- fitness calculators
-- popular diet options
+  - https://nawtch.app/history/
+- fitness calculators, including TDEE, BMR, BMI, Body weight, Ideal weight, macro calculator
+  - https://nawtch.app/calculators/
+- popular diet options and research behind them
+  - https://nawtch.app/diets/
+- guides to help you use nawtch and support your fitness journey
+  - https://nawtch.app/guides/
 
 ## Why it's unique
 - no login or sign-up needed
+- no email or personal information
 - all data stored locally in your browser
 - access via the web on any device
 - cost tracking
