@@ -21,6 +21,10 @@ https://nawtch.com
   - https://nawtch.app/diets/
 - guides to help you use nawtch and support your fitness journey
   - https://nawtch.app/guides/
+- free tools list to use for fun
+  - https://nawtch.app/tools/
+- scorekeeper tool for all games
+  - https://nawtch.app/tools/scorekeeper/
 
 ## Why it's unique
 - no login or sign-up needed
