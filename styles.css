@@ -2233,6 +2233,16 @@ input[readonly] {
 .settings-section-body {
   padding: 14px 16px;
 }
+.settings-section-body ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
 .settings-desc {
   font-family: "DM Mono", monospace;
   font-size: 12px;
