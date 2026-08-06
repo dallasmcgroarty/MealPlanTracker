@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calorie Calculator – How Many Calories Should I Eat? | Nawtch</title>
+    <meta name="description" content="Free calorie calculator. Find out how many calories you should eat per day to lose, maintain, or gain weight, based on the Mifflin-St Jeor equation." />
+    <link rel="canonical" href="https://nawtch.app/calculators/calorie/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/calculators/calorie/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Calorie Calculator – How Many Calories Should I Eat? | Nawtch" />
+    <meta property="og:description" content="Free calorie calculator. Find out how many calories you should eat per day to lose, maintain, or gain weight, based on the Mifflin-St Jeor equation." />
+    <meta property="og:url" content="https://nawtch.app/calculators/calorie/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Calorie Calculator – How Many Calories Should I Eat? | Nawtch" />
+    <meta name="twitter:description" content="Free calorie calculator. Find out how many calories you should eat per day to lose, maintain, or gain weight, based on the Mifflin-St Jeor equation." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/x-icon" sizes="48x48" href="../../media/favicon-48x48.ico" />
+    <link rel="icon" type="image/svg+xml" href="../../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" size="32x32" href="../../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="calculators">
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="../../" data-page="today">Today</a>
+        <a class="nav-tab" href="../../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Calorie Calculator</h1>
+          <p class="subtitle">Find out how many calories you should eat per day.</p>
+        </div>
+        <a class="ghost-btn" href="../">← Back to Calculators</a>
+      </header>
+
+      <div class="settings-section">
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            If you're wondering <strong>"how many calories should I eat per day?"</strong> — the honest answer
+            depends on your body and your goal, but this calculator gives you a solid, personalized starting number
+            in under a minute. Enter your age, height, weight, and how active you are, plus whether you want to
+            lose weight, gain weight, or stay where you are, and you'll get a daily calorie range to aim for.
+          </p>
+        </div>
+      </div>
+
+      <div id="calc-tdee"></div>
+
+      <div id="calc-tdee-explain" class="settings-section">
+        <div class="settings-section-title">How We Calculate This</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            We estimate your BMR — the calories your body burns just staying alive at rest — using the
+            <strong>Mifflin-St Jeor equation</strong>, the formula considered most accurate for healthy adults. We
+            then multiply that by how active you are day-to-day to get your full daily calorie burn, and shift it up
+            or down based on whether you want to lose, maintain, or gain weight.
+            <br /><br />
+            This number goes by a more technical name in fitness and nutrition science: <strong>TDEE</strong>, or
+            Total Daily Energy Expenditure. If you're already familiar with that term, or want to see BMR and TDEE
+            broken out separately instead of just the final range, check out our <a href="../tdee/">TDEE Calculator</a>.
+          </p>
+          <a href="https://pubmed.ncbi.nlm.nih.gov/2305711/" target="_blank" rel="noopener">Read the original study →</a>
+        </div>
+      </div>
+      </main>
+      <div class="legal-footer">
+        &copy; 2026 Nawtch · <a href="../../privacy/">Privacy Policy</a> · <a href="../../terms/">Terms of Use</a>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+      <a class="footer-settings-btn" href="../../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
+    </footer>
+
+    <script src="calorie.js" type="module"></script>
+  </body>
+</html>

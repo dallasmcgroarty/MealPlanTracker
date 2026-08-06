@@ -4,7 +4,7 @@
 // so "active" can't be matched by filename anymore — every page's filename is
 // identical. Instead each nav/footer link carries a stable data-page
 // attribute, and we work out the current page from the URL's folder segment.
-const KNOWN_PAGES = ['foods', 'weight', 'programs', 'history', 'settings', 'guides', 'calculators', 'diets', 'tools'];
+const KNOWN_PAGES = ['foods', 'weight', 'programs', 'history', 'settings', 'guides', 'calculators', 'diets', 'tools', 'privacy', 'terms'];
 
 export function currentPage() {
   const segments = location.pathname.split('/').filter(Boolean);

@@ -13,20 +13,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fitness Calculators — TDEE, BMI, Body Fat & More — Nawtch</title>
-    <meta name="description" content="Free, evidence-based calculators for TDEE, BMR, macros, BMI, body fat %, and ideal weight — all in Nawtch, with sources cited." />
+    <meta name="description" content="Free calorie calculator and TDEE calculator, plus BMR, macros, body fat %, BMI, and ideal weight — all evidence-based, with sources cited." />
     <link rel="canonical" href="https://nawtch.app/calculators/" />
     <link rel="alternate" hreflang="en" href="https://nawtch.app/calculators/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nawtch" />
     <meta property="og:title" content="Fitness Calculators — TDEE, BMI, Body Fat & More — Nawtch" />
-    <meta property="og:description" content="Free, evidence-based calculators for TDEE, BMR, macros, BMI, body fat %, and ideal weight — all in Nawtch, with sources cited." />
+    <meta property="og:description" content="Free calorie calculator and TDEE calculator, plus BMR, macros, body fat %, BMI, and ideal weight — all evidence-based, with sources cited." />
     <meta property="og:url" content="https://nawtch.app/calculators/" />
     <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
 
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Fitness Calculators — TDEE, BMI, Body Fat & More — Nawtch" />
-    <meta name="twitter:description" content="Free, evidence-based calculators for TDEE, BMR, macros, BMI, body fat %, and ideal weight — all in Nawtch, with sources cited." />
+    <meta name="twitter:description" content="Free calorie calculator and TDEE calculator, plus BMR, macros, body fat %, BMI, and ideal weight — all evidence-based, with sources cited." />
     <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
 
     <link rel="icon" type="image/x-icon" sizes="48x48" href="../media/favicon-48x48.ico" />
@@ -43,7 +43,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link rel="stylesheet" href="../styles.css" />
   </head>
-  <body>
+  <body class="calculators">
     <div id="confirm-modal" role="dialog" aria-modal="true">
       <div class="confirm-box">
         <p id="confirm-message"></p>
@@ -66,115 +66,105 @@
       <header>
         <div class="header-left">
           <h1>Fitness &amp; Nutrition Calculators</h1>
-          <p class="subtitle">TDEE · BMR · Macros · Body Fat · BMI · Ideal Weight</p>
+          <p class="subtitle">A free set of fitness and nutrition calculators — no sign-up, nothing stored anywhere but your own device. Each one cites its source formula.</p>
         </div>
         <a class="ghost-btn" style="font-size:12px;padding:6px 12px;" href="#" onclick="window.history.back(); return false;">← Back</a>
       </header>
 
-      <!-- Rendered by calculators.js: tab bar + active tab content -->
-      <div id="calc-tabs-container"></div>
-      <div id="calc-tdee"></div>
-
-      <!-- Static (not JS-rendered) so this explanation and citation are present in
-           the raw HTML for crawlers/bots that don't execute JavaScript. Toggled
-           alongside #calc-tdee by calcSetTab() since it's TDEE-tab-only content. -->
-      <div id="calc-tdee-explain" class="settings-section">
-        <div class="settings-section-title">How We Calculate This</div>
-        <div class="settings-section-body">
-          <p class="settings-desc">
-            Your BMR (calories burned at rest) is estimated with the <strong>Mifflin-St Jeor equation</strong>,
-            widely regarded as the most accurate predictive formula for resting energy expenditure in healthy
-            adults. Multiplying it by your activity level gives your <strong>TDEE</strong> — the calories needed
-            to maintain your current weight. Your goal (lose, stay the same, gain) then shifts that number up or
-            down to build a recommended daily range.
-          </p>
-          <a href="https://pubmed.ncbi.nlm.nih.gov/2305711/" target="_blank" rel="noopener">Read the original study →</a>
-        </div>
-      </div>
-
-      <div id="calc-bmr" style="display:none;"></div>
-
-      <!-- BMR-tab-only explanation, static for crawlers, toggled by calcSetTab(). -->
-      <div id="calc-bmr-explain" class="settings-section" style="display:none;">
-        <div class="settings-section-title">How We Calculate This</div>
-        <div class="settings-section-body">
-          <p class="settings-desc">
-            BMR (Basal Metabolic Rate) is the number of calories your body burns at complete rest, before any
-            activity is factored in. We use the same <strong>Mifflin-St Jeor equation</strong> that powers our TDEE
-            calculator, since BMR is the first step of that calculation — it's widely regarded as the most accurate
-            predictive formula for resting energy expenditure in healthy adults.
-          </p>
-          <a href="https://pubmed.ncbi.nlm.nih.gov/2305711/" target="_blank" rel="noopener">Read the original study →</a>
-        </div>
-      </div>
-
-      <div id="calc-macros" style="display:none;"></div>
-
-      <div id="calc-bodyfat" style="display:none;"></div>
-
-      <!-- Body-Fat-tab-only explanation, static for crawlers, toggled by calcSetTab(). -->
-      <div id="calc-bodyfat-explain" class="settings-section" style="display:none;">
-        <div class="settings-section-title">How We Calculate This</div>
-        <div class="settings-section-body">
-          <p class="settings-desc">
-            This uses the <strong>U.S. Navy circumference method</strong>, developed by the Naval Health Research
-            Center from a few tape-measure inputs (height, neck, waist, and — for women — hip) instead of
-            specialized equipment. The formula relies on <strong>base-10 logarithms</strong> (log₁₀), not natural
-            log — mixing the two up is the most common manual calculation error.
-            <br /><br />
-            In the original validation against underwater (hydrostatic) weighing, it correlated at roughly r=0.90
-            for men and r=0.85 for women, with a typical error margin of about 3–4 percentage points — a solid
-            estimate, not a clinical-grade measurement. It's also less reliable at the extremes of body composition,
-            e.g. very high muscle mass or very low body fat, where circumference alone tracks fat mass less well.
-          </p>
-          <strong>Source:</strong> Hodgdon, J.A., &amp; Beckett, M.B. (1984). <em>Prediction of Percent Body Fat for
-          U.S. Navy Men and Women from Body Circumferences and Height.</em> Naval Health Research Center Technical
-          Reports 84-11 (men) and 84-29 (women).
-          <br /><br />
-          <a href="https://www.ncbi.nlm.nih.gov/books/NBK235939/" target="_blank" rel="noopener">Read the validation data →</a>
-        </div>
-      </div>
-
-      <div id="calc-bmi" style="display:none;"></div>
-
-      <!-- BMI-tab-only explanation, static for crawlers, toggled by calcSetTab(). -->
-      <div id="calc-bmi-explain" class="settings-section" style="display:none;">
-        <div class="settings-section-title">How We Calculate This</div>
-        <div class="settings-section-body">
-          <p class="settings-desc">
-            BMI is simply <strong>weight (kg) ÷ height (m)²</strong> — a quick, population-level screening measure,
-            not a precise individual health assessment. The category thresholds (underweight, healthy weight,
-            overweight, obesity) come from the CDC's adult BMI reference ranges.
-            <br /><br />
-            <strong>Worth knowing:</strong> BMI can't distinguish fat mass from lean muscle and bone, so it can
-            misclassify very muscular or very lean people as "overweight" or "obese" even when their body fat is
-            actually low. Treat it as a starting point for a conversation, not a verdict.
-          </p>
-          <a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html" target="_blank" rel="noopener">Read CDC's BMI guidance →</a>
-        </div>
-      </div>
-
-      <div id="calc-ibw" style="display:none;"></div>
-
-      <!-- Ideal-Body-Weight-tab-only explanation, static for crawlers, toggled by calcSetTab(). -->
-      <div id="calc-ibw-explain" class="settings-section" style="display:none;">
-        <div class="settings-section-title">How We Calculate This</div>
-        <div class="settings-section-body">
-          <p class="settings-desc">
-            This uses the <strong>Devine formula (1974)</strong>, the most common clinical reference for "ideal"
-            body weight. It was originally created to estimate a dosing weight for gentamicin and other
-            medications, not as a personal fitness goal — actual healthy weight varies with frame size, muscle
-            mass, and other individual factors, so treat this as a population-average reference range rather than a
-            target number.
-          </p>
-          <strong>Source:</strong> McCarron, M.M., &amp; Devine, B.J. (1974). Clinical Pharmacy Case Studies: Case
-          Number 25, Gentamicin Therapy. <em>Drug Intelligence &amp; Clinical Pharmacy, 8</em>(11), 650–655.
-          Commonly cited in shorthand as "Devine, B.J. (1974)."
-          <br /><br />
-          <a href="https://pubmed.ncbi.nlm.nih.gov/10981254/" target="_blank" rel="noopener">Read more on its clinical origin →</a>
-        </div>
+      <div class="items-section">
+        <a class="tool-card" href="calorie/">
+          <span class="material-symbols-outlined tool-card-icon">restaurant</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">Calorie Calculator</div>
+            <div class="tool-card-desc">The quickest way to find your daily calorie target — no fitness jargon required.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="tdee/">
+          <span class="material-symbols-outlined tool-card-icon">local_fire_department</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">TDEE Calculator</div>
+            <div class="tool-card-desc">Find your daily calorie needs and a target range for your goal.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="bmr/">
+          <span class="material-symbols-outlined tool-card-icon">bedtime</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">BMR Calculator</div>
+            <div class="tool-card-desc">See how many calories your body burns at complete rest.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="macros/">
+          <span class="material-symbols-outlined tool-card-icon">pie_chart</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">Macro Calculator</div>
+            <div class="tool-card-desc">Turn a calorie target into protein, carb, and fat grams.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="body-fat/">
+          <span class="material-symbols-outlined tool-card-icon">percent</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">Body Fat % Calculator</div>
+            <div class="tool-card-desc">Estimate body fat from a few tape-measure inputs.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="bmi/">
+          <span class="material-symbols-outlined tool-card-icon">monitor_weight</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">BMI Calculator</div>
+            <div class="tool-card-desc">Check your body mass index against CDC categories.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="ideal-weight/">
+          <span class="material-symbols-outlined tool-card-icon">straighten</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">Ideal Weight Calculator</div>
+            <div class="tool-card-desc">Get a reference weight range using the Devine formula.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="calories-burned/">
+          <span class="material-symbols-outlined tool-card-icon">directions_run</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">Calories Burned Calculator</div>
+            <div class="tool-card-desc">Estimate calories burned for walking, running, cycling, swimming, and more.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="one-rep-max/">
+          <span class="material-symbols-outlined tool-card-icon">fitness_center</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">One-Rep Max Calculator</div>
+            <div class="tool-card-desc">Estimate your max single-rep lift from a recent set.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="vo2-max/">
+          <span class="material-symbols-outlined tool-card-icon">monitor_heart</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">VO2 Max Calculator</div>
+            <div class="tool-card-desc">Estimate your aerobic fitness level three different ways.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
+        <a class="tool-card" href="walking-calories/">
+          <span class="material-symbols-outlined tool-card-icon">directions_walk</span>
+          <div class="tool-card-info">
+            <div class="tool-card-name">Walking Calorie Calculator</div>
+            <div class="tool-card-desc">A more precise calorie estimate built specifically for walking.</div>
+          </div>
+          <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+        </a>
       </div>
       </main>
+      <div class="legal-footer">
+        &copy; 2026 Nawtch · <a href="../privacy/">Privacy Policy</a> · <a href="../terms/">Terms of Use</a>
+      </div>
     </div>
 
     <footer class="app-footer">
@@ -185,6 +175,7 @@
       <a class="footer-settings-btn" href="../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
     </footer>
 
-    <script src="calculators.js" type="module"></script>
+    <script type="module" src="../nav.js"></script>
+    <script type="module" src="../settingsHint.js"></script>
   </body>
 </html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VO2 Max Calculator – 3 Ways to Estimate Your Fitness | Nawtch</title>
+    <meta name="description" content="Free VO2 max calculator. Estimate your aerobic fitness using the resting heart rate method, Cooper 12-minute run test, or Rockport 1-mile walk test." />
+    <link rel="canonical" href="https://nawtch.app/calculators/vo2-max/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/calculators/vo2-max/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="VO2 Max Calculator – 3 Ways to Estimate Your Fitness | Nawtch" />
+    <meta property="og:description" content="Free VO2 max calculator. Estimate your aerobic fitness using the resting heart rate method, Cooper 12-minute run test, or Rockport 1-mile walk test." />
+    <meta property="og:url" content="https://nawtch.app/calculators/vo2-max/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="VO2 Max Calculator – 3 Ways to Estimate Your Fitness | Nawtch" />
+    <meta name="twitter:description" content="Free VO2 max calculator. Estimate your aerobic fitness using the resting heart rate method, Cooper 12-minute run test, or Rockport 1-mile walk test." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/x-icon" sizes="48x48" href="../../media/favicon-48x48.ico" />
+    <link rel="icon" type="image/svg+xml" href="../../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" size="32x32" href="../../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="calculators">
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="../../" data-page="today">Today</a>
+        <a class="nav-tab" href="../../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>VO2 Max Calculator</h1>
+          <p class="subtitle">Estimate your aerobic fitness level three different ways.</p>
+        </div>
+        <a class="ghost-btn" href="../">← Back to Calculators</a>
+      </header>
+
+      <div id="vo2-tabs"></div>
+      <div id="vo2-panel"></div>
+
+      <div id="vo2-explain-hr" class="settings-section">
+        <div class="settings-section-title">How We Calculate This — Resting Heart Rate Method</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            This method uses your resting heart rate as a proxy for aerobic fitness — a lower resting heart rate
+            relative to your estimated max generally indicates a more efficient cardiovascular system. We calculate
+            your estimated max heart rate using the <strong>Tanaka formula</strong> (HRmax = 208 − 0.7 × age), then
+            apply the <strong>Uth-Sørensen-Overgaard-Pedersen formula</strong>: VO2max = 15.3 × (HRmax ÷ resting HR).
+            <br /><br />
+            <strong>This is the least accurate of the three methods here.</strong> Resting heart rate swings with
+            caffeine, stress, hydration, sleep quality, and even time of day, so a single reading can shift your
+            result meaningfully. For the most consistent number, measure your resting heart rate first thing in the
+            morning, lying down, before caffeine or any activity. If you're willing to do a short physical test
+            instead, the Cooper Run Test or Rockport Walk Test tabs above are both more accurate.
+          </p>
+          <strong>Source:</strong> Uth, N., Sørensen, H., Overgaard, K., &amp; Pedersen, P.K. (2004). <em>Estimation
+          of V̇O2max from the ratio between HRmax and HRrest — the Heart Rate Ratio Method.</em> European Journal
+          of Applied Physiology, 91(1), 111–115.
+          <br /><br />
+          <a href="https://pubmed.ncbi.nlm.nih.gov/14624296/" target="_blank" rel="noopener">Read the original study →</a>
+        </div>
+      </div>
+
+      <div id="vo2-explain-cooper" class="settings-section" style="display:none;">
+        <div class="settings-section-title">How We Calculate This — Cooper 12-Minute Run Test</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            The Cooper test estimates VO2max from how far you can run in 12 minutes at maximal, sustained effort:
+            <strong>VO2max = (distance in meters − 504.9) ÷ 44.73.</strong> It was developed by Dr. Kenneth Cooper
+            for the U.S. Air Force as a fast field test that didn't require a lab.
+            <br /><br />
+            This test requires genuine maximal effort for the full 12 minutes, so it's best suited to people who are
+            already comfortable running hard and have appropriate fitness/health clearance to do so — it's not a
+            casual jog.
+          </p>
+          <strong>Source:</strong> Cooper, K.H. (1968). <em>A means of assessing maximal oxygen intake.</em> JAMA,
+          203(3), 201–204.
+          <br /><br />
+          <a href="https://pubmed.ncbi.nlm.nih.gov/5694044/" target="_blank" rel="noopener">Read the original study →</a>
+        </div>
+      </div>
+
+      <div id="vo2-explain-rockport" class="settings-section" style="display:none;">
+        <div class="settings-section-title">How We Calculate This — Rockport 1-Mile Walk Test</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            The Rockport Walk Test estimates VO2max from your time to walk one mile as fast as possible (without
+            running) and your heart rate immediately at the finish, combined with your age, sex, and weight:
+            <strong>VO2max = 132.853 − (0.0769 × weight in lb) − (0.3877 × age) + (6.315 × sex, male=1/female=0) −
+            (3.2649 × walk time in minutes) − (0.1565 × ending heart rate).</strong>
+            <br /><br />
+            In its original validation, this test correlated at r=0.88 with lab-measured VO2max — making it one of
+            the better field-test options, especially for people who prefer walking over running or who can't run
+            safely.
+          </p>
+          <strong>Source:</strong> Kline, G.M., et al. (1987). <em>Estimation of VO2max from a one-mile track walk,
+          gender, age, and body weight.</em> Medicine &amp; Science in Sports &amp; Exercise, 19(3), 253–259.
+          <br /><br />
+          <a href="https://pubmed.ncbi.nlm.nih.gov/3600239/" target="_blank" rel="noopener">Read the original study →</a>
+        </div>
+      </div>
+
+      <div id="vo2-explain-category" class="settings-section">
+        <div class="settings-section-title">Understanding Your Fitness Category</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Whichever method you use above, your result is classified against the same age- and sex-normed
+            reference data, since all three produce the same ml/kg/min unit. The categories — Poor, Fair, Average,
+            Good, Excellent, Superior — aren't fixed numbers; they're percentile bands within your own age-and-sex
+            bracket (below the 20th percentile = Poor, 20th–39th = Fair, 40th–59th = Average, 60th–79th = Good,
+            80th–94th = Excellent, 95th and above = Superior). That means "Good" means a different raw number for a
+            25-year-old woman than for a 55-year-old man.
+            <br /><br />
+            The reference table only publishes values at the 5th, 10th, 25th, 50th, 75th, 90th, and 95th
+            percentiles for each bracket, so where your result falls between two published points, we linearly
+            interpolate to place it — a standard, transparent approximation, not a guess.
+            <br /><br />
+            These are general population norms from a large reference dataset, not a personal verdict — individual
+            context like training history and health conditions affects where any one person "should" fall, the
+            same way BMI can't tell fat from muscle. Treat your category as a reference point for tracking change
+            over time, not a grade.
+          </p>
+          <strong>Source:</strong> American College of Sports Medicine. <em>ACSM's Guidelines for Exercise Testing
+          and Prescription</em> (11th ed.). Table 4.7: normative values for VO2max by age and sex, based on Cooper
+          Institute / FRIEND registry data.
+        </div>
+      </div>
+      </main>
+      <div class="legal-footer">
+        &copy; 2026 Nawtch · <a href="../../privacy/">Privacy Policy</a> · <a href="../../terms/">Terms of Use</a>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+      <a class="footer-settings-btn" href="../../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
+    </footer>
+
+    <script src="vo2-max.js" type="module"></script>
+  </body>
+</html>

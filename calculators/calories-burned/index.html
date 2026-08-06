@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calories Burned Calculator – Exercise Calorie Estimator | Nawtch</title>
+    <meta name="description" content="Free calories burned calculator. Estimate calories burned for walking, running, cycling, swimming, weightlifting, yoga, and more using MET values." />
+    <link rel="canonical" href="https://nawtch.app/calculators/calories-burned/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/calculators/calories-burned/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Calories Burned Calculator – Exercise Calorie Estimator | Nawtch" />
+    <meta property="og:description" content="Free calories burned calculator. Estimate calories burned for walking, running, cycling, swimming, weightlifting, yoga, and more using MET values." />
+    <meta property="og:url" content="https://nawtch.app/calculators/calories-burned/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Calories Burned Calculator – Exercise Calorie Estimator | Nawtch" />
+    <meta name="twitter:description" content="Free calories burned calculator. Estimate calories burned for walking, running, cycling, swimming, weightlifting, yoga, and more using MET values." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/x-icon" sizes="48x48" href="../../media/favicon-48x48.ico" />
+    <link rel="icon" type="image/svg+xml" href="../../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" size="32x32" href="../../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body class="calculators">
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="../../" data-page="today">Today</a>
+        <a class="nav-tab" href="../../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Calories Burned Calculator</h1>
+          <p class="subtitle">Estimate calories burned for walking, running, cycling, swimming, and more.</p>
+        </div>
+        <a class="ghost-btn" href="../">← Back to Calculators</a>
+      </header>
+
+      <div id="calc-calories-burned"></div>
+
+      <div id="calc-cb-explain" class="settings-section">
+        <div class="settings-section-title">How We Calculate This</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            We estimate calories burned using <strong>MET values</strong> (Metabolic Equivalent of Task) from the
+            2011 Compendium of Physical Activities — a standardized reference researchers use to compare the energy
+            cost of different activities. One MET is roughly the energy you burn just sitting still; an activity at
+            8 METs burns about 8 times that.
+            <br /><br />
+            <strong>Calories = MET × your weight in kg × duration in hours.</strong>
+            <br /><br />
+            MET values are population averages measured under controlled conditions — your actual burn varies with
+            fitness level, effort, terrain, and individual body composition, so treat this as a solid estimate
+            rather than a precise measurement. Walking is included here for comparison, but if walking is your main
+            activity, our <a href="../walking-calories/">Walking Calorie Calculator</a> uses a more precise
+            walking-specific formula instead of a general MET lookup.
+          </p>
+          <strong>Source:</strong> Ainsworth, B.E., et al. (2011). <em>2011 Compendium of Physical Activities: a
+          second update of codes and MET values.</em> Medicine &amp; Science in Sports &amp; Exercise, 43(8),
+          1575–1581.
+          <br /><br />
+          <a href="https://pubmed.ncbi.nlm.nih.gov/21681120/" target="_blank" rel="noopener">Read the original study →</a>
+        </div>
+      </div>
+      </main>
+      <div class="legal-footer">
+        &copy; 2026 Nawtch · <a href="../../privacy/">Privacy Policy</a> · <a href="../../terms/">Terms of Use</a>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+      <a class="footer-settings-btn" href="../../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
+    </footer>
+
+    <script src="calories-burned.js" type="module"></script>
+  </body>
+</html>
