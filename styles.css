@@ -53,6 +53,16 @@ main {
   margin: 20px;
 }
 
+.supporting-footer-links {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.supporting-footer-links a img {
+  max-width: 175px;
+}
+
 .field-hint a,
 .legal-footer a {
   color: var(--accent);
