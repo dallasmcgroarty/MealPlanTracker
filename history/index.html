@@ -115,6 +115,46 @@
         </div><!-- end stats-accordion-body -->
       </div>
       <div id="history-content"></div>
+      <div class="info-banners">
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
+            <span class="info-banner-label info-label-warn">Your history is organized months → weeks → days</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Click a month to expand or collapse its weeks, then click a week to expand its day-by-day table —
+            calories, protein, carbs, fat, cost, and whether that day landed inside your calorie range. The current
+            week opens pre-expanded, so once you open its month you don't need an extra click to see it.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--muted);box-shadow: 0 0 6px var(--muted);"></div>
+            <span class="info-banner-label info-label-info">Weeks that cross a month boundary are split, not lost</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            A week spanning two calendar months appears under both months, marked with a badge like
+            <strong>↑ from Jan</strong> or <strong>↓ into Feb</strong>. Each day is only counted once — in the month
+            it actually falls in — so nothing gets double-counted or dropped.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--carbs);box-shadow: 0 0 6px var(--carbs);"></div>
+            <span class="info-banner-label info-label-warn-2">Export your full history as CSV or JSON anytime</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            The <strong>Export</strong> button in the header downloads your complete logged history — not just
+            what's currently visible on screen — as either a <strong>CSV</strong> or <strong>JSON</strong> file.
+          </div>
+        </div>
+      </div>
+      <p class="field-hint" style="display:block;margin-top:14px;">
+        Trend look off from your target? Revisit your range with the <a href="../calculators/tdee/">TDEE calculator</a>.
+      </p>
       </main>
       <div class="legal-footer">
         &copy; 2026 Nawtch · <a href="../privacy/">Privacy Policy</a> · <a href="../terms/">Terms of Use</a>

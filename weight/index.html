@@ -74,6 +74,50 @@
         </div>
       </header>
       <div id="tab-weight"></div>
+      <div class="info-banners">
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
+            <span class="info-banner-label info-label-warn">Log once per day, update anytime</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Logging today's weight switches the button to <strong>Update</strong> instead of <strong>Save</strong>,
+            so entering a new number always edits today's single entry rather than creating a duplicate. You can
+            update it as many times as you want during the day — only the latest value is kept.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--muted);box-shadow: 0 0 6px var(--muted);"></div>
+            <span class="info-banner-label info-label-info">Switch between lb and kg anytime</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Your unit choice (<strong>lb</strong> or <strong>kg</strong>) is shared with the Settings page, and
+            every entry is stored normalized in kilograms internally. Switching units only changes how numbers are
+            displayed — it never changes the underlying data or any entry you've already logged.
+          </div>
+        </div>
+        <div class="info-banner">
+          <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+            <div class="info-dot" style="background:var(--carbs);box-shadow: 0 0 6px var(--carbs);"></div>
+            <span class="info-banner-label info-label-warn-2">Log at the same time of day for a trend that means something</span>
+            <span class="info-banner-chevron">▼</span>
+          </div>
+          <div class="info-banner-body">
+            Body weight can swing a few pounds or kilograms in a single day from food, water, and hydration alone —
+            not just fat loss or gain. Logging at roughly the same time each day (first thing in the morning is
+            typical) makes the <strong>Weight Over Time</strong> chart's trend far more meaningful than any single
+            day's number.
+          </div>
+        </div>
+      </div>
+      <p class="field-hint" style="display:block;margin-top:14px;">
+        Wondering what your numbers mean? Check your <a href="../calculators/bmi/">BMI</a>,
+        <a href="../calculators/ideal-weight/">ideal weight range</a>, or
+        <a href="../calculators/body-fat/">body fat %</a>.
+      </p>
       </main>
     </div>
 

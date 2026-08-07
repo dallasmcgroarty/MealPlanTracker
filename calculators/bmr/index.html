@@ -85,6 +85,30 @@
           <a href="https://pubmed.ncbi.nlm.nih.gov/2305711/" target="_blank" rel="noopener">Read the original study →</a>
         </div>
       </div>
+
+      <div id="calc-bmr-variance" class="settings-section">
+        <div class="settings-section-title">Why BMR Varies Between People</div>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Two people with the same height and weight can still land on meaningfully different BMRs. A few factors
+            drive most of that spread:
+            <br /><br />
+            <strong>Age.</strong> BMR declines gradually over adulthood, driven mainly by a slow loss of lean muscle
+            mass and shifting hormone levels rather than aging itself. Mifflin-St Jeor already bakes this in as a
+            per-year age term, so the number above has this adjustment built in — you don't need to apply it again.
+            <br /><br />
+            <strong>Sex.</strong> At the same height and weight, men typically post a higher BMR than women, mostly
+            because men carry more lean muscle mass and less body fat on average. That's why the equation uses a
+            separate constant for male vs. female rather than one formula for everyone.
+            <br /><br />
+            <strong>Muscle mass.</strong> Muscle tissue is more metabolically active at rest than fat tissue, so two
+            people at an identical weight but different body composition can have genuinely different BMRs even
+            when a formula predicts the same number for both. Mifflin-St Jeor only sees height, weight, age, and
+            sex — it has no way to know your actual muscle-to-fat ratio, which is a big part of why this is a
+            population-average estimate rather than a measurement of you specifically.
+          </p>
+        </div>
+      </div>
       </main>
       <div class="legal-footer">
         &copy; 2026 Nawtch · <a href="../../privacy/">Privacy Policy</a> · <a href="../../terms/">Terms of Use</a>

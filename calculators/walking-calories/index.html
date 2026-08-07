@@ -86,10 +86,14 @@
             calories using the standard approximation that 1 liter of oxygen ≈ 5 kcal.
             <br /><br />
             This equation is validated for walking speeds of roughly 50–100 m/min (about 1.9–3.7 mph) on level
-            ground — normal-to-brisk walking pace. If your calculated speed falls outside that range (e.g. you were
-            jogging, not walking), we'll flag it — for running or other activities, use our
-            <a href="../calories-burned/">Calories Burned Calculator</a> instead, which is also useful for comparing
-            walking against other activities using general MET values.
+            ground — normal-to-brisk walking pace. That range isn't an arbitrary cutoff: the formula was built
+            around the specific oxygen cost of a walking gait, and gait mechanics change once someone speeds up
+            enough to break into a jog — different muscles, a different stride pattern, and a different
+            energy-cost curve that this equation was never calibrated against. That's why, rather than silently
+            extrapolating past that point and quietly returning a wrong number, if your calculated speed falls
+            outside that range (e.g. you were jogging, not walking), we'll flag it — for running or other
+            activities, use our <a href="../calories-burned/">Calories Burned Calculator</a> instead, which is also
+            useful for comparing walking against other activities using general MET values.
           </p>
           <strong>Source:</strong> American College of Sports Medicine. <em>ACSM's Guidelines for Exercise Testing
           and Prescription.</em> Metabolic equation for walking.

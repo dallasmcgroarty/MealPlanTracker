@@ -53,11 +53,13 @@ main {
   margin: 20px;
 }
 
+.field-hint a,
 .legal-footer a {
   color: var(--accent);
   text-decoration: underline;
 }
 
+.field-hint a:hover,
 .legal-footer a:hover {
   text-decoration: none;
 }
