@@ -73,7 +73,7 @@
 
       <!-- Where Your Data Lives -->
       <div class="settings-section">
-        <div class="settings-section-title">Where Your Data Is Stored</div>
+        <h2 class="settings-section-title">Where Your Data Is Stored</h2>
         <div class="settings-section-body">
           <p class="settings-desc">
             Nawtch keeps everything — foods, logs, weight, programs, exercises, settings — locally in this browser, not on a server. Nothing leaves your device, but that also means
@@ -86,7 +86,7 @@
 
       <!-- Calorie Range -->
       <div class="settings-section">
-        <div class="settings-section-title">Calorie Target Range</div>
+        <h2 class="settings-section-title">Calorie Target Range</h2>
         <div class="settings-section-body">
           <p class="settings-desc">
             Get a recommended target calorie estimate by using the <a href="../calculators/tdee/">TDEE calculator</a>.
@@ -107,7 +107,7 @@
 
       <!-- Weight Unit -->
       <div class="settings-section">
-        <div class="settings-section-title">Weight Unit</div>
+        <h2 class="settings-section-title">Weight Unit</h2>
         <div class="settings-section-body">
           <p class="settings-desc">Choose the unit used for weight tracking. Applies everywhere weight is shown.</p>
           <div class="wt-toggle" id="settings-wt-unit-toggle"></div>
@@ -116,7 +116,7 @@
 
       <!-- Energy Unit -->
       <div class="settings-section">
-        <div class="settings-section-title">Energy Unit</div>
+        <h2 class="settings-section-title">Energy Unit</h2>
         <div class="settings-section-body">
           <p class="settings-desc">Choose the unit used for calories. Applies everywhere energy is shown.</p>
           <div class="wt-toggle" id="settings-energy-unit-toggle"></div>
@@ -125,7 +125,7 @@
 
       <!-- Currency -->
       <div class="settings-section" style="overflow:visible !important;">
-        <div class="settings-section-title">Currency</div>
+        <h2 class="settings-section-title">Currency</h2>
         <div class="settings-section-body">
           <p class="settings-desc">Choose the currency symbol shown next to cost. This only changes the label — amounts are not converted.</p>
           <div class="export-dropdown" style="display: inline-block;" id="settings-currency-dropdown">
@@ -137,7 +137,7 @@
 
       <!-- Backup -->
       <div class="settings-section">
-        <div class="settings-section-title">Data Backup</div>
+        <h2 class="settings-section-title">Data Backup</h2>
         <div class="settings-section-body">
           <p class="settings-desc">Export all your data — foods, weight, programs, exercises, history, and settings — as a single JSON file. Use this to transfer everything to a new device.</p>
           <button class="ghost-btn" onclick="window.exportFullBackup()">↓ Export Full Backup (JSON)</button>
@@ -146,7 +146,7 @@
 
       <!-- Restore -->
       <div class="settings-section">
-        <div class="settings-section-title">Data Restore</div>
+        <h2 class="settings-section-title">Data Restore</h2>
         <div class="settings-section-body">
           <p class="settings-desc">Import a Nawtch backup file to restore your data. <strong style="color:var(--warn);font-size:12px;">This will overwrite all existing data and cannot be undone.</strong></p>
           <input type="file" id="settings-import-file" accept=".json" style="display:none" onchange="window.handleImportFile(event)" />
