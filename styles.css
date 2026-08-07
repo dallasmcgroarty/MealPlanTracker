@@ -57,10 +57,13 @@ main {
   margin-top: 12px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 4px;
 }
 
 .supporting-footer-links a img {
   max-width: 175px;
+  height: 40px !important;
 }
 
 .field-hint a,
