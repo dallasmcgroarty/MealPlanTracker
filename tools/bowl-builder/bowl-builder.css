@@ -1,0 +1,313 @@
+/* Bowl Builder — shared chrome (header, nav, buttons, field-group, settings-section,
+   mgmt-card, pg-modal, info-banners) comes from styles.css; this file only covers
+   what's unique to this tool. */
+
+/* ─── sticky summary bar: bowl visual + live totals, always fully visible ───
+   Mobile: stacked column, top to bottom: calories, visual bar, macros.
+   Desktop: single row in the same left-to-right order. */
+.bb-summary-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+/* ─── page split: search/popular-picks vs. the working bowl ───
+   Mobile/tablet: single column, bowl on top (DOM order), search below.
+   Desktop (>=900px): two columns — search/popular-picks pinned on the
+   left (doesn't scroll away), working bowl on the right. */
+.bb-builder-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 900px) {
+  .bb-builder-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+  .bb-col-left {
+    order: -1;
+    position: sticky;
+    top: 16px;
+  }
+}
+
+/* abstract "bowl visual" — a stacked/segmented bar that grows and re-segments
+   as items are added; segments colored by each component's dominant macro. */
+.bb-visual {
+  flex: 1 1 auto;
+  width: 100%;
+}
+.bb-visual-bar {
+  display: flex;
+  height: 18px;
+  width: 100%;
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+.bb-visual-seg {
+  min-width: 3px;
+  transition: flex-grow 0.25s ease;
+}
+.bb-visual-empty {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.bb-totals-cal {
+  font-family: "Syne", sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  white-space: nowrap;
+}
+.bb-totals-macros {
+  display: flex;
+  gap: 10px;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  flex-wrap: wrap;
+}
+.bb-totals-macros .im-p { color: var(--protein); }
+.bb-totals-macros .im-c { color: var(--carbs); }
+.bb-totals-macros .im-f { color: var(--fat); }
+
+@media (min-width: 900px) {
+  .bb-summary-bar {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  .bb-totals-macros {
+    flex: 1 0 auto;
+  }
+}
+
+/* ─── search ─── */
+.bb-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.bb-search-results:empty {
+  margin-top: 0;
+}
+.bb-search-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.bb-search-result:hover {
+  border-color: var(--accent);
+}
+.bb-search-result-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.bb-search-result-macro {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ─── popular-food tap-to-add tiles ─── */
+.bb-tile-section-label {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin: 14px 0 8px;
+}
+.bb-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.bb-tile {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.bb-tile:hover {
+  border-color: var(--accent);
+}
+.bb-tile:active {
+  transform: scale(0.97);
+}
+.bb-tile-icon {
+  font-size: 22px;
+  color: var(--accent);
+}
+.bb-tile-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* ─── in-progress bowl: component rows with portion steppers ───
+   Single column always — at the 900px breakpoint the page-level
+   .bb-builder-grid split kicks in and narrows this column, so a
+   2-up ingredient grid would be cramped right where it'd appear. */
+#bb-bowl-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.bb-bowl-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.bb-bowl-row-info {
+  flex: 1;
+  min-width: 0;
+}
+.bb-bowl-row-name {
+  font-size: 13px;
+  font-weight: 600;
+  word-break: break-word;
+}
+.bb-bowl-row-macro {
+  font-family: "DM Mono", monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.bb-portion-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.bb-step-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+  flex-shrink: 0;
+}
+.bb-step-btn:hover {
+  border-color: var(--accent);
+}
+.bb-amount-input {
+  width: 54px;
+  text-align: center;
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 2px;
+  color: var(--text);
+}
+.bb-unit-lbl {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.bb-remove-btn {
+  color: var(--warn);
+  cursor: pointer;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.bb-unit-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.bb-unit-toggle-row .field-hint {
+  margin: 0;
+}
+.bb-unit-toggle-btn {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+}
+.bb-unit-toggle-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* the shared .section-header has no flex-wrap by default (its other uses are
+   title + a single small item); this one carries 4 buttons, so let it wrap. */
+#bb-bowl-section .section-header {
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 20px;
+}
+.bb-actions-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.bb-empty-note {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 0;
+}
+
+/* ─── saved bowls list ─── */
+#bb-saved-bowls-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+#bb-saved-bowls-list .mgmt-card-actions {
+  flex-wrap: wrap;
+}

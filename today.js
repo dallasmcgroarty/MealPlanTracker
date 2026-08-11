@@ -16,6 +16,7 @@ let servings = {};
 let customItems = [];
 let calRange = { low: 1250, high: 1750 };
 let halfStepMode = false; // session-only: when true, +/- steps by 0.5 instead of 1
+let coreItemsFilter = ""; // session-only: live text filter over the saved-foods list
 
 function computeTotals() {
   let cal = 0, p = 0, c = 0, f = 0, cost = 0;
@@ -160,8 +161,15 @@ function renderCoreItems() {
       "<div style=\"font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;\">No saved foods available.</div>";
     return;
   }
+  const filter = coreItemsFilter.trim().toLowerCase();
+  const items = filter ? CORE_ITEMS.filter((item) => item.name.toLowerCase().includes(filter)) : CORE_ITEMS;
+  if (items.length === 0) {
+    list.innerHTML =
+      "<div style=\"font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:8px 0;\">No saved foods match your search.</div>";
+    return;
+  }
   const step = halfStepMode ? 0.5 : 1;
-  CORE_ITEMS.forEach((item) => {
+  items.forEach((item) => {
     if (item.inactive) return;
     const srv = servings[item.id] || 0;
     const met = srv >= item.target;
@@ -754,6 +762,10 @@ async function init() {
   document.getElementById('cf-bulk-price-label').textContent = `Bulk Total Price (${prefs.getCurrencySymbol()})`;
   document.getElementById('cf-cost-label').textContent = `Cost / Serving (${prefs.getCurrencySymbol()})`;
   document.getElementById('cf-today-cost-hint').textContent = `today's cost: ${prefs.formatCurrency(0)}`;
+  document.getElementById('core-items-filter').addEventListener('keyup', (e) => {
+    coreItemsFilter = e.target.value;
+    renderCoreItems();
+  });
   await loadCoreItems();
 
   const saved = db.loadTodayLS(todayStr());

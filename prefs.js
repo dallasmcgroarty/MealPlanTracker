@@ -31,6 +31,19 @@ export async function setWeightUnit(unit) {
   await dbPut("settings", { key: "weightUnit", value: unit });
 }
 
+export async function getPortionUnit() {
+  try {
+    const saved = await dbGet("settings", "portionUnit");
+    if (saved && saved.value) return saved.value;
+  } catch (e) {}
+  return "g";
+}
+
+export async function setPortionUnit(unit) {
+  if (unit !== "g" && unit !== "oz") return;
+  await dbPut("settings", { key: "portionUnit", value: unit });
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // ENERGY UNIT — energy is always stored normalized to kcal (same
 // convention as weight-in-kg above). Display unit is a global setting.
