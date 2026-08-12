@@ -2367,9 +2367,6 @@ input[readonly] {
   padding: 10px 14px;
   border-bottom: 1px solid var(--border);
 }
-.settings-section-body {
-  padding: 14px 16px;
-}
 .settings-section-body ul {
   list-style: disc;
   padding-left: 20px;
@@ -2380,6 +2377,22 @@ input[readonly] {
   color: var(--muted);
   line-height: 1.7;
 }
+.settings-section-body {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  padding: 14px 16px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.settings-section-body .items-section .tool-card {
+  text-decoration: none;
+}
+
+.settings-section-body .items-section .tool-card .tool-card-name {
+  color: var(--text);
+}
+
 .settings-desc {
   font-family: "DM Mono", monospace;
   font-size: 12px;
@@ -2395,6 +2408,7 @@ input[readonly] {
   text-decoration: none;
 }
 
+.settings-section-body em,
 .settings-section-body strong {
   color: var(--text);
 }
