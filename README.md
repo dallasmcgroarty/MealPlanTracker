@@ -19,6 +19,8 @@ https://nawtch.com
   - https://nawtch.app/calculators/
 - popular diet options and research behind them
   - https://nawtch.app/diets/
+- popular supplements and research behind them
+  - https://nawtch.app/supplements/
 - guides to help you use nawtch and support your fitness journey
   - https://nawtch.app/guides/
 - free tools list to use for fun
