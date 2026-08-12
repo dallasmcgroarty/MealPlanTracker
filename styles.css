@@ -1464,6 +1464,11 @@ input[readonly] {
   align-items: flex-start;
   gap: 8px;
 }
+.mgmt-card .mgmt-card-name {
+  font-family: "Syne", sans-serif;
+  line-height: normal;
+  color: var(--text);
+}
 .mgmt-card-name {
   font-weight: 600;
   font-size: 13px;
