@@ -1,6 +1,21 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("nawtch_theme") || "dark";
+          var apply = function (v) {
+            var resolved = v === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : v;
+            document.documentElement.setAttribute("data-theme", resolved);
+          };
+          apply(t);
+          if (t === "system" && window.matchMedia) {
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { apply("system"); });
+          }
+        } catch (e) {}
+      })();
+    </script>
     <!-- Google tag (gtag.js) -->
     <script
       async

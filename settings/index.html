@@ -1,6 +1,21 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("nawtch_theme") || "dark";
+          var apply = function (v) {
+            var resolved = v === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : v;
+            document.documentElement.setAttribute("data-theme", resolved);
+          };
+          apply(t);
+          if (t === "system" && window.matchMedia) {
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { apply("system"); });
+          }
+        } catch (e) {}
+      })();
+    </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
     <script>
@@ -102,6 +117,15 @@
             </div>
             <button class="add-btn" style="padding:6px 14px;font-size:12px;" onclick="window.saveCalRangeFromSettings()">Save</button>
           </div>
+        </div>
+      </div>
+
+      <!-- Theme -->
+      <div class="settings-section">
+        <h2 class="settings-section-title">Theme</h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">Choose light or dark, or follow your device's setting automatically.</p>
+          <div class="wt-toggle" id="settings-theme-toggle"></div>
         </div>
       </div>
 

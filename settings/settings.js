@@ -32,6 +32,28 @@ async function saveCalRangeFromSettings() {
 window.saveCalRangeFromSettings = saveCalRangeFromSettings;
 
 // ═══════════════════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════════════════
+function themeToggleHTML(theme) {
+  return `
+    <button class="wt-toggle-btn ${theme === "light" ? "active" : ""}" onclick="window.settingsSetTheme('light')">Light</button>
+    <button class="wt-toggle-btn ${theme === "dark" ? "active" : ""}" onclick="window.settingsSetTheme('dark')">Dark</button>
+    <button class="wt-toggle-btn ${theme === "system" ? "active" : ""}" onclick="window.settingsSetTheme('system')">System</button>
+  `;
+}
+
+async function renderThemeToggle() {
+  const theme = await prefs.getTheme();
+  const el = document.getElementById("settings-theme-toggle");
+  if (el) el.innerHTML = themeToggleHTML(theme);
+}
+
+window.settingsSetTheme = async function (theme) {
+  await prefs.setTheme(theme);
+  renderThemeToggle();
+};
+
+// ═══════════════════════════════════════════════════════════════════
 // WEIGHT UNIT
 // ═══════════════════════════════════════════════════════════════════
 function unitToggleHTML(unit) {
@@ -168,6 +190,12 @@ async function handleImportFile(e) {
     }
     localStorage.removeItem(db.LS_TODAY);
     localStorage.removeItem(db.LS_WEEK);
+    // Restored theme lives in the "settings" store now, but the FOUC-prevention
+    // bootstrap script reads localStorage — mirror it so the reload below (and
+    // every page after) reflects the restored value instead of the stale one.
+    const restoredTheme = (backup.stores.settings || []).find((r) => r.key === "theme");
+    if (restoredTheme) localStorage.setItem(prefs.THEME_LS_KEY, restoredTheme.value);
+    else localStorage.removeItem(prefs.THEME_LS_KEY);
   } catch (err) {
     alert("Import failed: " + err.message);
     return;
@@ -184,6 +212,7 @@ async function init() {
   await db.openDB();
   await prefs.getEnergyUnit();
   await renderCalRangeInputs();
+  await renderThemeToggle();
   await renderUnitToggle();
   await renderEnergyUnitToggle();
   await renderCurrencyToggle();
