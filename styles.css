@@ -13,13 +13,108 @@
   --border: #2a2d3a;
   --accent: #c8f060;
   --accent2: #60c8f0;
-  --accent3: #f0a060;
+  --accent3: #ff9d49;
   --warn: #f06060;
+  --danger: #ff5050;
   --text: #e8eaf0;
   --muted: #9fa5c4;
   --protein: #60f0a0;
   --carbs: #f0d060;
   --fat: #f09060;
+  --on-accent: #0e0f13;
+}
+
+/* LIGHT THEME — same variable names/structure as dark mode above, only the
+   values change. Applied via data-theme on <html>, set pre-paint by the
+   inline bootstrap script in each page's <head> (see theme.js). */
+:root[data-theme="light"] {
+  --bg: #f2f0ef;
+  --bg2: #e2e3e3;
+  --surface: #e2e3e3;
+  --surface2: #f2f0ef;
+  --border: #66615e;
+  --warn: #ad0000;
+  --danger: #ad0000;
+  --text: #36404a;
+  --muted: #36404a;
+  --accent3: #bf5700;
+  --on-accent: #242b32;
+  --on-accent: white;
+  --protein: #1f8a52;
+  --carbs: #a17a16;
+  --fat: #b25a2e;
+  --accent: #053dc4;
+  --accent2: #053dc4;
+}
+
+/* A few roles reuse --accent (brand green) for both "text/label accent" and
+   "button fill" in dark mode; light mode needs those to diverge, so these
+   are scoped overrides rather than repointing --accent itself. */
+:root[data-theme="light"] h1,
+:root[data-theme="light"] h2,
+:root[data-theme="light"] h3 {
+  color: #242b32;
+}
+:root[data-theme="light"] .nav-tab:hover {
+  color: var(--accent);
+}
+:root[data-theme="light"] .settings-section-body a,
+:root[data-theme="light"] .settings-desc a,
+:root[data-theme="light"] .field-hint a,
+:root[data-theme="light"] .legal-footer a,
+:root[data-theme="light"] .info-banner-body a {
+  color: #0b55a4;
+}
+:root[data-theme="light"] input::placeholder,
+:root[data-theme="light"] .pg-textarea::placeholder,
+:root[data-theme="light"] .pg-ex-search-input::placeholder {
+  color: #949392;
+}
+/* Standalone icon glyphs (no solid fill behind them) need the darker,
+   same-hue green variant for contrast — the bright button green is too
+   light as a thin stroke/glyph color against light backgrounds. */
+:root[data-theme="light"] .footer-settings-btn.active,
+:root[data-theme="light"] .tool-card-icon,
+:root[data-theme="light"] .pg-ex-create-icon {
+  color: #053dc4;
+}
+/* Card elevation: light mode drops the border and uses a shadow instead.
+   Dark mode's border-based card styling is untouched. */
+:root[data-theme="light"] .item-card,
+:root[data-theme="light"] .program-card,
+:root[data-theme="light"] .tool-card,
+:root[data-theme="light"] .settings-section,
+:root[data-theme="light"] .status-banner,
+:root[data-theme="light"] .info-banners,
+:root[data-theme="light"] .weekly-section,
+:root[data-theme="light"] .add-section,
+:root[data-theme="light"] .meter-section,
+:root[data-theme="light"] .total-card,
+:root[data-theme="light"] .pg-day-section,
+:root[data-theme="light"] .pg-day-form-section,
+:root[data-theme="light"] .stats-accordion-wrap,
+:root[data-theme="light"] .confirm-box,
+:root[data-theme="light"] .pg-modal-box,
+:root[data-theme="light"] .scanner-modal-box,
+:root[data-theme="light"] input[type="text"], 
+:root[data-theme="light"] input[type="number"], 
+:root[data-theme="light"] select {
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+:root[data-theme="light"] .settings-desc strong,
+:root[data-theme="light"] .settings-desc em,
+:root[data-theme="light"] .settings-section-body strong,
+:root[data-theme="light"] .settings-section-body em,
+:root[data-theme="light"] .info-banner-body strong {
+  color:black;
+}
+:root[data-theme="light"] .tool-card[href="peptides/"]:hover {
+  background: rgb(255 2 2 / 20%) !important;
+}
+:root[data-theme="light"] .month-block-inner {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
+  border: none !important;
 }
 * {
   box-sizing: border-box;
@@ -251,7 +346,7 @@ input[readonly] {
 /* BUTTONS */
 .add-btn {
   background: var(--accent);
-  color: #0e0f13;
+  color: var(--on-accent);
   border: none;
   border-radius: 6px;
   font-family: "Syne", sans-serif;
@@ -270,7 +365,7 @@ input[readonly] {
 .edit-btn,
 .mgmt-edit-btn {
   background: var(--accent);
-  color: #0e0f13;
+  color: var(--on-accent);
   border: 1px solid var(--border);
   border-radius: 6px;
   font-family: "Syne", sans-serif;
@@ -311,6 +406,8 @@ input[readonly] {
   color: var(--muted);
   font-family: "DM Mono", monospace;
   font-size: 12px;
+  height: 30px;
+  line-height: normal;
   padding: 6px 12px;
   cursor: pointer;
   transition: all 0.15s;
@@ -435,7 +532,7 @@ input[readonly] {
 #confirm-ok {
   background: var(--warn);
   border-color: var(--warn);
-  color: #0e0f13;
+  color: var(--on-accent);
   font-weight: 600;
 }
 #confirm-ok:hover {
@@ -989,7 +1086,7 @@ input[readonly] {
 }
 .srv-btn:hover {
   background: var(--accent);
-  color: #0e0f13;
+  color: var(--on-accent);
   border-color: var(--accent);
 }
 .srv-btn:active {
@@ -1026,7 +1123,7 @@ input[readonly] {
 }
 .half-step-toggle.active {
   background: var(--accent2);
-  color: #0e0f13;
+  color: var(--on-accent);
   border-color: var(--accent2);
   box-shadow: 0 0 12px rgba(96, 200, 240, 0.45);
 }
@@ -1930,7 +2027,7 @@ input[readonly] {
 }
 .pg-ex-add-btn {
   background: var(--accent);
-  color: #0e0f13;
+  color: var(--on-accent);
   border: none;
   border-radius: 6px;
   font-family: "Syne", sans-serif;
@@ -2033,7 +2130,7 @@ input[readonly] {
 .stats-accordion-body {
   display: none;
   padding: 20px 16px 16px;
-  background: var(--bg);
+  background: var(--surface);
 }
 .stats-accordion-wrap.open .stats-accordion-body {
   display: block;
@@ -2411,6 +2508,14 @@ input[readonly] {
 }
 .settings-section-body a:hover {
   text-decoration: none;
+}
+
+.settings-section-body a.ghost-btn {
+  text-decoration: none;
+}
+
+.settings-section-body a.ghost-btn:hover {
+  border-color: var(--accent);
 }
 
 .settings-section-body em,

@@ -165,6 +165,48 @@ export async function getJourneyStartedAt() {
 
 // Whether the user has ever loaded the Settings page — gates the one-time
 // settings-button hint arrow.
+// ═══════════════════════════════════════════════════════════════════
+// THEME — light / dark / system. IndexedDB is the persisted value (so it
+// round-trips through Export/Import Backup like every other setting);
+// localStorage is a synchronous mirror the inline bootstrap script in each
+// page's <head> reads to set data-theme before first paint, since IndexedDB
+// can't be read synchronously. THEME_LS_KEY must match theme.js's copy.
+// ═══════════════════════════════════════════════════════════════════
+export const THEME_LS_KEY = "nawtch_theme";
+let cachedTheme = null;
+
+export function resolveTheme(theme) {
+  if (theme !== "system") return theme;
+  try {
+    return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  } catch (e) {
+    return "dark";
+  }
+}
+
+export function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", resolveTheme(theme));
+}
+
+export async function getTheme() {
+  if (cachedTheme) return cachedTheme;
+  try {
+    const saved = await dbGet("settings", "theme");
+    cachedTheme = (saved && saved.value) || "dark";
+  } catch (e) {
+    cachedTheme = "dark";
+  }
+  return cachedTheme;
+}
+
+export async function setTheme(theme) {
+  if (theme !== "light" && theme !== "dark" && theme !== "system") return;
+  cachedTheme = theme;
+  await dbPut("settings", { key: "theme", value: theme });
+  try { localStorage.setItem(THEME_LS_KEY, theme); } catch (e) {}
+  applyTheme(theme);
+}
+
 export async function getSettingsVisited() {
   try {
     const saved = await dbGet("settings", "settingsVisited");

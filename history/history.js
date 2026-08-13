@@ -246,7 +246,7 @@ async function renderHistory() {
       }],
       legend: {
         show: true, type: 'scroll', orient: 'vertical', right: 0, bottom: 0,
-        textStyle: { color: 'whitesmoke', fontWeight: 'normal', fontSize: 12, textBorderColor: 'rgba(0,0,0,0.25)', textBorderWidth: 2 },
+        textStyle: { color: 'var(--text)', fontWeight: 'normal', fontSize: 12, textBorderColor: 'rgba(0,0,0,0.25)', textBorderWidth: 2 },
       },
     });
     resizeECharts(window._echartMacros, macrosDom);

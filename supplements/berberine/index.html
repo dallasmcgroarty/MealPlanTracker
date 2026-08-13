@@ -1,6 +1,21 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("nawtch_theme") || "dark";
+          var apply = function (v) {
+            var resolved = v === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : v;
+            document.documentElement.setAttribute("data-theme", resolved);
+          };
+          apply(t);
+          if (t === "system" && window.matchMedia) {
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { apply("system"); });
+          }
+        } catch (e) {}
+      })();
+    </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
     <script>
@@ -72,7 +87,7 @@
       </header>
 
       <div class="settings-section" style="border:1px solid var(--warn); background:rgba(240,96,96,0.08);">
-        <h2 class="settings-section-title" style="color:var(--warn);">⚠ Before Anything Else: Drug Interaction Risk</h2>
+        <h2 class="settings-section-title" style="color:var(--danger);">⚠ Before Anything Else: Drug Interaction Risk</h2>
         <div class="settings-section-body">
           <p class="settings-desc">
             Berberine measurably inhibits several liver enzymes that metabolize a wide range of prescription
