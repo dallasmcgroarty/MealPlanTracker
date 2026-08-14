@@ -1,0 +1,259 @@
+/* Grocery Budget Calculator — shared chrome (header, nav, buttons, field-group,
+   settings-section, mgmt-card, pg-modal, info-banners) comes from styles.css;
+   this file only covers what's unique to this tool. */
+
+/* ─── totals bar: two stat tiles + local currency override ─── */
+.gb-summary-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 700px) {
+  .gb-summary-bar {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.gb-stat-tile {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.gb-stat-label {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.gb-stat-value {
+  font-family: "Syne", sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+}
+.gb-stat-sub {
+  font-family: "DM Mono", monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.gb-currency-override {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ─── page split: add-item vs. the working list ─── */
+.gb-builder-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 900px) {
+  .gb-builder-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+  .gb-col-left {
+    order: -1;
+    position: sticky;
+    top: 16px;
+  }
+}
+
+.gb-actions-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+#gb-list-section .section-header {
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 20px;
+}
+
+/* ─── search ─── */
+.gb-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0px;
+}
+.gb-search-results:empty {
+  margin-top: 0;
+}
+.gb-search-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.gb-search-result:hover {
+  border-color: var(--accent);
+}
+.gb-search-result-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+.gb-saved-star {
+  font-size: 14px;
+  color: var(--accent);
+  vertical-align: -2px;
+  margin-right: 3px;
+}
+.gb-search-result-cost {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ─── item list ─── */
+#gb-item-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.gb-empty-note {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 0;
+}
+
+.gb-item-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.gb-item-row-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.gb-item-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  word-break: break-word;
+}
+.gb-remove-btn {
+  color: var(--warn);
+  cursor: pointer;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.gb-item-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 560px) {
+  .gb-item-fields {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.gb-bulk-helper {
+  background: var(--surface2);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 8px;
+}
+.gb-bulk-helper-label {
+  font-family: "DM Mono", monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.gb-bulk-helper-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.gb-bulk-helper-row .field-group {
+  flex: 1 1 100px;
+  min-width: 100px;
+}
+
+.gb-target-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.gb-target-row input {
+  width: 70px;
+}
+.gb-unit-toggle-btn {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+}
+.gb-unit-toggle-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.gb-item-results {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.gb-item-result {
+  display: flex;
+  flex-direction: column;
+}
+.gb-item-result-label {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.gb-item-result-value {
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ─── saved plans list ─── */
+#gb-saved-plans-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+#gb-saved-plans-list .mgmt-card-actions {
+  flex-wrap: wrap;
+}

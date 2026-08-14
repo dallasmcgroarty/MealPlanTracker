@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("nawtch_theme") || "dark";
+          var apply = function (v) {
+            var resolved = v === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : v;
+            document.documentElement.setAttribute("data-theme", resolved);
+          };
+          apply(t);
+          if (t === "system" && window.matchMedia) {
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { apply("system"); });
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mazdutide: Approved in China, Not the US — Nawtch</title>
+    <meta name="description" content="Mazdutide is NMPA-approved in China for obesity and diabetes, but still early-phase for FDA review — trial data and status." />
+    <link rel="canonical" href="https://nawtch.app/supplements/peptides/mazdutide/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/supplements/peptides/mazdutide/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Mazdutide: Approved in China, Not the US — Nawtch" />
+    <meta property="og:description" content="Mazdutide is NMPA-approved in China for obesity and diabetes, but still early-phase for FDA review — trial data and status." />
+    <meta property="og:url" content="https://nawtch.app/supplements/peptides/mazdutide/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Mazdutide: Approved in China, Not the US — Nawtch" />
+    <meta name="twitter:description" content="Mazdutide is NMPA-approved in China for obesity and diabetes, but still early-phase for FDA review — trial data and status." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/x-icon" sizes="48x48" href="../../../media/favicon-48x48.ico" />
+    <link rel="icon" type="image/svg+xml" href="../../../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" size="32x32" href="../../../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../../../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="../../../styles.css" />
+  </head>
+  <body class="diets">
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="../../../" data-page="today">Today</a>
+        <a class="nav-tab" href="../../../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../../../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../../../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../../../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Mazdutide</h1>
+          <p class="subtitle">GLP-1/glucagon agonist approved in China for diabetes and obesity — still in early FDA review stages.</p>
+        </div>
+        <a class="ghost-btn" href="../">← Back to Peptides</a>
+      </header>
+
+      <div class="settings-section" style="border:1px solid var(--accent); background:rgba(200,240,96,0.08);">
+        <h2 class="settings-section-title" style="color:var(--accent);">Last Verified: August 14, 2026</h2>
+      </div>
+
+      <div class="settings-section" style="border:1px solid var(--accent3); background:rgba(240,160,96,0.08);">
+        <h2 class="settings-section-title" style="color:var(--accent3); display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
+          Tier 2 — Investigational / Not Currently Approved
+          <span style="display:inline-block; padding:2px 10px; border-radius:10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; background:rgba(96,200,240,0.15); color:var(--accent2);">Late-Stage Investigational</span>
+        </h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Mazdutide is <strong>not FDA-approved in the United States</strong>, though it has
+            large completed Phase 3 trials and full regulatory approval in China. This page
+            describes the mechanism and trial data — <strong>not dosing or usage guidance, and not
+            a recommendation to use it.</strong> Talk to a doctor before considering it.
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="settings-section-title">What It Is</h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Mazdutide (also known by its development code IBI362) is a dual GLP-1/glucagon
+            receptor agonist developed by Innovent Biologics, working through the same
+            two-receptor mechanism concept as survodutide — GLP-1 activity for appetite and
+            insulin effects, glucagon-receptor activity for added energy expenditure.
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="settings-section-title">What the Trials Actually Show</h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Mazdutide's clinical program has run primarily in Chinese populations. The Phase 3
+            GLORY-1 trial, in 610 Chinese adults, showed roughly 13% placebo-subtracted weight
+            reduction at the 6 mg dose by week 32. A second Phase 3 trial, GLORY-2, evaluated a
+            9 mg dose in Chinese adults with obesity and reported up to 20.1% weight loss, meeting
+            its primary and all key secondary endpoints. This is real, completed Phase 3 data —
+            it just hasn't yet been generated or reviewed in a US population or through the FDA
+            process.
+          </p>
+          <br />
+          <a href="https://www.prnewswire.com/news-releases/mazdutide-9-mg-achieves-up-to-20-1-weight-loss-in-chinese-adults-with-obesity-glory-2-study-meets-primary-and-all-key-secondary-endpoints-302620471.html" target="_blank" rel="noopener">Innovent — Mazdutide 9 mg Achieves Up to 20.1% Weight Loss in Chinese Adults, GLORY-2 Study →</a>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="settings-section-title">Current Regulatory Status</h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            China's National Medical Products Administration (NMPA) has approved mazdutide for
+            both glycemic control in type 2 diabetes and for obesity — making it, per Innovent, the
+            first GLP-1/glucagon dual agonist to receive full regulatory approval for obesity
+            anywhere in the world. In the US, however, mazdutide <strong>has not been submitted to
+            or approved by the FDA</strong> for any indication; as of this writing, US development
+            is reported to still be in Phase 2 trials, with Phase 3 expected in 2026–2027 and an
+            FDA filing not anticipated until 2027–2028 at the earliest. In practice: approved
+            medicine in China, unapproved investigational compound in the US — a genuinely
+            different regulatory status depending on where you are, and neither status transfers
+            to the other.
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="settings-section-title">Learn More</h2>
+        <div class="settings-section-body">
+          <a href="https://www.prnewswire.com/news-releases/innovent-announces-mazdutide-received-approval-from-chinas-nmpa-for-glycemic-control-in-adults-with-type-2-diabetes-302561434.html" target="_blank" rel="noopener">Innovent — Mazdutide Received Approval from China's NMPA for Glycemic Control</a>
+        </div>
+      </div>
+      </main>
+      <div class="legal-footer">
+        &copy; 2026 Nawtch · <a href="../../../privacy/">Privacy Policy</a> · <a href="../../../terms/">Terms of Use</a>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../../../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../../../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../../../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../../../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+      <a class="footer-settings-btn" href="../../../supplements/" data-page="supplements" title="Supplements"><span class="material-symbols-outlined">medication</span></a>
+      <a class="footer-settings-btn" href="../../../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
+    </footer>
+
+    <script type="module" src="../../../nav.js"></script>
+    <script type="module" src="../../../settingsHint.js"></script>
+  </body>
+</html>

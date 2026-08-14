@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("nawtch_theme") || "dark";
+          var apply = function (v) {
+            var resolved = v === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : v;
+            document.documentElement.setAttribute("data-theme", resolved);
+          };
+          apply(t);
+          if (t === "system" && window.matchMedia) {
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { apply("system"); });
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Survodutide: Phase 3 Status, No Approval Yet — Nawtch</title>
+    <meta name="description" content="Survodutide's Phase 3 SYNCHRONIZE trials are complete, but it's not FDA-approved — mechanism, trial data, and current status." />
+    <link rel="canonical" href="https://nawtch.app/supplements/peptides/survodutide/" />
+    <link rel="alternate" hreflang="en" href="https://nawtch.app/supplements/peptides/survodutide/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content="Survodutide: Phase 3 Status, No Approval Yet — Nawtch" />
+    <meta property="og:description" content="Survodutide's Phase 3 SYNCHRONIZE trials are complete, but it's not FDA-approved — mechanism, trial data, and current status." />
+    <meta property="og:url" content="https://nawtch.app/supplements/peptides/survodutide/" />
+    <meta property="og:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Survodutide: Phase 3 Status, No Approval Yet — Nawtch" />
+    <meta name="twitter:description" content="Survodutide's Phase 3 SYNCHRONIZE trials are complete, but it's not FDA-approved — mechanism, trial data, and current status." />
+    <meta name="twitter:image" content="https://nawtch.app/media/nawtch-logo-1000x1000.png" />
+
+    <link rel="icon" type="image/x-icon" sizes="48x48" href="../../../media/favicon-48x48.ico" />
+    <link rel="icon" type="image/svg+xml" href="../../../media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" size="32x32" href="../../../media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="../../../media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="../../../styles.css" />
+  </head>
+  <body class="diets">
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <nav class="nav-tabs">
+        <a class="nav-tab" href="../../../" data-page="today">Today</a>
+        <a class="nav-tab" href="../../../foods/" data-page="foods">Foods</a>
+        <a class="nav-tab" href="../../../weight/" data-page="weight">Weight</a>
+        <a class="nav-tab" href="../../../programs/" data-page="programs">Programs</a>
+        <a class="nav-tab" href="../../../history/" data-page="history">History</a>
+      </nav>
+
+      <main>
+      <header>
+        <div class="header-left">
+          <h1>Survodutide</h1>
+          <p class="subtitle">GLP-1/glucagon dual agonist — completed Phase 3 trials in obesity and MASH, not yet FDA-approved.</p>
+        </div>
+        <a class="ghost-btn" href="../">← Back to Peptides</a>
+      </header>
+
+      <div class="settings-section" style="border:1px solid var(--accent); background:rgba(200,240,96,0.08);">
+        <h2 class="settings-section-title" style="color:var(--accent);">Last Verified: August 14, 2026</h2>
+      </div>
+
+      <div class="settings-section" style="border:1px solid var(--accent3); background:rgba(240,160,96,0.08);">
+        <h2 class="settings-section-title" style="color:var(--accent3); display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
+          Tier 2 — Investigational / Not Currently Approved
+          <span style="display:inline-block; padding:2px 10px; border-radius:10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; background:rgba(96,200,240,0.15); color:var(--accent2);">Late-Stage Investigational</span>
+        </h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Survodutide is <strong>not FDA-approved for any use</strong>, but it has large,
+            completed Phase 3 trials with real published results — a different evidence
+            situation than most Tier 2 compounds. This page describes the mechanism and the
+            actual trial data — <strong>not dosing or usage guidance, and not a recommendation to
+            use it.</strong> Talk to a doctor before considering it.
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="settings-section-title">What It Is</h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Survodutide is a peptide developed by Boehringer Ingelheim (in partnership with
+            Zealand Pharma) that acts as a dual agonist at the GLP-1 and glucagon receptors —
+            similar in concept to retatrutide's triple-agonist approach, but targeting two
+            receptors instead of three. The added glucagon-receptor activity is intended to
+            increase energy expenditure alongside the appetite and insulin effects of GLP-1
+            activity, and is also the basis for its liver-focused research in fatty liver
+            disease.
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="settings-section-title">What the Trials Actually Show</h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            In the Phase 3 SYNCHRONIZE-1 trial, adults with obesity without diabetes lost an
+            average of about 16.6% of body weight on the higher studied dose over 76 weeks, with
+            a substudy showing meaningful reductions in visceral and liver fat. In a separate
+            Phase 3 trial (SYNCHRONIZE-MASLD) in adults with obesity and MASH/MASLD (metabolic
+            dysfunction-associated steatohepatitis), 84.2% of participants achieved at least a
+            30% reduction in liver fat over 48 weeks, versus 24.3% on placebo, alongside about
+            12.2% weight loss. The most common side effects reported were mild-to-moderate
+            gastrointestinal symptoms, consistent with the GLP-1 drug class generally.
+          </p>
+          <br />
+          <a href="https://www.ajmc.com/view/survodutide-phase-3-data-signal-metabolic-gains-beyond-weight-loss" target="_blank" rel="noopener">AJMC — Survodutide Phase 3 Data Signal Metabolic Gains Beyond Weight Loss →</a>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="settings-section-title">Current Regulatory Status — Watch This Space</h2>
+        <div class="settings-section-body">
+          <p class="settings-desc">
+            Survodutide is <strong>not FDA-approved and not available by prescription</strong> as
+            of this writing, for either obesity or MASH. Boehringer Ingelheim and Zealand Pharma
+            are continuing their Phase 3 programs in both indications. <strong>This status could
+            change as trial programs complete and a filing is submitted</strong> — check back for
+            updates. Until any approval, it remains available only through unregulated
+            research-chemical channels, with the sourcing and purity risks that implies.
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h2 class="settings-section-title">Learn More</h2>
+        <div class="settings-section-body">
+          <a href="https://www.nature.com/articles/s41591-026-04479-3" target="_blank" rel="noopener">Nature Medicine — Survodutide in Adults with Obesity and MASLD: SYNCHRONIZE-MASLD Phase 3 Trial</a>
+        </div>
+      </div>
+      </main>
+      <div class="legal-footer">
+        &copy; 2026 Nawtch · <a href="../../../privacy/">Privacy Policy</a> · <a href="../../../terms/">Terms of Use</a>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <a class="footer-settings-btn" href="../../../settings/" data-page="settings" title="Settings"><span class="material-symbols-outlined">settings</span></a>
+      <a class="footer-settings-btn" href="../../../guides/" data-page="guides" title="Guides"><span class="material-symbols-outlined">menu_book</span></a>
+      <a class="footer-settings-btn" href="../../../calculators/" data-page="calculators" title="Calculators"><span class="material-symbols-outlined">calculate</span></a>
+      <a class="footer-settings-btn" href="../../../diets/" data-page="diets" title="Diets"><span class="material-symbols-outlined">nutrition</span></a>
+      <a class="footer-settings-btn" href="../../../supplements/" data-page="supplements" title="Supplements"><span class="material-symbols-outlined">medication</span></a>
+      <a class="footer-settings-btn" href="../../../tools/" data-page="tools" title="Tools"><span class="material-symbols-outlined">build</span></a>
+    </footer>
+
+    <script type="module" src="../../../nav.js"></script>
+    <script type="module" src="../../../settingsHint.js"></script>
+  </body>
+</html>
