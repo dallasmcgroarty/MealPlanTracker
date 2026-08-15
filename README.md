@@ -21,6 +21,8 @@ https://nawtch.com
   - https://nawtch.app/diets/
 - popular supplements and research behind them
   - https://nawtch.app/supplements/
+- popular and up-and-coming peptide information (based on FDA data)
+  - https://nawtch.app/supplements/peptides/
 - guides to help you use nawtch and support your fitness journey
   - https://nawtch.app/guides/
 - free tools list to use for fun
