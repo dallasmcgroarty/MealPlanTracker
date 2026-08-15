@@ -25,6 +25,10 @@ https://nawtch.com
   - https://nawtch.app/guides/
 - free tools list to use for fun
   - https://nawtch.app/tools/
+- build bowl, meals, plates with calories and macros
+  - https://nawtch.app/tools/bowl-builder/
+- build a weekly grocery list/ meal plan
+  - https://nawtch.app/tools/grocery-budget-calculator/
 - scorekeeper tool for all games
   - https://nawtch.app/tools/scorekeeper/
 
