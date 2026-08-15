@@ -6,12 +6,22 @@
         try {
           var t = localStorage.getItem("nawtch_theme") || "dark";
           var apply = function (v) {
-            var resolved = v === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : v;
+            var resolved =
+              v === "system"
+                ? matchMedia("(prefers-color-scheme: dark)").matches
+                  ? "dark"
+                  : "light"
+                : v;
             document.documentElement.setAttribute("data-theme", resolved);
           };
           apply(t);
           if (t === "system" && window.matchMedia) {
-            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { apply("system"); });
+            matchMedia("(prefers-color-scheme: dark)").addEventListener(
+              "change",
+              function () {
+                apply("system");
+              },
+            );
           }
         } catch (e) {}
       })();
@@ -33,7 +43,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nawtch — Free Calorie & Macro Tracker, No Account Needed</title>
-    <meta name="description" content="Free calorie and macro tracker, no account needed. Log food, cost, and weight — plus a free calorie and TDEE calculator. All data stays on your device." />
+    <meta
+      name="description"
+      content="Free calorie and macro tracker, no account needed. Log food, cost, and weight — plus a free calorie and TDEE calculator. All data stays on your device."
+    />
     <link rel="canonical" href="https://nawtch.app/" />
     <link rel="alternate" hreflang="en" href="https://nawtch.app/" />
 
@@ -545,25 +558,22 @@
           <h2 class="settings-section-title">Free Calorie & Macro Tracker</h2>
           <div class="settings-section-body">
             <p class="settings-desc">
-              Nawtch is a free nutrition, calorie and macros tracker that helps you
-              monitor calories, macros, weight, spending and workouts without creating an
-              account. Track meals with a food database and barcode scanner,
-              monitor progress over time, and use our calculators, guides, tools and
-              diet resources to support your goals. No sign-ups, no data tracking, free forever. 
-              Everything is stored locally in your browser, so your data is private and secure.
+              Nawtch is a free nutrition, calorie and macros tracker that helps
+              you monitor calories, macros, weight, spending and workouts
+              without creating an account. Track meals with a food database and
+              barcode scanner, monitor progress over time, and use our
+              calculators, guides, tools and diet resources to support your
+              goals. No sign-ups, no data tracking, free forever. Everything is
+              stored locally in your browser, so your data is private and
+              secure.
             </p>
           </div>
         </div>
       </main>
       <div class="legal-footer">
         <div>
-          &copy; 2026 Nawtch · <a href="privacy/">Privacy Policy</a> · <a href="terms/">Terms of Use</a>
-        </div>
-        <div class="supporting-footer-links">
-          <a href="https://submitforbacklinks.com/badge/m9_792topW89_eVLKU7CA3IK?ref=badge" target="_blank" rel="noopener" data-s4b-token="m9_792topW89_eVLKU7CA3IK" data-s4b-theme="dark"><img src="https://submitforbacklinks.com/api/badge/m9_792topW89_eVLKU7CA3IK.svg?variant=verified&theme=dark" alt="Nawtch — Verified on SubmitForBacklinks" width="220" height="48" loading="lazy"></a>
-          <a href="https://startupbase.io/products/nawtch?utm_source=startupbase&utm_medium=badge&utm_campaign=featured-badge-dark" target="_blank" rel="noopener noreferrer">
-            <img src="https://statics.startupbase.io/site/badges/featured-on-sb-dark.svg" alt="Featured on StartupBase" height="55" style="height:55px;width:auto;" />
-          </a>
+          &copy; 2026 Nawtch · <a href="privacy/">Privacy Policy</a> ·
+          <a href="terms/">Terms of Use</a>
         </div>
       </div>
     </div>
