@@ -726,7 +726,10 @@ async function maybeShowWelcome() {
     <div class="pg-modal-box welcome-modal-box">
       <button class="pg-close-btn welcome-close-btn" onclick="window.startJourney()">×</button>
       <div class="welcome-modal-content">
-        <div class="welcome-wordmark">Nawtch</div>
+        <div class="welcome-header">
+          <div class="welcome-wordmark">Nawtch</div>
+          <img class="welcome-nawtch-logo" src="/media/favicon-512x512.png" alt="nawtch logo image, smiling teeth with a notch in one tooth" loading="lazy" />
+        </div>
         <h2 class="welcome-title">Welcome to Nawtch!</h2>
         <p class="welcome-subtitle">Track your daily macros, food costs, weight changes, create programs and exercises, and view your progress over time.</p>
         <p class="welcome-subtitle">Simple, easy, fast and free!</p>
