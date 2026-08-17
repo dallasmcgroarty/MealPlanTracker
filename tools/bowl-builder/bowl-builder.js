@@ -180,6 +180,7 @@ function renderSavedBowls() {
         <div class="mgmt-card-actions">
           <button class="mgmt-edit-btn" onclick="window.bbOpenSavedBowl('${bowl.id}')">Open / Edit</button>
           <button class="mgmt-edit-btn" onclick="window.bbAddToNawtchFromSaved('${bowl.id}')">Add to Foods</button>
+          <button class="mgmt-edit-btn" onclick="window.bbExportBowlPng('${bowl.id}')">Export PNG</button>
           <button class="remove-btn" onclick="window.bbDeleteBowl('${bowl.id}')">Delete</button>
         </div>
       </div>`;
@@ -304,6 +305,193 @@ window.bbOpenSavedBowl = function (id) {
   renderAll();
   renderSaveButtons();
   document.getElementById("bb-bowl-section").scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// EXPORT (PNG) — a purpose-built canvas card, not a screenshot of the live
+// editing UI. Height is computed in a measure pass (real font metrics via a
+// scratch canvas) before the real canvas is created, so long bowl names and
+// ingredient lists wrap instead of getting cut off or overlapping.
+// ═══════════════════════════════════════════════════════════════════
+let _bbLogoImgPromise = null;
+function loadBowlExportLogo() {
+  if (!_bbLogoImgPromise) {
+    _bbLogoImgPromise = new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = "../../media/nawtch-logo.svg";
+    });
+  }
+  return _bbLogoImgPromise;
+}
+
+function bbWrapLines(ctx, text, maxWidth) {
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const test = line ? line + " " + word : word;
+    if (line && ctx.measureText(test).width > maxWidth) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function bbSlugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-+|-+$)/g, "") || "bowl";
+}
+
+// Exported cards show both units regardless of the working bowl's current
+// portion-unit toggle, since a shared image shouldn't assume the viewer
+// thinks in whichever unit the original editor happened to be using.
+function bbFmtAmountBoth(comp) {
+  const grams = toGrams(comp.amount, comp.unit);
+  const oz = fromGrams(grams, "oz");
+  return `${Math.round(grams)}g or ${round1(oz)}oz`;
+}
+
+// Builds the full list of draw operations and the exact canvas height they
+// require — a single pass so measurement and drawing can never drift apart.
+function bbLayoutCard(bowl, hasLogo) {
+  const W = 1000;
+  const PAD = 64;
+  const contentW = W - PAD * 2;
+  const amountColW = 230;
+  const nameColW = contentW - amountColW;
+  const mctx = document.createElement("canvas").getContext("2d");
+  const totals = computeTotals(bowl.components);
+
+  const ops = [];
+  let y = PAD;
+
+  if (hasLogo) ops.push({ type: "logo", x: PAD, y, w: 32, h: 32 });
+  ops.push({ type: "text", text: "NAWTCH", x: PAD + (hasLogo ? 42 : 0), y: y + 8, font: "500 16px 'DM Mono', monospace", color: "#9fa5c4" });
+  ops.push({ type: "text", text: "BOWL SUMMARY", x: W - PAD, y: y + 8, font: "500 16px 'DM Mono', monospace", color: "#9fa5c4", align: "right" });
+  y += 64;
+
+  ops.push({ type: "hr", y });
+  y += 32;
+
+  const titleFont = "800 52px Syne, sans-serif";
+  mctx.font = titleFont;
+  const titleLines = bbWrapLines(mctx, bowl.name || "Bowl", contentW);
+  titleLines.forEach((line) => {
+    ops.push({ type: "text", text: line, x: PAD, y, font: titleFont, color: "#e8eaf0" });
+    y += 62;
+  });
+
+  const dateStr = new Date(bowl.updatedAt || bowl.createdAt || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  ops.push({
+    type: "text",
+    text: `${bowl.components.length} ingredient${bowl.components.length === 1 ? "" : "s"} · ${dateStr}`,
+    x: PAD,
+    y,
+    font: "500 20px 'DM Mono', monospace",
+    color: "#9fa5c4",
+  });
+  y += 52;
+
+  ops.push({ type: "hr", y });
+  y += 32;
+
+  const rowNameFont = "600 26px Syne, sans-serif";
+  mctx.font = rowNameFont;
+  bowl.components.forEach((comp) => {
+    const lines = bbWrapLines(mctx, comp.name, nameColW);
+    lines.forEach((line, idx) => {
+      ops.push({ type: "text", text: line, x: PAD, y, font: rowNameFont, color: "#e8eaf0" });
+      if (idx === 0) {
+        ops.push({ type: "text", text: bbFmtAmountBoth(comp), x: W - PAD, y, font: "500 22px 'DM Mono', monospace", color: "#9fa5c4", align: "right" });
+      }
+      y += 34;
+    });
+    y += 16;
+  });
+
+  ops.push({ type: "hr", y });
+  y += 32;
+
+  ops.push({ type: "text", text: "TOTAL", x: PAD, y, font: "600 18px 'DM Mono', monospace", color: "#9fa5c4" });
+  y += 32;
+  ops.push({ type: "text", text: prefs.formatEnergy(totals.cal), x: PAD, y, font: "800 56px Syne, sans-serif", color: "#c8f060" });
+  y += 76;
+
+  const macroFont = "600 24px Syne, sans-serif";
+  mctx.font = macroFont;
+  const macroParts = [
+    { text: `Protein ${totals.p.toFixed(0)}g`, color: "#60f0a0" },
+    { text: `Carbs ${totals.c.toFixed(0)}g`, color: "#f0d060" },
+    { text: `Fat ${totals.f.toFixed(0)}g`, color: "#f09060" },
+  ];
+  let mx = PAD;
+  macroParts.forEach((part) => {
+    ops.push({ type: "text", text: part.text, x: mx, y, font: macroFont, color: part.color });
+    mx += mctx.measureText(part.text).width + 32;
+  });
+  y += 64;
+
+  ops.push({ type: "hr", y });
+  y += 40;
+
+  ops.push({ type: "text", text: "Built with Nawtch — nawtch.app", x: W / 2, y, font: "500 16px 'DM Mono', monospace", color: "#9fa5c4", align: "center" });
+  y += 16 + PAD;
+
+  return { W, height: Math.round(y), ops, PAD };
+}
+
+function bbDrawCard(bowl, logo) {
+  const { W, height, ops, PAD } = bbLayoutCard(bowl, !!logo);
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "#0e0f13";
+  ctx.fillRect(0, 0, W, height);
+  ctx.strokeStyle = "#2a2d3a";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, W - 2, height - 2);
+  ctx.textBaseline = "top";
+
+  ops.forEach((op) => {
+    if (op.type === "hr") {
+      ctx.strokeStyle = "#2a2d3a";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(PAD, op.y);
+      ctx.lineTo(W - PAD, op.y);
+      ctx.stroke();
+    } else if (op.type === "logo") {
+      ctx.drawImage(logo, op.x, op.y, op.w, op.h);
+    } else if (op.type === "text") {
+      ctx.font = op.font;
+      ctx.fillStyle = op.color;
+      ctx.textAlign = op.align || "left";
+      ctx.fillText(op.text, op.x, op.y);
+      ctx.textAlign = "left";
+    }
+  });
+
+  return canvas;
+}
+
+window.bbExportBowlPng = async function (id) {
+  const bowl = BOWLS.find((b) => b.id === id);
+  if (!bowl) return;
+  if (!(await showConfirm("This will generate a PNG image of this bowl's ingredients and totals for you to save or share. Continue?", "Export PNG"))) return;
+  await document.fonts.ready;
+  const logo = await loadBowlExportLogo();
+  const canvas = bbDrawCard(bowl, logo);
+  const a = document.createElement("a");
+  a.href = canvas.toDataURL("image/png");
+  a.download = `${bbSlugify(bowl.name || "bowl")}-nawtch.png`;
+  a.click();
 };
 
 window.bbDeleteBowl = async function (id) {

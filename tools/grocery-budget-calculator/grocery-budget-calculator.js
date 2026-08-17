@@ -142,6 +142,7 @@ function renderSavedPlans() {
         <div class="gb-item-result-label">${gbFormatCurrency(totals.paced)}/wk paced · ${plan.items.length} item${plan.items.length === 1 ? "" : "s"}</div>
         <div class="mgmt-card-actions">
           <button class="mgmt-edit-btn" onclick="window.gbOpenSavedPlan('${plan.id}')">Open / Edit</button>
+          <button class="mgmt-edit-btn" onclick="window.gbExportPlanPdf('${plan.id}')">Export PDF</button>
           <button class="remove-btn" onclick="window.gbDeletePlan('${plan.id}')">Delete</button>
         </div>
       </div>`;
@@ -345,6 +346,44 @@ window.gbSavePlanAsNew = async function () {
   if (!(await showConfirm("Save this plan as a new entry?", "Save as New"))) return;
   const result = await persistPlan(true);
   if (result) showAlert("Plan Saved", `"${result.name}" was saved as a new plan.`);
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// EXPORT (PRINT / PDF) — renders one saved plan into the hidden #gb-print-area,
+// which only becomes visible under the @media print stylesheet (see
+// grocery-budget-calculator.css); window.print()'s own "Save as PDF"
+// destination is what turns this into a PDF, no library involved.
+// ═══════════════════════════════════════════════════════════════════
+function buildPrintPlanHTML(plan) {
+  const totals = planTotals(plan.items);
+  const rows = plan.items
+    .map((item) => {
+      const costs = itemCosts(item);
+      const target = `${item.targetValue}/${item.targetUnit}`;
+      return `
+      <div class="gb-print-item">
+        <span>${esc(item.name)} (${gbFormatCurrency(item.costPerServing)}/srv · ${esc(target)})</span>
+        <span>${gbFormatCurrency(costs.pacedCost)}/wk</span>
+      </div>`;
+    })
+    .join("");
+  return `
+    <h1>${esc(plan.name)}</h1>
+    <div class="gb-print-items">${rows}</div>
+    <div class="gb-print-totals">
+      <div><span>Weekly total (paced)</span><span>${gbFormatCurrency(totals.paced)}</span></div>
+      <div><span>Monthly total (paced)</span><span>${gbFormatCurrency(totals.monthly)}</span></div>
+    </div>
+  `;
+}
+
+window.gbExportPlanPdf = async function (id) {
+  const plan = GROCERY_PLANS.find((p) => p.id === id);
+  if (!plan) return;
+  if (!(await showConfirm("This will open your browser's print dialog so you can save this grocery list as a PDF or print it. Continue?", "Print / Save PDF"))) return;
+  const area = document.getElementById("gb-print-area");
+  area.innerHTML = buildPrintPlanHTML(plan);
+  window.print();
 };
 
 // ═══════════════════════════════════════════════════════════════════

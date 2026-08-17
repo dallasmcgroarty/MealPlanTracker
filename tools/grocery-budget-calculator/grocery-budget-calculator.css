@@ -257,3 +257,74 @@
 #gb-saved-plans-list .mgmt-card-actions {
   flex-wrap: wrap;
 }
+
+/* ─── print export (Export PDF button) ───────────────────────────────────
+   #gb-print-area is populated with one saved plan's markup right before
+   window.print() is called (see gbExportPlanPdf). It stays empty/hidden the
+   rest of the time — only @media print reveals it, and only it. Colors are
+   hardcoded to light/dark-text here (not var(--bg)/var(--text)) since the
+   printout must stay legible regardless of which site theme is active. */
+.gb-print-area {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  /* #confirm-modal and .page are both direct children of body, siblings of
+     #gb-print-area (see index.html) — display:none removes them from the
+     layout entirely rather than just hiding them, so the printed page's
+     height matches the print area's content instead of the full app's
+     height (which was producing a blank second page). */
+  body > *:not(#gb-print-area) {
+    display: none !important;
+  }
+
+  .gb-print-area {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    color: #111111;
+    padding: 24px;
+  }
+
+  .gb-print-area h1 {
+    font-family: "Syne", sans-serif;
+    font-size: 22px;
+    color: #111111;
+    margin-bottom: 14px;
+  }
+
+  .gb-print-items {
+    margin-bottom: 16px;
+  }
+
+  .gb-print-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 6px 0;
+    border-bottom: 1px solid #cccccc;
+    font-family: "DM Mono", monospace;
+    font-size: 14px;
+    color: #111111;
+  }
+
+  .gb-print-totals {
+    padding-top: 12px;
+    border-top: 2px solid #111111;
+    font-family: "Syne", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #111111;
+  }
+
+  .gb-print-totals div {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+}
