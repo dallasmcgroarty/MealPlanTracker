@@ -38,6 +38,41 @@ function computeTotals() {
   return { cal, p, c, f, cost };
 }
 
+// Builds a per-item snapshot of everything logged today, from the current
+// CORE_ITEMS catalog + session state — called only from persistState(), which
+// only ever writes to todayStr()'s record, so once a day is in the past this
+// snapshot is frozen forever and never re-derived from a (possibly since
+// edited/deleted/renamed) catalog entry.
+function buildLoggedItems() {
+  const items = [];
+  CORE_ITEMS.forEach((item) => {
+    const srv = servings[item.id] || 0;
+    if (srv > 0) {
+      items.push({
+        name: item.name,
+        servings: srv,
+        cal: item.cal * srv,
+        p: item.p * srv,
+        c: item.c * srv,
+        f: item.f * srv,
+        cost: item.costPerServing * srv,
+      });
+    }
+  });
+  customItems.forEach((item) => {
+    items.push({
+      name: item.name,
+      servings: item.servingsEaten,
+      cal: parseFloat(item.cal) || 0,
+      p: parseFloat(item.p) || 0,
+      c: parseFloat(item.c) || 0,
+      f: parseFloat(item.f) || 0,
+      cost: parseFloat(item.todayCost) || 0,
+    });
+  });
+  return items;
+}
+
 function adjustServing(id, delta) {
   const next = Math.max(0, (servings[id] || 0) + delta);
   servings[id] = Math.round(next * 2) / 2; // guard against float drift, servings are always multiples of 0.5
@@ -79,6 +114,7 @@ async function persistState() {
     date: todayStr(),
     servings: { ...servings },
     customItems: [...customItems],
+    loggedItems: buildLoggedItems(),
     cal: tot.cal,
     p: tot.p,
     c: tot.c,

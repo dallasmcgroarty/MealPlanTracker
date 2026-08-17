@@ -1,7 +1,7 @@
 import * as db from "../db.js";
 import { todayStr, weekStartFor } from "../dates.js";
 import * as prefs from "../prefs.js";
-import { showConfirm } from "../ui.js";
+import { esc, showConfirm } from "../ui.js";
 import "../nav.js";
 import "../settingsHint.js";
 
@@ -410,7 +410,7 @@ async function renderHistory() {
             const rangeLabel = day.cal === 0 ? "" : inRange
               ? '<br><span class="in-range">✓ in range</span>'
               : '<br><span class="out-range">⚠ out</span>';
-            return `<tr>
+            return `<tr class="day-row" onclick="window.openDayDetail('${d}')">
               <td><span class="day-date">${formatDate(d)}</span>${rangeLabel}</td>
               <td class="day-cal">${prefs.formatEnergy(day.cal)}</td>
               <td class="day-p">${Math.round(day.p)}g</td>
@@ -471,6 +471,98 @@ async function renderHistory() {
 
 window.toggleWeek = function (header) {
   header.parentElement.classList.toggle("open");
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// DAY DETAIL MODAL — "what did I eat" breakdown for a single day.
+// Footer totals come from the "weeks" store entry already shown on the row
+// (never re-summed from loggedItems), so they can never drift from what
+// History already displays elsewhere. Item detail comes from the "days"
+// store's loggedItems snapshot, which is undefined for days logged before
+// this feature existed.
+// ═══════════════════════════════════════════════════════════════════
+function ensureDayDetailModal() {
+  if (!document.getElementById("day-detail-modal")) {
+    const el = document.createElement("div");
+    el.id = "day-detail-modal";
+    el.className = "pg-modal";
+    el.addEventListener("click", (e) => {
+      if (e.target === el) el.classList.remove("open");
+    });
+    document.body.appendChild(el);
+  }
+}
+
+window.openDayDetail = async function (dateStr) {
+  let summary = null;
+  try {
+    const week = await db.dbGet("weeks", weekStartFor(dateStr));
+    summary = week && week.days ? week.days[dateStr] : null;
+  } catch (e) {
+    summary = null;
+  }
+  if (!summary) return;
+
+  let day = null;
+  try {
+    day = await db.dbGet("days", dateStr);
+  } catch (e) {
+    day = null;
+  }
+
+  const dayCalLow = summary.calLow ?? calRange.low;
+  const dayCalHigh = summary.calHigh ?? calRange.high;
+  const inRange = summary.cal >= dayCalLow && summary.cal <= dayCalHigh;
+  const rangeBadge = summary.cal === 0 ? "" : inRange
+    ? '<span class="in-range">✓ in range</span>'
+    : '<span class="out-range">⚠ out</span>';
+
+  const loggedItems = day && day.loggedItems;
+  const bodyHTML = loggedItems && loggedItems.length
+    ? loggedItems
+        .map(
+          (item) => `
+        <div class="day-detail-item">
+          <div class="day-detail-item-top">
+            <span class="day-detail-item-name">${esc(item.name)}</span>
+            <span class="day-detail-item-servings">${item.servings}× serving${item.servings === 1 ? "" : "s"}</span>
+          </div>
+          <div class="day-detail-item-macros">
+            <span class="im-cal">${prefs.formatEnergy(item.cal)}</span> ·
+            <span class="im-p">P ${Math.round(item.p)}g</span> ·
+            <span class="im-c">C ${Math.round(item.c)}g</span> ·
+            <span class="im-f">F ${item.f.toFixed(1)}g</span> ·
+            <span class="day-detail-item-cost">${prefs.formatCurrency(item.cost || 0)}</span>
+          </div>
+        </div>`
+        )
+        .join("")
+    : `<p class="day-detail-unavailable">Detailed breakdown not available for entries logged before this feature.</p>`;
+
+  ensureDayDetailModal();
+  const modal = document.getElementById("day-detail-modal");
+  modal.innerHTML = `
+    <div class="pg-modal-box pg-modal-box-lg">
+      <div class="pg-modal-header">
+        <div>
+          <div class="pg-modal-title">${formatDate(dateStr)}</div>
+          <div class="pg-modal-subtitle">${rangeBadge}</div>
+        </div>
+        <button class="pg-close-btn" onclick="document.getElementById('day-detail-modal').classList.remove('open')">×</button>
+      </div>
+      <div class="pg-modal-body">${bodyHTML}</div>
+      <div class="pg-modal-footer day-detail-footer">
+        <div class="day-detail-totals">
+          <span class="im-cal">${prefs.formatEnergy(summary.cal)}</span> ·
+          <span class="im-p">P ${Math.round(summary.p)}g</span> ·
+          <span class="im-c">C ${Math.round(summary.c)}g</span> ·
+          <span class="im-f">F ${(summary.f || 0).toFixed(1)}g</span> ·
+          <span class="day-detail-item-cost">${prefs.formatCurrency(summary.cost || 0)}</span>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.classList.add("open");
 };
 
 window.toggleStatsAccordion = function () {

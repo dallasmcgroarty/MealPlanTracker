@@ -652,6 +652,11 @@ input[readonly] {
   color: var(--muted);
 }
 
+#day-detail-modal .pg-modal-subtitle .out-range,
+#day-detail-modal .pg-modal-subtitle .in-range {
+  font-size: 12px;
+}
+
 .pg-close-btn {
   background: none;
   border: none;
@@ -850,6 +855,11 @@ input[readonly] {
   .pg-modal-box-lg {
     max-width: 100%;
     border-radius: 10px 10px 0 0;
+  }
+
+  #day-detail-modal .pg-modal-box,
+  #day-detail-modal .pg-modal-box-lg {
+    border-radius: 10px;
   }
 }
 
@@ -2696,6 +2706,10 @@ input[readonly] {
   font-family: "Syne", sans-serif;
 }
 
+.day-row {
+  cursor: pointer;
+}
+
 .day-date {
   font-size: 14px;
   font-weight: 700;
@@ -2746,6 +2760,69 @@ input[readonly] {
   color: var(--muted);
   font-family: "DM Mono", monospace;
   margin-left: 4px;
+}
+
+/* Day detail modal ("what did I eat") — pg-modal content specific to
+   history.js's window.openDayDetail() */
+.day-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.day-detail-item:last-child {
+  border-bottom: none;
+}
+
+.day-detail-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.day-detail-item-name {
+  font-family: "Syne", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.day-detail-item-servings {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.day-detail-item-macros {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.day-detail-item-cost {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.day-detail-unavailable {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 0;
+}
+
+.day-detail-footer {
+  justify-content: flex-start !important;
+}
+
+.day-detail-totals {
+  font-family: "DM Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 @media (max-width: 660px) {
