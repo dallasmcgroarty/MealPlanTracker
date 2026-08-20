@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="BMR Calculator – Basal Metabolic Rate | Nawtch"
+  description="Free BMR calculator using the Mifflin-St Jeor equation. Find out how many calories your body burns at complete rest."
+  canonicalPath="/calculators/bmr/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>BMR Calculator</h1>
+      <p class="subtitle">Find out how many calories your body burns at complete rest.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-bmr"></div>
+
+  <div id="calc-bmr-explain" class="settings-section">
+    <h2 class="settings-section-title">How We Calculate This</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        BMR (Basal Metabolic Rate) is the number of calories your body burns at complete rest, before any
+        activity is factored in. We use the same <strong>Mifflin-St Jeor equation</strong> that powers our TDEE
+        calculator, since BMR is the first step of that calculation — it's widely regarded as the most accurate
+        predictive formula for resting energy expenditure in healthy adults.
+      </p>
+      <a href="https://pubmed.ncbi.nlm.nih.gov/2305711/" target="_blank" rel="noopener">Read the original study →</a>
+    </div>
+  </div>
+
+  <div id="calc-bmr-variance" class="settings-section">
+    <h2 class="settings-section-title">Why BMR Varies Between People</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        Two people with the same height and weight can still land on meaningfully different BMRs. A few factors
+        drive most of that spread:
+        <br /><br />
+        <strong>Age.</strong> BMR declines gradually over adulthood, driven mainly by a slow loss of lean muscle
+        mass and shifting hormone levels rather than aging itself. Mifflin-St Jeor already bakes this in as a
+        per-year age term, so the number above has this adjustment built in — you don't need to apply it again.
+        <br /><br />
+        <strong>Sex.</strong> At the same height and weight, men typically post a higher BMR than women, mostly
+        because men carry more lean muscle mass and less body fat on average. That's why the equation uses a
+        separate constant for male vs. female rather than one formula for everyone.
+        <br /><br />
+        <strong>Muscle mass.</strong> Muscle tissue is more metabolically active at rest than fat tissue, so two
+        people at an identical weight but different body composition can have genuinely different BMRs even
+        when a formula predicts the same number for both. Mifflin-St Jeor only sees height, weight, age, and
+        sex — it has no way to know your actual muscle-to-fat ratio, which is a big part of why this is a
+        population-average estimate rather than a measurement of you specifically.
+      </p>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/bmr/bmr.js"></script>
+</BaseLayout>

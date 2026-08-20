@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Water Intake Calculator — Daily Hydration Needs — Nawtch"
+  description="Estimate your daily water intake from body weight, exercise, and climate, with real IOM, EFSA, and ACSM sources cited."
+  canonicalPath="/calculators/water/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>Water Intake Calculator</h1>
+      <p class="subtitle">Estimate your daily water needs from body weight, exercise, and climate.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-water"></div>
+
+  <div id="calc-water-explain" class="settings-section">
+    <h2 class="settings-section-title">How We Calculate This</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        The baseline figure here uses <strong>30–35 mL of water per kg of body weight per day</strong>, a common
+        clinical rule of thumb (we use the 33 mL/kg midpoint) rather than a figure drawn directly from a single
+        authoritative study. It's a practical starting point, not a precise requirement — actual needs vary by
+        person, diet, and activity.
+        <br /><br />
+        For a more authoritative benchmark, the U.S. National Academies of Medicine (formerly the Institute of
+        Medicine) set Adequate Intake levels for total water — from all beverages and food combined — at about <strong>3.7 L/day for men and 2.7 L/day for women</strong>. EFSA, the European Food Safety Authority, set
+        its own Adequate Intakes at about <strong>2.5 L/day for men and 2.0 L/day for women</strong> under
+        moderate temperature and activity conditions. Both bodies agree that people who exercise heavily or live
+        in hot climates need more than these baseline figures.
+        <br /><br />
+        <strong>Exercise adjustment:</strong> we add fluid using the American College of Sports Medicine's
+        position stand on exercise and fluid replacement, which recommends replacing losses at a rate of roughly <strong>600–1200 mL per hour</strong> of exercise; we use a conservative 700 mL/hour estimate. Sweat rates
+        vary a great deal between individuals and conditions, so treat this as a reasonable estimate rather than
+        an exact figure — heavy or salty sweaters may need more, and pairing this with electrolytes matters for
+        exercise over about an hour. Read more on that in our <a href="/supplements/electrolytes/">electrolytes page</a>.
+        <br /><br />
+        <strong>Climate adjustment:</strong> selecting "Hot / Humid" adds a flat 500 mL/day, a practical estimate
+        reflecting the higher sweat losses of hot conditions — the National Academies' own guidance explicitly
+        notes that people in hot climates may need more than the baseline Adequate Intake, though it does not
+        specify an exact additional figure.
+      </p>
+      <a href="https://www.nationalacademies.org/read/10925/chapter/6" target="_blank" rel="noopener">Read the National Academies' Dietary Reference Intakes for Water report →</a>
+      <br /><br />
+      <a href="https://doi.org/10.2903/j.efsa.2010.1459" target="_blank" rel="noopener">Read EFSA's Scientific Opinion on Dietary Reference Values for water →</a>
+      <br /><br />
+      <strong>Source:</strong> Sawka MN, et al. "American College of Sports Medicine Position Stand: Exercise and
+      Fluid Replacement," <em>Medicine & Science in Sports & Exercise</em>.
+      <br /><br />
+      <a href="https://journals.lww.com/acsm-msse/Fulltext/1996/10000/ACSM_Position_Stand__Exercise_and_Fluid.45.aspx" target="_blank" rel="noopener">Read the ACSM position stand →</a>
+      <br /><br />
+      Exercising for more than an hour, especially in the heat? Sodium and other electrolytes matter alongside
+      plain water — see our <a href="/supplements/electrolytes/">Electrolytes guide</a> for who actually needs
+      them.
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/water/water.js"></script>
+</BaseLayout>

@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Fitness Calculators — TDEE, BMI, Body Fat & More — Nawtch"
+  description="Free calorie calculator and TDEE calculator, plus BMR, macros, body fat %, BMI, and ideal weight — all evidence-based, with sources cited."
+  canonicalPath="/calculators/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>Fitness &amp; Nutrition Calculators</h1>
+      <p class="subtitle">A free set of fitness and nutrition calculators — no sign-up, nothing stored anywhere but your own device. Each one cites its source formula.</p>
+    </div>
+    <a class="ghost-btn" style="font-size:12px;padding:6px 12px;" href="#" onclick="window.history.back(); return false;">← Back</a>
+  </header>
+
+  <p class="field-hint" style="margin:-4px 0 14px;">Already have a number in mind and just deciding how to eat? Our <a href="/diets/">diets guide</a> covers popular eating patterns and the evidence behind each.</p>
+
+  <div class="items-section">
+    <a class="tool-card" href="/calculators/calorie/">
+      <span class="material-symbols-outlined tool-card-icon">restaurant</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Calorie Calculator</div>
+        <div class="tool-card-desc">The quickest way to find your daily calorie target — no fitness jargon required.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/tdee/">
+      <span class="material-symbols-outlined tool-card-icon">local_fire_department</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">TDEE Calculator</div>
+        <div class="tool-card-desc">Find your daily calorie needs and a target range for your goal.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/bmr/">
+      <span class="material-symbols-outlined tool-card-icon">bedtime</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">BMR Calculator</div>
+        <div class="tool-card-desc">See how many calories your body burns at complete rest.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/macros/">
+      <span class="material-symbols-outlined tool-card-icon">pie_chart</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Macro Calculator</div>
+        <div class="tool-card-desc">Turn a calorie target into protein, carb, and fat grams.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/protein/">
+      <span class="material-symbols-outlined tool-card-icon">egg_alt</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Protein Calculator</div>
+        <div class="tool-card-desc">Get a daily protein gram range for your body weight and goal.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/body-fat/">
+      <span class="material-symbols-outlined tool-card-icon">percent</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Navy Body Fat Calculator</div>
+        <div class="tool-card-desc">Estimate body fat from a few tape-measure inputs using the U.S Navy method.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/bmi/">
+      <span class="material-symbols-outlined tool-card-icon">monitor_weight</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">BMI Calculator</div>
+        <div class="tool-card-desc">Check your body mass index against CDC categories.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/sleep/">
+      <span class="material-symbols-outlined tool-card-icon">bedtime</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Sleep Cycle Calculator</div>
+        <div class="tool-card-desc">Find the best bedtime or wake-up time based on 90-minute sleep cycles.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/waist-to-height/">
+      <span class="material-symbols-outlined tool-card-icon">square_foot</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Waist-to-Height Ratio Calculator</div>
+        <div class="tool-card-desc">A companion to BMI that looks at where you carry weight, using NICE's risk bands.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/ideal-weight/">
+      <span class="material-symbols-outlined tool-card-icon">straighten</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Ideal Weight Calculator</div>
+        <div class="tool-card-desc">Get a reference weight range using the Devine formula.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/calories-burned/">
+      <span class="material-symbols-outlined tool-card-icon">directions_run</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Calories Burned Calculator</div>
+        <div class="tool-card-desc">Estimate calories burned for walking, running, cycling, swimming, and more.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/one-rep-max/">
+      <span class="material-symbols-outlined tool-card-icon">fitness_center</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">One-Rep Max Calculator</div>
+        <div class="tool-card-desc">Estimate your max single-rep lift from a recent set.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/vo2-max/">
+      <span class="material-symbols-outlined tool-card-icon">monitor_heart</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">VO2 Max Calculator</div>
+        <div class="tool-card-desc">Estimate your aerobic fitness level three different ways.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/walking-calories/">
+      <span class="material-symbols-outlined tool-card-icon">directions_walk</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Walking Calorie Calculator</div>
+        <div class="tool-card-desc">A more precise calorie estimate built specifically for walking.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/calculators/water/">
+      <span class="material-symbols-outlined tool-card-icon">water_drop</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Water Intake Calculator</div>
+        <div class="tool-card-desc">Estimate your daily water needs from body weight, exercise, and climate.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+  </div>
+
+  <script src="../../lib/nav.js"></script>
+</BaseLayout>

@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Bowl Builder – Build a Meal & See Macros Instantly | Nawtch"
+  description="Build a bowl, plate, or meal and watch calories and macros total up live. Free meal builder, no account needed, works right in your browser."
+  canonicalPath="/tools/bowl-builder/"
+  bodyClass="tools"
+>
+  <link rel="stylesheet" href="/tools/bowl-builder/bowl-builder.css" />
+
+  <header>
+    <div class="header-left">
+      <h1>Bowl Builder</h1>
+      <p class="subtitle">Build a bowl, plate, or meal item by item and watch calories and macros update live as you go — tap in foods, adjust portions, and see the totals add up. No account needed.</p>
+    </div>
+    <a class="ghost-btn" href="#" onclick="window.history.back(); return false;">← Back</a>
+  </header>
+
+  <p class="field-hint" style="margin-bottom: 12px;">Use our <a href="/calculators/macros/">macro calculator</a> to see your target proteins, carbs, and fats.</p>
+
+  <div class="bb-summary-bar" id="bb-summary-bar">
+    <div class="bb-totals-cal" id="bb-totals-cal"></div>
+    <div class="bb-visual" id="bb-visual"></div>
+    <div class="bb-totals-macros" id="bb-totals-macros"></div>
+  </div>
+
+  <div class="bb-builder-grid">
+    <div class="items-section bb-col-right" id="bb-bowl-section">
+      <div class="section-header">
+        <h2 class="section-title" style="margin-bottom: 0">Your Bowl</h2>
+        <div class="bb-actions-row">
+          <button type="button" class="ghost-btn" onclick="window.bbStartNewBowl()">New Bowl</button>
+          <span id="bb-save-as-new-wrap"></span>
+          <button type="button" class="ghost-btn" id="bb-save-bowl-btn">Save Bowl</button>
+          <button type="button" class="add-btn" id="bb-add-to-nawtch-btn">Add to Foods</button>
+        </div>
+      </div>
+
+      <div class="field-group" style="max-width:320px; margin-bottom: 20px;">
+        <label class="field-label" for="bb-bowl-name-input">Bowl / meal name</label>
+        <input type="text" id="bb-bowl-name-input" placeholder="Optional — auto-named if left blank" autocomplete="off" />
+      </div>
+
+      <div class="bb-unit-toggle-row" id="bb-unit-toggle-row"></div>
+      <div id="bb-bowl-list"></div>
+    </div>
+
+    <div class="settings-section bb-col-left">
+      <h2 class="settings-section-title">Add to Your Bowl</h2>
+      <div class="settings-section-body">
+        <div class="field-group">
+          <label class="field-label" for="bb-search-input">Search foods</label>
+          <input type="text" id="bb-search-input" placeholder="e.g. chicken breast, brown rice..." autocomplete="off" />
+          <span class="field-hint" id="bb-search-hint">Type at least 3 characters</span>
+        </div>
+        <div id="bb-search-results" class="bb-search-results"></div>
+
+        <div class="bb-tile-section-label">Popular picks — tap to add</div>
+        <div class="bb-tile-grid" id="bb-tile-grid"></div>
+
+        <button type="button" class="ghost-btn" id="bb-custom-item-btn">+ Add a custom item</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h2 class="settings-section-title">Saved Bowls</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc" id="bb-saved-bowls-empty">No saved bowls yet — build one above and tap "Save Bowl" to keep it here for later.</p>
+      <div id="bb-saved-bowls-list"></div>
+    </div>
+  </div>
+
+  <div class="info-banners">
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>
+        <h2 class="info-banner-label">How Bowl Builder Works</h2>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        Bowl Builder is a free tool for building a meal, plate, or bowl from scratch and seeing calories and
+        macros total up in real time — great for meal-preppers who just want to see "what are the macros on
+        this combo," and for Nawtch tracker users who want to save the finished result straight into their
+        Foods catalog.
+        <br /><br />
+        Tap a popular food tile or search for anything else, adjust the portion with the <strong>−</strong> /
+        <strong>+</strong> controls (toggle between grams and ounces, or tap the amount to type an exact number),
+        and remove an item any time. Your running calorie and macro totals update instantly with every change.
+        <br /><br />
+        When you're happy with it, <strong>Add to Foods</strong> saves the whole bowl as a single food you can
+        log from the <a href="/">Today page</a> like any other saved food. You can also <strong>Save
+        Bowl</strong> to keep its individual components for later — reopen a saved bowl any time to tweak it
+        further, then re-save it or add it to Nawtch again.
+      </div>
+    </div>
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
+        <h2 class="info-banner-label">Saved Bowls vs. Foods — What's the Difference?</h2>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        A <strong>saved bowl</strong> keeps every individual component (each food and its portion) so you can
+        reopen and edit it later — add an item, remove one, or nudge a portion, then re-save it.
+        <br /><br />
+        Hitting <strong>Add to Foods</strong> is a different, one-way action: it flattens the bowl's current
+        totals into a single independent food entry on your <a href="/foods/">Foods page</a>, the same as
+        any manually-added food. That food entry is a permanent snapshot — editing the original bowl afterward,
+        or re-saving it, will <strong>never</strong> change a food entry you already created from it, including
+        ones you've already logged on past days. If you edit a bowl and hit Add to Foods again, you get a
+        brand-new, separate food entry, not an update to the old one.
+      </div>
+    </div>
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--accent3);box-shadow:0 0 6px var(--accent3);"></div>
+        <h2 class="info-banner-label">Where the Food Data Comes From</h2>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        The tap-to-add tiles and search box are backed by a built-in database of roughly 300 common bowl
+        ingredients — grains, proteins, vegetables, sauces, and more — covering generic staples across grain
+        bowls, poke bowls, burrito bowls, and similar. Matches from this list are instant, since there's no
+        lookup involved.
+        <br /><br />
+        If a search doesn't turn up anything locally, it falls back to <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener">Open
+        Food Facts</a>, a free, open database of packaged and branded foods — the same source Nawtch already
+        uses for barcode scanning. For anything neither source covers well, use <strong>+ Add a custom
+        item</strong> to enter the macros yourself.
+        <br /><br />
+        Like the rest of Nawtch, everything you build and save here — bowls and any foods you create from
+        them — stays stored locally in this browser only. Nothing is sent to a server or account.
+      </div>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/tools/bowl-builder/bowl-builder.js"></script>
+</BaseLayout>

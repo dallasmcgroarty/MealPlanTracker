@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Ideal Weight Calculator – Devine Formula | Nawtch"
+  description="Free ideal body weight calculator using the Devine formula. Get a reference weight range in kg and lb based on height and sex."
+  canonicalPath="/calculators/ideal-weight/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>Ideal Weight Calculator</h1>
+      <p class="subtitle">Get a reference weight range using the Devine formula.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-ibw"></div>
+
+  <div id="calc-ibw-explain" class="settings-section">
+    <h2 class="settings-section-title">How We Calculate This</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        This uses the <strong>Devine formula (1974)</strong>, the most common clinical reference for "ideal"
+        body weight. It was originally created to estimate a dosing weight for gentamicin and other
+        medications, not as a personal fitness goal — actual healthy weight varies with frame size, muscle
+        mass, and other individual factors, so treat this as a population-average reference range rather than a
+        target number.
+        <br /><br />
+        Devine isn't the only formula in clinical use — Robinson (1983), Miller (1983), and Hamwi (1964) all
+        estimate the same general concept with slightly different coefficients, so if you see a different
+        number on another calculator, it's likely just using one of those instead. None is more "correct" than
+        the others; they're different population-average approximations of the same rough idea.
+      </p>
+      <strong>Source:</strong> McCarron, M.M., &amp; Devine, B.J. (1974). Clinical Pharmacy Case Studies: Case
+      Number 25, Gentamicin Therapy. <em>Drug Intelligence &amp; Clinical Pharmacy, 8</em>(11), 650–655.
+      Commonly cited in shorthand as "Devine, B.J. (1974)."
+      <br /><br />
+      <a href="https://pubmed.ncbi.nlm.nih.gov/10981254/" target="_blank" rel="noopener">Read more on its clinical origin →</a>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/ideal-weight/ibw.js"></script>
+</BaseLayout>

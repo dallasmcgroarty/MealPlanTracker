@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Calories Burned Calculator – Exercise Calorie Estimator | Nawtch"
+  description="Free calories burned calculator. Estimate calories burned for walking, running, cycling, swimming, weightlifting, yoga, and more using MET values."
+  canonicalPath="/calculators/calories-burned/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>Calories Burned Calculator</h1>
+      <p class="subtitle">Estimate calories burned for walking, running, cycling, swimming, and more.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-calories-burned"></div>
+
+  <div id="calc-cb-explain" class="settings-section">
+    <h2 class="settings-section-title">How We Calculate This</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        We estimate calories burned using <strong>MET values</strong> (Metabolic Equivalent of Task) from the
+        2011 Compendium of Physical Activities — a standardized reference researchers use to compare the energy
+        cost of different activities. One MET is roughly the energy you burn just sitting still; an activity at
+        8 METs burns about 8 times that.
+        <br /><br />
+        <strong>Calories = MET × your weight in kg × duration in hours.</strong>
+        <br /><br />
+        MET values are population averages measured under controlled conditions — your actual burn varies with
+        fitness level, effort, terrain, and individual body composition, so treat this as a solid estimate
+        rather than a precise measurement. Two people doing the "cycling, general" activity at 7.5 METs won't
+        necessarily burn the same number of calories in real life: a trained cyclist moving efficiently at a
+        given pace typically burns somewhat less than the MET value predicts, while a beginner working harder
+        to sustain that same pace can burn more — the MET value assumes an average level of efficiency that
+        doesn't hold for everyone. Walking is included here for comparison, but if walking is your main
+        activity, our <a href="/calculators/walking-calories/">Walking Calorie Calculator</a> uses a more precise
+        walking-specific formula instead of a general MET lookup.
+      </p>
+      <strong>Source:</strong> Ainsworth, B.E., et al. (2011). <em>2011 Compendium of Physical Activities: a
+      second update of codes and MET values.</em> Medicine &amp; Science in Sports &amp; Exercise, 43(8),
+      1575–1581.
+      <br /><br />
+      <a href="https://pubmed.ncbi.nlm.nih.gov/21681120/" target="_blank" rel="noopener">Read the original study →</a>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/calories-burned/calories-burned.js"></script>
+</BaseLayout>

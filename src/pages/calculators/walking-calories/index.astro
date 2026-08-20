@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Walking Calorie Calculator – Calories Burned Walking | Nawtch"
+  description="Free walking calorie calculator using the ACSM walking metabolic equation. Estimate calories burned from distance, time, and weight."
+  canonicalPath="/calculators/walking-calories/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>Walking Calorie Calculator</h1>
+      <p class="subtitle">A more precise calorie estimate built specifically for walking.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-walking"></div>
+
+  <div id="calc-walking-explain" class="settings-section">
+    <h2 class="settings-section-title">How We Calculate This</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        This uses the walking-specific metabolic equation from the <strong>American College of Sports Medicine
+        (ACSM)</strong>, which is more precise for walking than a general MET lookup because it scales
+        continuously with your actual speed instead of bucketing you into a fixed intensity category.
+        <br /><br />
+        Step by step: your speed in meters per minute is combined with a walking-specific oxygen-cost formula
+        (VO2 = 0.1 × speed + 3.5, in ml/kg/min) to get your oxygen consumption, which is then converted to
+        calories using the standard approximation that 1 liter of oxygen ≈ 5 kcal.
+        <br /><br />
+        This equation is validated for walking speeds of roughly 50–100 m/min (about 1.9–3.7 mph) on level
+        ground — normal-to-brisk walking pace. That range isn't an arbitrary cutoff: the formula was built
+        around the specific oxygen cost of a walking gait, and gait mechanics change once someone speeds up
+        enough to break into a jog — different muscles, a different stride pattern, and a different
+        energy-cost curve that this equation was never calibrated against. That's why, rather than silently
+        extrapolating past that point and quietly returning a wrong number, if your calculated speed falls
+        outside that range (e.g. you were jogging, not walking), we'll flag it — for running or other
+        activities, use our <a href="/calculators/calories-burned/">Calories Burned Calculator</a> instead, which is also
+        useful for comparing walking against other activities using general MET values.
+      </p>
+      <strong>Source:</strong> American College of Sports Medicine. <em>ACSM's Guidelines for Exercise Testing
+      and Prescription.</em> Metabolic equation for walking.
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/walking-calories/walking-calories.js"></script>
+</BaseLayout>

@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Protein Calculator — Daily Protein Intake Range — Nawtch"
+  description="Free protein calculator. Get a gram/day protein range for sedentary, active, cutting, or older-adult goals, based on cited nutrition research."
+  canonicalPath="/calculators/protein/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>Protein Calculator</h1>
+      <p class="subtitle">Get a daily protein gram range based on your body weight and goal.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-protein"></div>
+
+  <div id="calc-protein-explain" class="settings-section">
+    <h2 class="settings-section-title">How Much Protein Do You Actually Need?</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        The U.S. Institute of Medicine's Recommended Dietary Allowance (RDA) for protein is <strong>0.8 grams
+        per kilogram of body weight per day</strong> for sedentary adults — this is the minimum intake needed to
+        avoid a gradual loss of body protein, not necessarily the amount that supports optimal body composition
+        or muscle health. A randomized controlled trial that overfed healthy, sedentary adults diets containing
+        0.7, 1.8, or 3.0 g/kg/day of protein found that the low-protein group actually lost a small amount of
+        lean body mass despite gaining weight, while both higher-protein groups gained lean mass — suggesting
+        the RDA floor is lower than what benefits body composition even for people who aren't training.
+        <br /><br />
+        For people doing regular resistance training with a goal of building muscle, a systematic review and
+        meta-analysis pooling roughly 49 studies on protein supplementation and resistance-training outcomes
+        found that gains in muscle mass and strength plateaued around <strong>1.6 g/kg/day</strong>, with the
+        analysis's upper confidence interval extending to about 2.2 g/kg/day — the range this calculator uses
+        for the Active/Muscle Building tier.
+        <br /><br />
+        The same 1.6–2.2 g/kg/day range is commonly recommended during a calorie deficit as well, to protect
+        lean mass while losing fat. A randomized trial in exercising adults during a marked energy deficit found
+        that a group eating 2.4 g/kg/day of protein gained lean mass and lost more fat than a group eating 1.2
+        g/kg/day, supporting the idea that protein needs — if anything — trend higher, not lower, while cutting.
+        <br /><br />
+        Older adults face a different problem: <strong>anabolic resistance</strong>, a reduced ability to build
+        muscle protein from a given amount of dietary protein, which raises the minimum intake needed to
+        maintain muscle mass and function. The PROT-AGE Study Group's position paper recommends adults over 65
+        average at least <strong>1.0–1.2 g/kg/day</strong>, with higher intakes — up to roughly 1.5 g/kg/day or
+        more — advised for those who are physically active or managing an acute or chronic illness.
+      </p>
+      <strong>Sources:</strong>
+      <br /><br />
+      Institute of Medicine (2005). <em>Dietary Reference Intakes for Energy, Carbohydrate, Fiber, Fat, Fatty
+      Acids, Cholesterol, Protein, and Amino Acids.</em> National Academies Press.
+      <br />
+      <a href="https://www.nationalacademies.org/read/10490/chapter/1" target="_blank" rel="noopener">Read the report →</a>
+      <br /><br />
+      Bray, G.A., et al. (2012). <em>Effect of Dietary Protein Content on Weight Gain, Energy Expenditure, and
+      Body Composition During Overeating: A Randomized Controlled Trial.</em> JAMA, 307(1), 47–55.
+      <br />
+      <a href="https://pubmed.ncbi.nlm.nih.gov/22215165/" target="_blank" rel="noopener">Read the study →</a>
+      <br /><br />
+      Morton, R.W., et al. (2018). <em>A Systematic Review, Meta-Analysis and Meta-Regression of the Effect of
+      Protein Supplementation on Resistance Training-Induced Gains in Muscle Mass and Strength in Healthy
+      Adults.</em> British Journal of Sports Medicine, 52(6), 376–384.
+      <br />
+      <a href="https://pubmed.ncbi.nlm.nih.gov/28698222/" target="_blank" rel="noopener">Read the study →</a>
+      <br /><br />
+      Longland, T.J.M., et al. (2016). <em>Higher Compared with Lower Dietary Protein During an Energy Deficit
+      Combined with Intense Exercise Promotes Greater Lean Mass Gain and Fat Mass Loss: A Randomized Trial.</em> American Journal of Clinical Nutrition, 103(3), 738–746.
+      <br />
+      <a href="https://academic.oup.com/ajcn/article/103/3/738/4564609" target="_blank" rel="noopener">Read the study →</a>
+      <br /><br />
+      Bauer, J., et al. (2013). <em>Evidence-Based Recommendations for Optimal Dietary Protein Intake in Older
+      People: A Position Paper from the PROT-AGE Study Group.</em> Journal of the American Medical Directors
+      Association, 14(8), 542–559.
+      <br />
+      <a href="https://pubmed.ncbi.nlm.nih.gov/23867520/" target="_blank" rel="noopener">Read the study →</a>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/protein/protein.js"></script>
+</BaseLayout>

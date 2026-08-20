@@ -1,0 +1,123 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string; // e.g. "/diets/keto/" — must include leading and trailing slash
+  ogImage?: string; // full absolute URL; defaults to the standard logo
+  ogType?: string;
+  bodyClass?: string;
+  noIndex?: boolean;
+  showLegalFooter?: boolean;
+  showSettingsHint?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalPath,
+  ogImage = 'https://nawtch.app/media/nawtch-logo-1000x1000.png',
+  ogType = 'website',
+  bodyClass,
+  noIndex = false,
+  showLegalFooter = true,
+  showSettingsHint = true,
+} = Astro.props;
+
+const canonicalUrl = `https://nawtch.app${canonicalPath}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("nawtch_theme") || "dark";
+          var apply = function (v) {
+            var resolved = v === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : v;
+            document.documentElement.setAttribute("data-theme", resolved);
+          };
+          apply(t);
+          if (t === "system" && window.matchMedia) {
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { apply("system"); });
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-DCERQMG3M3"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DCERQMG3M3');
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noIndex && <meta name="robots" content="noindex, follow" />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="en" href={canonicalUrl} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="Nawtch" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" type="image/x-icon" sizes="48x48" href="/media/favicon-48x48.ico" />
+    <link rel="icon" type="image/svg+xml" href="/media/nawtch-logo.svg" />
+    <link rel="icon" type="image/png" size="32x32" href="/media/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="/media/favicon-512x512.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class={bodyClass}>
+    <div id="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-box">
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel">Cancel</button>
+          <button id="confirm-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+      <Nav />
+
+      <main>
+        <slot />
+      </main>
+      {showLegalFooter && (
+        <div class="legal-footer">
+          &copy; 2026 Nawtch · <a href="/privacy/">Privacy Policy</a> · <a href="/terms/">Terms of Use</a>
+        </div>
+      )}
+    </div>
+
+    <slot name="footer">
+      <Footer />
+    </slot>
+
+    <script src="../lib/nav.js"></script>
+    {showSettingsHint && <script src="../lib/settingsHint.js"></script>}
+  </body>
+</html>

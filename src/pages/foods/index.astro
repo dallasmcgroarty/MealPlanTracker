@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Food Tracker & Barcode Scanner — Nawtch"
+  description="Add, edit, hide, or barcode-scan your saved foods in Nawtch. Set nutrition info, cost per serving, and daily targets for every food you track."
+  canonicalPath="/foods/"
+>
+  <header>
+    <div class="header-left">
+      <h1>Manage Your Foods</h1>
+      <p class="subtitle">
+        View, edit, hide/show, delete, or add foods
+      </p>
+    </div>
+    <div style="display: flex;">
+      <button class="add-btn" id="add-core-item-btn" onclick="window.showAddCoreItemForm()">+ Add Food</button>
+    </div>
+  </header>
+  <div id="core-items-mgmt-list"></div>
+  <div class="info-banners">
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
+        <span class="info-banner-label info-label-warn">Target/Day controls what counts toward your daily goals</span>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        <strong>Target/Day</strong> must be greater than <strong>0</strong> for a food to count toward
+        daily target calories, daily target cost, and weekly cost projections.
+        A target of <strong>0</strong> means the food is still loggable but excluded from all targets.
+      </div>
+    </div>
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--muted);box-shadow: 0 0 6px var(--muted);"></div>
+        <span class="info-banner-label info-label-info">Hiding a food removes it from tracking but keeps it saved</span>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        <strong>Hide</strong> removes a food from the daily tracker, daily cost target, and expected
+        weekly cost. The food stays in storage and can be restored any time with <strong>Show</strong>.
+      </div>
+    </div>
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--carbs);box-shadow: 0 0 6px var(--carbs);"></div>
+        <span class="info-banner-label info-label-warn-2">Barcode scanning a food/product is <strong>not</strong> always accurate</span>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        The barcode scanner uses a community driven food library and may not always provide accurate nutritional information.
+        Always double-check the details before logging a food item.
+      </div>
+    </div>
+  </div>
+  <p class="field-hint" style="display:block;margin-top:14px;">
+    Not sure what your macro targets should be? Calculate your <a href="/calculators/macros/">macro split</a>, or browse our <a href="/diets/">diet comparison guide</a>. Want to plan out a meal before adding it here? Try the <a href="/tools/bowl-builder/">Bowl Builder</a>. Want to budget your grocery list? Try the <a href="/tools/grocery-budget-calculator/">Grocery Budget Calculator</a>.
+  </p>
+
+  <!-- Barcode scanner -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+  <script src="../../islands/vanilla/foods/foods.js"></script>
+</BaseLayout>

@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="BMI Calculator – Free Body Mass Index Tool | Nawtch"
+  description="Free BMI calculator using CDC adult BMI categories. Find your body mass index from height and weight in seconds."
+  canonicalPath="/calculators/bmi/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>BMI Calculator</h1>
+      <p class="subtitle">Check your body mass index against CDC adult BMI categories.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-bmi"></div>
+
+  <div id="calc-bmi-explain" class="settings-section">
+    <h2 class="settings-section-title">How We Calculate This</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        BMI is simply <strong>weight (kg) ÷ height (m)²</strong> — a quick, population-level screening measure,
+        not a precise individual health assessment. The category thresholds (underweight, healthy weight,
+        overweight, obesity) come from the CDC's adult BMI reference ranges.
+        <br /><br />
+        <strong>Worth knowing:</strong> BMI can't distinguish fat mass from lean muscle and bone, so it can
+        misclassify very muscular or very lean people as "overweight" or "obese" even when their body fat is
+        actually low. It also can't account for fat distribution — try our <a href="/calculators/waist-to-height/">Waist-to-Height Ratio Calculator</a> for another perspective on that.
+
+        The standard thresholds were also developed largely from data on white/European populations, and both
+        the CDC and a WHO expert consultation have noted that they can misjudge risk for other groups — for
+        example, East and South Asian populations tend to face higher health risk at lower BMI values than the
+        standard cutoffs reflect. Treat it as a starting point for a conversation, not a verdict.
+      </p>
+      <a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html" target="_blank" rel="noopener">Read CDC's BMI guidance →</a>
+      <br /><br />
+      <a href="https://www.cdc.gov/bmi/about/index.html" target="_blank" rel="noopener">Read CDC's note on BMI and race/ethnicity →</a>
+      <br /><br />
+      <strong>Source:</strong> WHO Expert Consultation (2004). <em>Appropriate body-mass index for Asian
+      populations and its implications for policy and intervention strategies.</em> The Lancet, 363(9403),
+      157–163.
+      <br /><br />
+      <a href="https://pubmed.ncbi.nlm.nih.gov/14726171/" target="_blank" rel="noopener">Read the WHO consultation →</a>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/bmi/bmi.js"></script>
+</BaseLayout>

@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Free Online Tools – No App, No Account | Nawtch"
+  description="Browse Nawtch's free browser-based tools — no downloads, no sign-up. Everything runs and saves privately on your device."
+  canonicalPath="/tools/"
+  bodyClass="tools"
+>
+  <header>
+    <div class="header-left">
+      <h1>Free Tools</h1>
+      <p class="subtitle">A growing set of fast, free tools that work right in your browser. No account, no app to install, nothing stored anywhere but your own device.</p>
+    </div>
+    <a class="ghost-btn" href="#" onclick="window.history.back(); return false;">← Back</a>
+  </header>
+
+  <div class="items-section">
+    <a class="tool-card" href="/tools/scorekeeper/">
+      <span class="material-symbols-outlined tool-card-icon">scoreboard</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Scorekeeper</div>
+        <div class="tool-card-desc">Track scores for board games, card games, drinking games, or any game where points matter.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/tools/bowl-builder/">
+      <span class="material-symbols-outlined tool-card-icon">ramen_dining</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Bowl Builder</div>
+        <div class="tool-card-desc">Build a bowl, plate, or meal item by item and watch calories and macros total up live as you go.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+    <a class="tool-card" href="/tools/grocery-budget-calculator/">
+      <span class="material-symbols-outlined tool-card-icon">shopping_cart</span>
+      <div class="tool-card-info">
+        <div class="tool-card-name">Grocery Budget Calculator</div>
+        <div class="tool-card-desc">Build your real grocery list item by item and see the real paced weekly cost — not a flat per-person estimate.</div>
+      </div>
+      <span class="material-symbols-outlined tool-card-arrow">chevron_right</span>
+    </a>
+  </div>
+</BaseLayout>

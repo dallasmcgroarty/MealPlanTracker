@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Sleep Cycle Calculator — Bedtime & Wake Time — Nawtch"
+  description="Find the best bedtime or wake-up time based on 90-minute sleep cycles, so you wake up between cycles instead of mid-cycle."
+  canonicalPath="/calculators/sleep/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>Sleep Cycle Calculator</h1>
+      <p class="subtitle">Time your bedtime or wake-up around full 90-minute sleep cycles.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-sleep"></div>
+
+  <div id="calc-sleep-explain" class="settings-section">
+    <h2 class="settings-section-title">How We Calculate This</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        Sleep isn't one flat state — it moves through a repeating cycle of light sleep, deep sleep, and REM sleep
+        that takes roughly 90 minutes to complete, with most adults getting through <strong>four to six full
+        cycles</strong> a night. The National Institute of Neurological Disorders and Stroke (NINDS) describes this
+        ultradian rhythm in its patient-education overview of sleep architecture.
+        <br /><br />
+        Waking up in the middle of a cycle — mid-deep-sleep, for instance — tends to feel groggier than waking up
+        right at the boundary between cycles, when sleep is naturally lighter. This calculator works backward (or
+        forward) from your target wake-up time or bedtime in 90-minute increments, plus roughly 15 minutes to
+        account for the time it typically takes to actually fall asleep, so the suggested times land on cycle
+        boundaries rather than mid-cycle.
+        <br /><br />
+        <strong>On sleep duration:</strong> the American Academy of Sleep Medicine and Sleep Research Society's
+        joint consensus statement recommends adults get <strong>7 or more hours</strong> of sleep per night for
+        optimal health, which lines up with the 5-cycle (7.5 hour) and 6-cycle (9 hour) options here. Consistently
+        sleeping less than 7 hours is associated with adverse health outcomes including weight gain, impaired
+        immune function, and increased risk of cardiovascular disease.
+        <br /><br />
+        Two things that reliably push against good sleep timing are caffeine and magnesium status — see our <a href="/supplements/caffeine/">caffeine guide</a> for how late-day caffeine quietly shortens total sleep
+        time, and our <a href="/supplements/magnesium/">magnesium guide</a> for an honest look at the (thinner)
+        evidence behind magnesium glycinate as a sleep aid.
+      </p>
+      <a href="https://www.ninds.nih.gov/health-information/public-education/brain-basics/brain-basics-understanding-sleep" target="_blank" rel="noopener">Read NINDS's Brain Basics: Understanding Sleep →</a>
+      <br /><br />
+      <strong>Source:</strong> Watson NF, Badr MS, Belenky G, et al. <em>Recommended Amount of Sleep for a Healthy
+      Adult: A Joint Consensus Statement of the American Academy of Sleep Medicine and Sleep Research Society.</em> Sleep. 2015;38(6):843–844.
+      <br /><br />
+      <a href="https://pubmed.ncbi.nlm.nih.gov/25979105/" target="_blank" rel="noopener">Read the consensus statement on PubMed →</a>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/sleep/sleep.js"></script>
+</BaseLayout>

@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Free Online Scorekeeper – No App, No Account | Nawtch"
+  description="Keep score for board games, card games, drinking games, and more. Free, fast, and private — no sign-up, no app download, works right in your browser."
+  canonicalPath="/tools/scorekeeper/"
+  bodyClass="tools"
+>
+  <link rel="stylesheet" href="/tools/scorekeeper/scorekeeper.css" />
+
+  <header>
+    <div class="header-left">
+      <h1>Free Online Scorekeeper</h1>
+      <p class="subtitle">Track scores for board games, card games, drinking games, or any game where points matter — no account needed. Add players, log points, and keep the game moving without pen and paper.</p>
+    </div>
+    <a class="ghost-btn" href="#" onclick="window.history.back(); return false;">← Back</a>
+  </header>
+
+  <div class="settings-section">
+    <h2 class="settings-section-title">Add Player</h2>
+    <div class="settings-section-body">
+      <form id="player-input" class="sk-add-form">
+        <div class="field-group">
+          <label class="field-label" for="player-name">Name</label>
+          <input type="text" id="player-name" placeholder="Player name" autocomplete="off">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="player-score">Starting score</label>
+          <input type="number" id="player-score" placeholder="0">
+        </div>
+        <button type="submit" class="add-btn" id="new-player">Add Player</button>
+      </form>
+      <p class="field-hint" id="default-score">Default score is 0 if left blank</p>
+    </div>
+  </div>
+
+  <div class="items-section">
+    <div class="section-title">Players</div>
+    <div id="card-set"></div>
+  </div>
+
+  <div class="settings-section">
+    <h2 class="settings-section-title">Adjust Score</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">Select a player above, then use the controls below to adjust their score.</p>
+      <div id="functions">
+        <span class="material-symbols-outlined sk-step-btn" id="minus" role="button" tabindex="0" aria-label="Subtract from selected player's score">remove</span>
+        <input type="number" min="0" oninput="validity.valid||(value='');" id="score-update" placeholder="0">
+        <span class="material-symbols-outlined sk-step-btn" id="plus" role="button" tabindex="0" aria-label="Add to selected player's score">add</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sk-danger-row">
+    <button type="button" class="ghost-btn" id="reset-all-btn">Reset All Scores</button>
+    <button type="button" class="ghost-btn" id="clear-all-btn">Delete All Players</button>
+  </div>
+
+  <div class="settings-section">
+    <h2 class="settings-section-title">Keeping Score - How It Works</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        To use the free scorekeeper, first add players using the form above. Then select a player to adjust their score using the controls.
+        Players will automatically be ranked from highest to lowest score. You can reset all scores or delete all players using the buttons provided. All data is stored locally in your browser and will persist across sessions until cleared.</p>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h2 class="settings-section-title">Can Be Used With All Types Of Games</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        Great for:
+      </p>
+      <ul>
+        <li>Kings Cup / Ring of Fire</li>
+        <li>Flip Cup</li>
+        <li>Beer Pong</li>
+        <li>Beer Die</li>
+        <li>Cornhole & darts</li>
+        <li>Card games (Cards Against Humanity, Euchre, Rummy)</li>
+        <li>Board game night</li>
+        <li>Any game where you just need fast, simple score tracking</li>
+      </ul>
+      <p class="settings-desc">
+        Built mobile-first for game night in progress — big tap targets, no menus to dig through, works one-handed.
+      </p>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/tools/scorekeeper/scorekeeper.js"></script>
+</BaseLayout>

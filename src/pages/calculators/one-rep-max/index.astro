@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="One Rep Max Calculator – Epley &amp; Brzycki 1RM | Nawtch"
+  description="Free one rep max calculator. Estimate your one-rep max (1RM), the max weight you can lift for a single repetition for a given exercise."
+  canonicalPath="/calculators/one-rep-max/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>One Rep Max Calculator</h1>
+      <p class="subtitle">Estimate your max one-rep lift, the max weight you can lift for a single repetition for a given exercise.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-orm"></div>
+
+  <div id="calc-orm-explain" class="settings-section">
+    <h2 class="settings-section-title">How We Calculate This</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        There's no single "most accurate" formula for estimating a one-rep max from a submaximal set — every
+        equation is a population-average approximation, so we show you two of the most widely used ones side by
+        side instead of picking a favorite.
+        <br /><br />
+        The <strong>Epley formula</strong> (1RM = weight × (1 + reps/30)) is the most widely used approximation
+        in gyms and coaching, originally published as a poundage chart rather than in a peer-reviewed journal.
+        <br /><br />
+        The <strong>Brzycki formula</strong> (1RM = weight × 36 ÷ (37 − reps)) comes from a peer-reviewed paper
+        and tends to estimate slightly lower than Epley at higher rep counts. It becomes mathematically
+        undefined at 37 reps or more (the denominator hits zero), so it isn't usable outside a realistic
+        strength-testing rep range.
+        <br /><br />
+        Both formulas are most reliable for sets of 1–10 reps — accuracy drops the higher your rep count goes,
+        since fatigue and muscular endurance start to matter more than raw strength. For the most reliable
+        estimate, use a recent set of 1–6 reps taken close to failure.
+        <br /><br />
+        Once you have an estimate, the <strong>Training Load Table</strong> below it converts that number into
+        practical training weights using the NSCA's percentage-of-1RM chart — so you can see what to load on the
+        bar for a strength-focused set of 3 reps versus a hypertrophy-focused set of 8, without doing the math
+        yourself.
+      </p>
+      <strong>Source:</strong> Epley, B. (1985). <em>Poundage chart.</em> In <em>Boyd Epley Workout.</em> Lincoln, NE: Body Enterprises.
+      <br /><br />
+      <strong>Source:</strong> Brzycki, M. (1993). <em>Strength testing—Predicting a one-rep max from
+      reps-to-fatigue.</em> Journal of Physical Education, Recreation &amp; Dance, 64(1), 88–90.
+      <br /><br />
+      <a href="https://doi.org/10.1080/07303084.1993.10606684" target="_blank" rel="noopener">Read the Brzycki study →</a>
+      <br /><br />
+      <strong>Source:</strong> Landers, J. (1984). <em>Maximum based on reps.</em> NSCA Journal, 6(6), 60–61.
+      <br /><br />
+      <a href="https://www.nsca.com/contentassets/61d813865e264c6e852cadfe247eae52/nsca_training_load_chart.pdf" target="_blank" rel="noopener">Read the NSCA training load chart →</a>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/one-rep-max/one-rep-max.js"></script>
+</BaseLayout>

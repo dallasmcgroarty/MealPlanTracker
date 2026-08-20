@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Workout Planner & Exercise Programs | Nawtch"
+  description="Build multi-day workout programs with sets, reps, rest, and notes in Nawtch. Create and reuse exercises from your own personal exercise library."
+  canonicalPath="/programs/"
+>
+  <header>
+    <div class="header-left">
+      <h1>Workout Planner</h1>
+      <p class="subtitle">Create workout routines, plan exercises, and follow personalized fitness programs.</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-direction: column;">
+      <button style="align-self: auto;" class="add-btn" onclick="window.pgOpenCreate()">+ New Program</button>
+      <button style="align-self: auto;" class="ghost-btn pg-exercise-manage-btn" onclick="window.pgOpenExLibrary()">Exercise Library</button>
+    </div>
+  </header>
+  <div id="programs-list"></div>
+  <div class="info-banners">
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
+        <span class="info-banner-label info-label-warn">Each program can have up to 7 days</span>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        A program can hold up to <strong>7 days</strong>, and every day needs at least one exercise before you
+        can save. A program always keeps at least one day — once you're down to the last one, its <strong>Remove</strong> option disappears.
+      </div>
+    </div>
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--muted);box-shadow: 0 0 6px var(--muted);"></div>
+        <span class="info-banner-label info-label-info">Your exercise library is shared across all programs</span>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        Exercises you create are saved to a shared <strong>Exercise Library</strong> you can search and reuse in
+        any program, not just the one you built it in. Adding one to a day copies its current sets, reps, and
+        notes at that moment — later edits to the library update future additions, but won't retroactively
+        change copies already placed in other programs' days.
+      </div>
+    </div>
+    <div class="info-banner">
+      <div class="info-banner-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="info-dot" style="background:var(--carbs);box-shadow: 0 0 6px var(--carbs);"></div>
+        <span class="info-banner-label info-label-warn-2">Reorder exercises within a day anytime</span>
+        <span class="info-banner-chevron">▼</span>
+      </div>
+      <div class="info-banner-body">
+        Use the <strong>↑</strong>/<strong>↓</strong> arrows next to each exercise to reorder it within a day.
+        The library itself — creating, editing, or deleting exercises — can also be managed on its own via the <strong>Exercise Library</strong> button, independent of any specific program.
+      </div>
+    </div>
+  </div>
+  <p class="field-hint" style="display:block;margin-top:14px;">
+    Track your strength and endurance with our <a href="/calculators/one-rep-max/">One-Rep Max</a> and <a href="/calculators/vo2-max/">VO2 Max</a> calculators.
+  </p>
+
+  <script src="../../islands/vanilla/programs/programs.js"></script>
+</BaseLayout>

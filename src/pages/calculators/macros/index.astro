@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Macro Calculator – Protein, Carb & Fat Targets | Nawtch"
+  description="Free macro calculator. Turn your calorie target into protein, carb, and fat gram targets with High Protein, Low Carb, Low Fat, and Standard presets."
+  canonicalPath="/calculators/macros/"
+  bodyClass="calculators"
+>
+  <header>
+    <div class="header-left">
+      <h1>Macro Calculator</h1>
+      <p class="subtitle">Turn a calorie target into protein, carb, and fat gram targets.</p>
+    </div>
+    <a class="ghost-btn" href="/calculators/">← Back to Calculators</a>
+  </header>
+
+  <div id="calc-macros"></div>
+
+  <div id="calc-macros-explain" class="settings-section">
+    <h2 class="settings-section-title">What Are Macros & Why They Matter</h2>
+    <div class="settings-section-body">
+      <p class="settings-desc">
+        Macronutrients — <strong>protein</strong>, <strong>carbohydrates</strong>, and <strong>fat</strong> — are
+        the three nutrients that supply your body with energy (unlike micronutrients like vitamins and
+        minerals, which don't provide calories). Protein and carbohydrate each provide about 4 calories per
+        gram, while fat provides about 9 — more than double — which is why fat-heavy foods pack more calories
+        into a smaller volume.
+        <br /><br />
+        <strong>Protein</strong> supplies the amino acids your body uses to repair and build muscle tissue, and
+        is the macro most linked to preserving lean mass while eating in a calorie deficit. It's also the most
+        satiating macro gram-for-gram and has the highest thermic effect of food, meaning your body burns more
+        calories digesting it than it does digesting carbs or fat.
+        <br /><br />
+        <strong>Carbohydrates</strong> are your body's preferred fuel for the brain and for higher-intensity
+        exercise, and getting enough supports training performance and recovery. Whole-food sources — vegetables,
+        fruit, whole grains, legumes — also supply fiber, which supports digestion and satiety.
+        <br /><br />
+        <strong>Fat</strong> is required for hormone production (including sex hormones), supports cell membrane
+        structure, and is necessary to absorb the fat-soluble vitamins A, D, E, and K. Going too low on fat for
+        extended periods can disrupt hormone levels.
+        <br /><br />
+        Total calories are still what determines whether you lose, maintain, or gain weight — a macro split
+        doesn't override that. What it changes is body composition, hunger, energy levels, and how sustainable a
+        calorie target feels day to day, which is why picking a split you can actually stick with matters as
+        much as the exact percentages. For context, the Institute of Medicine's Acceptable Macronutrient
+        Distribution Ranges (AMDR) suggest adults get roughly 10–35% of calories from protein, 45–65% from
+        carbohydrate, and 20–35% from fat — the four presets above sit within or near that range, just shifted
+        toward different priorities.
+      </p>
+      <strong>Source:</strong> Institute of Medicine (2005). <em>Dietary Reference Intakes for Energy,
+      Carbohydrate, Fiber, Fat, Fatty Acids, Cholesterol, Protein, and Amino Acids.</em> National Academies
+      Press.
+      <br /><br />
+      <a href="https://www.nationalacademies.org/read/10490/chapter/1" target="_blank" rel="noopener">Read the report →</a>
+    </div>
+  </div>
+
+  <script src="../../../islands/vanilla/calculators/macros/macros.js"></script>
+</BaseLayout>
