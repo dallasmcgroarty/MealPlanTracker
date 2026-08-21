@@ -351,6 +351,7 @@ h1 {
 input[type="text"],
 input[type="number"],
 input[type="time"],
+input[type="date"],
 select {
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -763,6 +764,112 @@ input[readonly] {
   background: var(--surface);
   color: var(--accent);
   border: 1px solid var(--border);
+}
+
+/* Weight goal — action/countdown card and completed-goal banner */
+.wt-goal-section {
+  display: flex;
+}
+
+.wt-goal-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.wt-goal-card .add-btn {
+  width: 100%;
+}
+
+.wt-goal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wt-goal-target {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+.wt-goal-countdown-wrapper {
+  text-align:center;
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+}
+
+.wt-goal-countdown {
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.wt-goal-countdown.overdue {
+  color: var(--warn);
+}
+
+.wt-goal-delete {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wt-goal-delete:hover {
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.wt-goal-banner {
+  position: relative;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 36px 14px 14px;
+  margin-bottom: 14px;
+}
+
+.wt-goal-banner-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.wt-goal-banner-body {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.wt-goal-banner-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.wt-goal-banner-close:hover {
+  color: var(--text);
 }
 
 /* ECharts container base sizing (History + Weight) */
