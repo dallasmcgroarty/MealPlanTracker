@@ -18,3 +18,11 @@ export function weekStartFor(dateStr) {
   d.setDate(d.getDate() - day);
   return isoDate(d);
 }
+
+// Whole-day difference (b - a) in days, e.g. daysBetween(today, targetDate)
+// for a countdown or daysBetween(startDate, endDate) for elapsed time.
+export function daysBetween(dateStrA, dateStrB) {
+  const a = new Date(dateStrA + "T00:00:00");
+  const b = new Date(dateStrB + "T00:00:00");
+  return Math.round((b - a) / 86400000);
+}
