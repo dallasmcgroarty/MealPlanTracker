@@ -161,7 +161,7 @@ window.openGoalModal = function () {
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().slice(0, 10);
   modal.innerHTML = `
-    <div class="pg-modal-box">wt-goal-banner
+    <div class="pg-modal-box">
       <div class="pg-modal-header">
         <div class="pg-modal-title">Set a Goal Weight</div>
         <button class="pg-close-btn" onclick="document.getElementById('goal-modal').classList.remove('open')">×</button>
