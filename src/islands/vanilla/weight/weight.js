@@ -1,6 +1,7 @@
 import * as db from "../../../lib/db.js";
-import { todayStr, weekStartFor } from "../../../lib/dates.js";
+import { todayStr, weekStartFor, daysBetween } from "../../../lib/dates.js";
 import * as prefs from "../../../lib/prefs.js";
+import * as weightGoals from "../../../lib/weightGoals.js";
 import { showConfirm } from "../../../lib/ui.js";
 
 // Weight is always stored normalized to kg. Display unit is a global setting
@@ -8,6 +9,8 @@ import { showConfirm } from "../../../lib/ui.js";
 export let WEIGHT_ENTRIES = []; // [{ date, weightKg }]
 let weightUnit = "lb"; // 'lb' | 'kg'
 let chartMode = "daily"; // 'daily' | 'weekly'
+let activeGoal = null; // weightGoals "active-goal" record, or null
+let latestCompletedGoal = null; // most recent unhidden completed-goal record, or null
 
 const KG_PER_LB = 0.45359237;
 
@@ -19,6 +22,8 @@ export async function loadAll() {
   }
   WEIGHT_ENTRIES.sort((a, b) => a.date.localeCompare(b.date));
   weightUnit = await prefs.getWeightUnit();
+  activeGoal = await weightGoals.getActiveGoal();
+  latestCompletedGoal = await weightGoals.getLatestCompletedGoal();
 }
 
 function kgToDisplay(kg) {
@@ -65,6 +70,203 @@ function renderHeader() {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// WEIGHT GOAL — countdown card, completed-goal banner, and the two
+// modals (set-goal, congrats). All goal data lives in weightGoals.js;
+// this file only renders it and reacts to wtSave.
+// ═══════════════════════════════════════════════════════════════════
+function directionLabel(direction) {
+  return direction === "lose" ? "Lose" : "Gain";
+}
+
+function goalSectionHTML() {
+  if (!activeGoal) {
+    return `
+    <div class="wt-goal-section">
+      <div class="wt-goal-card">
+        <button class="add-btn" onclick="window.openGoalModal()">Set a goal weight</button>
+      </div>
+    </div>
+    `;
+  }
+  const targetDisplay = round1(kgToDisplay(activeGoal.targetWeightKg));
+  const remaining = daysBetween(todayStr(), activeGoal.targetDate);
+  let countdownHTML;
+  if (remaining > 0) {
+    countdownHTML = `<span class="wt-goal-countdown">${remaining} day${remaining === 1 ? "" : "s"} left</span>`;
+  } else if (remaining === 0) {
+    countdownHTML = `<span class="wt-goal-countdown">Due today</span>`;
+  } else {
+    countdownHTML = `<span class="wt-goal-countdown overdue">${Math.abs(remaining)} day${Math.abs(remaining) === 1 ? "" : "s"} overdue</span>`;
+  }
+  return `
+  <div class="wt-goal-section">
+    <div class="wt-goal-card">
+      <div class="wt-goal-info">
+        <div class="wt-goal-target">Current goal is to ${directionLabel(activeGoal.direction)} ${targetDisplay} ${weightUnit}s</div>
+        <div class="wt-goal-countdown-wrapper">You have a ${countdownHTML} to achieve it!</div>
+      </div>
+      <button class="wt-goal-delete" title="Delete goal" onclick="window.wgDeleteGoal()">🗑</button>
+    </div>
+  </div>
+  `;
+}
+
+function completedBannerHTML() {
+  if (!latestCompletedGoal) return "";
+  const g = latestCompletedGoal;
+  const startDisplay = round1(kgToDisplay(g.startWeightKg));
+  const endDisplay = round1(kgToDisplay(g.endWeightKg));
+  return `
+  <div class="wt-goal-banner" id="wt-goal-banner-${g.id}">
+    <button class="wt-goal-banner-close" title="Hide" onclick="window.wgHideBanner('${g.id}')">×</button>
+    <div class="wt-goal-banner-title">🎉 Goal complete!</div>
+    <div class="wt-goal-banner-body">
+      ${g.direction === "lose" ? "Lost" : "Gained"} weight from ${startDisplay} ${weightUnit} to ${endDisplay} ${weightUnit}
+      in ${g.daysTaken} day${g.daysTaken === 1 ? "" : "s"} (${formatDateShort(g.startDate)} – ${formatDateShort(g.endDate)}).
+    </div>
+  </div>
+  `;
+}
+
+window.wgHideBanner = async function (id) {
+  await weightGoals.hideCompletedGoal(id);
+  if (latestCompletedGoal && latestCompletedGoal.id === id) latestCompletedGoal = null;
+  const el = document.getElementById(`wt-goal-banner-${id}`);
+  if (el) el.remove();
+};
+
+window.wgDeleteGoal = async function () {
+  if (!(await showConfirm("Delete this weight goal? You'll need to start a new one.", "Delete"))) return;
+  await weightGoals.deleteActiveGoal();
+  activeGoal = null;
+  renderWeightTab();
+};
+
+function ensureGoalModal() {
+  if (!document.getElementById("goal-modal")) {
+    const el = document.createElement("div");
+    el.id = "goal-modal";
+    el.className = "pg-modal";
+    el.addEventListener("click", (e) => {
+      if (e.target === el) el.classList.remove("open");
+    });
+    document.body.appendChild(el);
+  }
+}
+
+window.openGoalModal = function () {
+  ensureGoalModal();
+  const modal = document.getElementById("goal-modal");
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDate = tomorrow.toISOString().slice(0, 10);
+  modal.innerHTML = `
+    <div class="pg-modal-box">wt-goal-banner
+      <div class="pg-modal-header">
+        <div class="pg-modal-title">Set a Goal Weight</div>
+        <button class="pg-close-btn" onclick="document.getElementById('goal-modal').classList.remove('open')">×</button>
+      </div>
+      <div class="pg-modal-body" style="display: flex; gap: 8px; flex-direction: column;">
+        <div class="field-group">
+          <span class="field-label">Direction</span>
+          <div class="wt-toggle" id="goal-direction-toggle" style="width: fit-content; width: -webkit-fit-content;  width: -moz-fit-content;">
+            <button class="wt-toggle-btn active" id="goal-dir-lose" onclick="window.wgSetDirection('lose')">Lose</button>
+            <button class="wt-toggle-btn" id="goal-dir-gain" onclick="window.wgSetDirection('gain')">Gain</button>
+          </div>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Target weight (${weightUnit})</span>
+          <input type="number" id="goal-target-input" min="0" step="0.1" placeholder="e.g. 150.0" />
+        </div>
+        <div class="field-group">
+          <span class="field-label">Target date</span>
+          <input type="date" id="goal-date-input" min="${minDate}" value="${minDate}" />
+        </div>
+        <button class="add-btn" style="margin-top:8px;" onclick="window.wgStartGoal()">Start Goal</button>
+      </div>
+    </div>
+  `;
+  modal.dataset.direction = "lose";
+  modal.classList.add("open");
+};
+
+window.wgSetDirection = function (direction) {
+  const modal = document.getElementById("goal-modal");
+  if (!modal) return;
+  modal.dataset.direction = direction;
+  document.getElementById("goal-dir-lose").classList.toggle("active", direction === "lose");
+  document.getElementById("goal-dir-gain").classList.toggle("active", direction === "gain");
+};
+
+window.wgStartGoal = async function () {
+  const modal = document.getElementById("goal-modal");
+  const targetInput = document.getElementById("goal-target-input");
+  const dateInput = document.getElementById("goal-date-input");
+  const targetVal = parseFloat(targetInput.value);
+  const targetDate = dateInput.value;
+  const direction = modal.dataset.direction === "gain" ? "gain" : "lose";
+  const today = todayStr();
+  if (!targetVal || targetVal <= 0) {
+    targetInput.focus();
+    return;
+  }
+  if (!targetDate || targetDate <= today) {
+    dateInput.focus();
+    return;
+  }
+  const targetWeightKg = displayToKg(round1(targetVal));
+  const priorEntry = [...WEIGHT_ENTRIES].filter((e) => e.date <= today).sort((a, b) => b.date.localeCompare(a.date))[0];
+  const startWeightKg = priorEntry ? priorEntry.weightKg : null;
+  activeGoal = await weightGoals.startGoal({ targetWeightKg, direction, targetDate, startWeightKg });
+  modal.classList.remove("open");
+  renderWeightTab();
+};
+
+function ensureCongratsModal() {
+  if (!document.getElementById("congrats-modal")) {
+    const el = document.createElement("div");
+    el.id = "congrats-modal";
+    el.className = "pg-modal";
+    document.body.appendChild(el);
+  }
+}
+
+let pendingCompletion = null; // { activeGoal, endWeightKg, endDate } awaiting congrats-close
+
+function showCongratsModal(completionInfo) {
+  pendingCompletion = completionInfo;
+  const { activeGoal: goal, endWeightKg, endDate } = completionInfo;
+  const daysTaken = daysBetween(goal.startDate, endDate);
+  const targetDisplay = round1(kgToDisplay(goal.targetWeightKg));
+  ensureCongratsModal();
+  const modal = document.getElementById("congrats-modal");
+  modal.innerHTML = `
+    <div class="pg-modal-box">
+      <div class="pg-modal-header">
+        <div class="pg-modal-title">🎉 Congrats!</div>
+      </div>
+      <div class="pg-modal-body">
+        <p>You reached your goal of ${targetDisplay} ${weightUnit} in ${daysTaken} day${daysTaken === 1 ? "" : "s"}.</p>
+        <button class="add-btn" style="margin-top:12px;" onclick="window.wgCloseCongrats()">Nice!</button>
+      </div>
+    </div>
+  `;
+  modal.classList.add("open");
+}
+
+window.wgCloseCongrats = async function () {
+  if (pendingCompletion) {
+    const { activeGoal: goal, endWeightKg, endDate } = pendingCompletion;
+    latestCompletedGoal = await weightGoals.completeGoal(goal, endWeightKg, endDate);
+    activeGoal = null;
+    pendingCompletion = null;
+  }
+  const modal = document.getElementById("congrats-modal");
+  if (modal) modal.classList.remove("open");
+  renderWeightTab();
+};
+
+// ═══════════════════════════════════════════════════════════════════
 // WEIGHT TAB
 // ═══════════════════════════════════════════════════════════════════
 export function renderWeightTab() {
@@ -98,6 +300,9 @@ export function renderWeightTab() {
     </div>
     `
     }
+
+    ${completedBannerHTML()}
+    ${goalSectionHTML()}
 
     <div class="items-section">
       <div class="section-header">
@@ -206,6 +411,14 @@ window.wtSave = async function () {
   } else {
     WEIGHT_ENTRIES.push(entry);
     WEIGHT_ENTRIES.sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  if (activeGoal) {
+    activeGoal = await weightGoals.resolveStartWeightIfPending(activeGoal, weightKg);
+    if (weightGoals.checkGoalMet(activeGoal, weightKg)) {
+      showCongratsModal({ activeGoal, endWeightKg: weightKg, endDate: today });
+      return;
+    }
   }
   renderWeightTab();
 };
